@@ -166,6 +166,24 @@
 </head>
 <body>
 <script>if(sessionStorage.getItem("tc_auth")!=="true"){window.location.replace("index.html");}</script>
+<!-- FLOATING SIGN OUT BAR -->
+<div style="position:fixed;top:12px;right:12px;z-index:9999;display:flex;align-items:center;gap:8px;">
+  <div id="float-name" style="background:rgba(2,14,46,0.88);border:1px solid rgba(125,211,252,0.2);border-radius:10px;padding:7px 14px;font-family:'Exo 2',sans-serif;font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);white-space:nowrap;">Student</div>
+  <button onclick="signOut()" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:7px 12px;font-family:'Exo 2',sans-serif;font-size:11px;font-weight:700;color:#fca5a5;cursor:pointer;white-space:nowrap;">🚪 Sign Out</button>
+</div>
+<script>
+(function(){
+  var n = sessionStorage.getItem('tc_student') || 'Student';
+  var el = document.getElementById('float-name');
+  if(el) el.textContent = n;
+})();
+function signOut() {
+  if(confirm('Sign out of TechCamp portal?')) {
+    ['tc_auth','tc_student','tc_att','tc_lock'].forEach(function(k){ sessionStorage.removeItem(k); });
+    window.location.replace('index.html');
+  }
+}
+</script>
 <div class="grid-bg"></div>
 <div class="blob b1"></div>
 <div class="blob b2"></div>
