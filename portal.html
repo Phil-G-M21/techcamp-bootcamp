@@ -462,54 +462,51 @@
   </div>
 
   <footer>TechCamp Boot Camp · April 2026 · Online / Virtual<br>
-    <span style="opacity:0.5;"
+    <span style="opacity:0.5;">Instructor: Gyamerah Afriyie Philimon</span>
+  </footer>
+
+</div>
 
 <script>
 (function() {
-  // Build email at runtime — keeps it safe from scrapers
+  // ── Email — built at runtime so scrapers can't steal it ──
   var em  = ['jyaw456', '@', 'gmail', '.com'].join('');
   var sub = encodeURIComponent('TechCamp Boot Camp Enquiry');
 
-  // Contact card
   var card = document.getElementById('email-card-btn');
   if (card) {
     card.href = 'mailto:' + em + '?subject=' + sub;
     document.getElementById('email-display').textContent = em;
   }
-
-  // Future box email button
   var btn = document.getElementById('portal-email-btn');
   if (btn) btn.href = 'mailto:' + em + '?subject=' + sub;
-})();
-</script>
 
-<script>
-// ── Display student name in top bar ──────────────────────────
-(function() {
+  // ── Student name in top bar ──
   var name = sessionStorage.getItem('tc_student') || 'Student';
   document.getElementById('tb-name').textContent = name;
-  // Avatar initials — first letter of first + last name
-  var parts = name.trim().split(' ');
+
+  var parts    = name.trim().split(' ');
   var initials = parts.length >= 2
-    ? parts[0][0].toUpperCase() + parts[parts.length-1][0].toUpperCase()
+    ? parts[0][0].toUpperCase() + parts[parts.length - 1][0].toUpperCase()
     : parts[0][0].toUpperCase();
   document.getElementById('tb-avatar').textContent = initials;
 
-  // Update welcome text too
+  // ── Personalised welcome text ──
   var welcome = document.querySelector('.welcome-text');
   if (welcome) {
     welcome.innerHTML = 'Welcome, <strong style="color:#fff;">' + name + '</strong>! This is your learning hub for the April Boot Camp.<br>Each week unlocks a new topic — work through it at your own pace.';
   }
 })();
 
-// ── Sign out ──────────────────────────────────────────────────
+// ── Sign out ──
 function signOut() {
   if (confirm('Sign out of TechCamp portal?')) {
-    sessionStorage.removeItem('tc_auth');
-    sessionStorage.removeItem('tc_student');
-    sessionStorage.removeItem('tc_att');
-    sessionStorage.removeItem('tc_lock');
+    ['tc_auth','tc_student','tc_att','tc_lock'].forEach(function(k) {
+      sessionStorage.removeItem(k);
+    });
     window.location.replace('index.html');
   }
 }
 </script>
+</body>
+</html>
