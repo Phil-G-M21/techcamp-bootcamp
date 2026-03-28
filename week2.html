@@ -1,0 +1,2152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 2 — Arduino & C Programming | TechCamp</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --teal:#06b6d4; --teal-l:#22d3ee; --teal-p:#67e8f9; --dark:#020e2e; --sky:#0ea5e9; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--dark); font-family:'Exo 2',sans-serif; color:#fff; min-height:100vh; }
+
+  .grid-bg { position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:linear-gradient(rgba(6,182,212,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(6,182,212,0.04) 1px,transparent 1px);
+    background-size:40px 40px; }
+  .blob { position:fixed; border-radius:50%; filter:blur(90px); pointer-events:none; z-index:0; }
+  .b1 { width:350px;height:350px; background:rgba(6,182,212,0.15); top:-80px; right:-80px; }
+  .b2 { width:300px;height:300px; background:rgba(14,165,233,0.1); bottom:0; left:-60px; }
+
+  .wrap { position:relative; z-index:1; max-width:720px; margin:0 auto; padding:30px 18px 70px; }
+
+  .topnav { display:flex; align-items:center; justify-content:space-between; margin-bottom:32px; }
+  .topnav a { text-decoration:none; color:var(--teal-p); font-size:12px; font-weight:700; letter-spacing:1px; }
+  .week-badge { background:rgba(6,182,212,0.15); border:1px solid rgba(6,182,212,0.4); color:var(--teal-p); font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:6px 14px; border-radius:50px; }
+
+  .hero { text-align:center; margin-bottom:36px; }
+  .hero-icon { font-size:52px; margin-bottom:12px; filter:drop-shadow(0 0 20px rgba(6,182,212,0.5)); }
+  .hero-title { font-family:'Orbitron',monospace; font-weight:900; font-size:26px; color:#fff; text-shadow:0 0 30px rgba(6,182,212,0.4); margin-bottom:8px; }
+  .hero-sub { font-size:13px; font-weight:300; color:rgba(255,255,255,0.5); line-height:1.7; }
+  .hero-dates { display:inline-block; margin-top:12px; background:rgba(6,182,212,0.12); border:1px solid rgba(6,182,212,0.3); border-radius:50px; padding:6px 16px; font-size:11px; font-weight:700; color:var(--teal-p); letter-spacing:2px; }
+
+  .progress-strip { display:flex; gap:5px; margin-bottom:36px; }
+  .p-day { flex:1; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:10px 4px; text-align:center; cursor:pointer; transition:all 0.2s; }
+  .p-day.active { background:rgba(6,182,212,0.2); border-color:rgba(6,182,212,0.5); }
+  .p-day:hover { background:rgba(255,255,255,0.1); }
+  .p-num { font-family:'Orbitron',monospace; font-size:13px; font-weight:700; color:#fff; }
+  .p-label { font-size:7px; color:rgba(255,255,255,0.4); letter-spacing:1px; margin-top:3px; text-transform:uppercase; }
+
+  .lesson { display:none; }
+  .lesson.active { display:block; }
+
+  /* SLIDE */
+  .slide { background:linear-gradient(135deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02)); border:1px solid rgba(6,182,212,0.15); border-radius:16px; padding:24px 20px; margin-bottom:18px; position:relative; overflow:hidden; }
+  .slide::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--teal),var(--sky)); }
+  .slide-tag { font-size:9px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--teal-p); margin-bottom:8px; }
+  .slide-title { font-size:19px; font-weight:800; color:#fff; margin-bottom:12px; line-height:1.3; }
+  .slide-body { font-size:13px; font-weight:400; color:rgba(255,255,255,0.7); line-height:1.8; }
+  .slide-body p { margin-bottom:10px; }
+  .slide-body strong { color:#fff; }
+
+  /* COMPONENT IMAGE */
+  .comp-img { width:100%; border-radius:12px; margin:14px 0; border:1px solid rgba(6,182,212,0.2); display:block; object-fit:cover; max-height:260px; }
+  .img-caption { font-size:10px; color:rgba(255,255,255,0.35); text-align:center; margin-top:-8px; margin-bottom:14px; letter-spacing:1px; }
+
+  .img-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:14px 0; }
+  .img-row img { width:100%; border-radius:10px; border:1px solid rgba(6,182,212,0.2); object-fit:cover; height:160px; }
+  .img-row .cap { font-size:9px; color:rgba(255,255,255,0.35); text-align:center; margin-top:4px; }
+
+  /* GRIDS */
+  .vis-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
+  .vis-card { background:rgba(255,255,255,0.05); border:1px solid rgba(6,182,212,0.12); border-radius:10px; padding:13px; text-align:center; }
+  .vis-icon { font-size:26px; margin-bottom:6px; }
+  .vis-label { font-size:12px; font-weight:700; color:#fff; margin-bottom:3px; }
+  .vis-desc { font-size:10px; color:rgba(255,255,255,0.45); font-weight:300; line-height:1.4; }
+
+  /* TABLE */
+  .family-table { width:100%; border-collapse:collapse; margin-top:14px; font-size:11.5px; }
+  .family-table th { background:rgba(6,182,212,0.15); color:var(--teal-p); font-weight:700; letter-spacing:1px; text-transform:uppercase; font-size:9px; padding:10px 12px; text-align:left; }
+  .family-table td { padding:10px 12px; border-bottom:1px solid rgba(255,255,255,0.05); color:rgba(255,255,255,0.7); vertical-align:top; line-height:1.5; }
+  .family-table tr:hover td { background:rgba(255,255,255,0.03); }
+  .family-table td strong { color:#fff; }
+
+  /* CODE */
+  .code-block { background:#040d1a; border:1px solid rgba(6,182,212,0.2); border-radius:10px; padding:16px; margin:12px 0; overflow-x:auto; }
+  .code-block pre { font-family:'Fira Code',monospace; font-size:12px; color:#e2e8f0; line-height:1.75; white-space:pre; }
+  .kw{color:#67e8f9;} .str{color:#86efac;} .cm{color:#4b5563;} .num{color:#fbbf24;} .fn{color:#a78bfa;}
+  .code-lang { font-size:9px; font-weight:700; letter-spacing:2px; color:var(--teal-p); margin-bottom:8px; text-transform:uppercase; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px; }
+  .sim-link { font-size:10px; color:var(--teal-p); text-decoration:none; background:rgba(6,182,212,0.1); border:1px solid rgba(6,182,212,0.3); padding:4px 12px; border-radius:20px; white-space:nowrap; }
+  .sim-link:hover { background:rgba(6,182,212,0.2); }
+
+  /* CIRCUIT */
+  .circuit-box { background:#040d1a; border:1px solid rgba(6,182,212,0.2); border-radius:12px; padding:18px 14px; margin:14px 0; }
+  .circuit-title { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(103,232,249,0.5); margin-bottom:14px; }
+  .circuit-diagram { font-family:'Fira Code',monospace; font-size:11px; line-height:2; color:#94a3b8; overflow-x:auto; }
+  .circuit-diagram .pin{color:#67e8f9;font-weight:700;} .circuit-diagram .comp{color:#fbbf24;} .circuit-diagram .wire{color:#475569;} .circuit-diagram .gnd{color:#94a3b8;} .circuit-diagram .pwr{color:#f87171;} .circuit-diagram .sig{color:#86efac;} .circuit-diagram .note{color:#64748b;font-style:italic;}
+
+  /* PIN TABLE */
+  .pin-table { width:100%; border-collapse:collapse; margin-top:12px; font-size:11.5px; }
+  .pin-table th { background:rgba(6,182,212,0.1); color:var(--teal-p); font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:8px 10px; text-align:left; }
+  .pin-table td { padding:8px 10px; border-bottom:1px solid rgba(255,255,255,0.05); color:rgba(255,255,255,0.7); }
+  .pin-table .from { color:#67e8f9; font-family:'Fira Code',monospace; font-size:11px; }
+  .pin-table .to   { color:#86efac; font-family:'Fira Code',monospace; font-size:11px; }
+
+  /* STEPS */
+  .steps { display:flex; flex-direction:column; gap:10px; margin-top:12px; }
+  .step { display:flex; gap:12px; align-items:flex-start; }
+  .step-num { width:26px; height:26px; border-radius:50%; flex-shrink:0; background:rgba(6,182,212,0.2); border:1px solid rgba(6,182,212,0.4); display:flex; align-items:center; justify-content:center; font-family:'Orbitron',monospace; font-size:10px; font-weight:700; color:var(--teal-p); margin-top:2px; }
+  .step-text { font-size:13px; color:rgba(255,255,255,0.7); line-height:1.6; }
+  .step-text strong { color:#fff; }
+
+  /* TERMS */
+  .terms-grid { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+  .term { background:rgba(255,255,255,0.04); border-left:3px solid var(--teal); border-radius:0 8px 8px 0; padding:10px 14px; }
+  .term-word { font-size:13px; font-weight:700; color:var(--teal-l); margin-bottom:2px; }
+  .term-def { font-size:11.5px; color:rgba(255,255,255,0.6); line-height:1.5; }
+
+  /* BOXES */
+  .tip-box { background:rgba(6,182,212,0.08); border:1px solid rgba(6,182,212,0.25); border-radius:10px; padding:13px 16px; margin-top:13px; display:flex; gap:10px; align-items:flex-start; }
+  .tip-icon { font-size:17px; flex-shrink:0; }
+  .tip-text { font-size:12px; color:rgba(103,232,249,0.85); line-height:1.6; }
+
+  .warn-box { background:rgba(251,191,36,0.08); border:1px solid rgba(251,191,36,0.25); border-radius:10px; padding:13px 16px; margin-top:13px; display:flex; gap:10px; align-items:flex-start; }
+  .warn-icon { font-size:17px; flex-shrink:0; }
+  .warn-text { font-size:12px; color:rgba(253,230,138,0.85); line-height:1.6; }
+
+  /* WOKWI BANNER */
+  .wokwi-banner { background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.3); border-radius:12px; padding:16px 18px; margin:14px 0; display:flex; align-items:center; gap:14px; text-decoration:none; }
+  .wokwi-banner:hover { background:rgba(34,197,94,0.14); }
+  .wokwi-icon { font-size:28px; flex-shrink:0; }
+  .wokwi-text { flex:1; }
+  .wokwi-title { font-size:13px; font-weight:700; color:#fff; margin-bottom:3px; }
+  .wokwi-sub { font-size:10.5px; color:rgba(134,239,172,0.7); }
+  .wokwi-arr { color:rgba(134,239,172,0.5); font-size:20px; }
+
+  /* LINK CARD */
+  .link-card { background:rgba(255,255,255,0.05); border:1px solid rgba(6,182,212,0.2); border-radius:10px; padding:13px 16px; margin-bottom:9px; display:flex; align-items:center; gap:12px; text-decoration:none; }
+  .link-card:hover { background:rgba(255,255,255,0.09); }
+  .link-icon { font-size:20px; flex-shrink:0; }
+  .link-info { flex:1; }
+  .link-title { font-size:13px; font-weight:700; color:#fff; }
+  .link-url { font-size:10px; color:rgba(103,232,249,0.6); margin-top:2px; }
+  .link-arr { color:rgba(103,232,249,0.4); font-size:18px; }
+
+  /* CODE EXPLAIN */
+  .code-explain { display:flex; flex-direction:column; gap:7px; margin-top:12px; }
+  .ce-row { display:flex; gap:10px; align-items:flex-start; padding:8px 12px; background:rgba(255,255,255,0.03); border-radius:8px; border-left:2px solid rgba(6,182,212,0.3); }
+  .ce-code { font-family:'Fira Code',monospace; font-size:11px; color:#67e8f9; flex-shrink:0; min-width:150px; }
+  .ce-desc { font-size:11.5px; color:rgba(255,255,255,0.6); line-height:1.5; }
+
+  /* STARTER KIT */
+  .kit-box { background:rgba(251,191,36,0.06); border:1px solid rgba(251,191,36,0.2); border-radius:14px; padding:20px; margin-top:14px; }
+  .kit-title { font-size:15px; font-weight:800; color:#fff; margin-bottom:6px; }
+  .kit-body { font-size:12.5px; color:rgba(255,255,255,0.6); line-height:1.7; margin-bottom:14px; }
+  .kit-imgs { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+  .kit-imgs img { width:100%; border-radius:10px; border:1px solid rgba(251,191,36,0.2); object-fit:cover; height:160px; }
+  .kit-imgs .cap { font-size:9px; color:rgba(255,255,255,0.35); text-align:center; margin-top:4px; }
+  .kit-btns { display:flex; gap:8px; flex-wrap:wrap; }
+  .kit-btn { flex:1; min-width:90px; text-align:center; text-decoration:none; background:rgba(255,255,255,0.07); border:1px solid rgba(251,191,36,0.25); border-radius:10px; padding:10px 10px; font-size:12px; font-weight:700; color:#fff; }
+
+  /* REACH OUT */
+  .reach-box { background:rgba(14,165,233,0.07); border:1px solid rgba(14,165,233,0.2); border-radius:14px; padding:20px; margin-top:14px; }
+  .reach-title { font-size:15px; font-weight:800; color:#fff; margin-bottom:6px; }
+  .reach-body { font-size:12.5px; color:rgba(255,255,255,0.55); line-height:1.7; margin-bottom:14px; }
+  .reach-btns { display:flex; gap:8px; flex-wrap:wrap; }
+  .reach-btn { flex:1; min-width:80px; text-align:center; text-decoration:none; background:rgba(255,255,255,0.07); border:1px solid rgba(125,211,252,0.2); border-radius:10px; padding:10px 10px; font-size:12px; font-weight:700; color:#fff; }
+
+  /* NAV BTNS */
+  .lesson-nav { display:flex; gap:10px; margin-top:26px; }
+  .nav-btn { flex:1; background:rgba(255,255,255,0.06); border:1px solid rgba(6,182,212,0.2); border-radius:10px; padding:13px; text-align:center; cursor:pointer; font-family:'Exo 2',sans-serif; font-size:13px; font-weight:700; color:#fff; transition:all 0.2s; text-decoration:none; display:flex; align-items:center; justify-content:center; }
+  .nav-btn:hover { background:rgba(255,255,255,0.1); }
+  .nav-btn.primary { background:rgba(6,182,212,0.2); border-color:rgba(6,182,212,0.4); }
+
+  footer { text-align:center; margin-top:40px; font-size:11px; color:rgba(255,255,255,0.2); line-height:1.8; }
+</style>
+</head>
+<body>
+<script>if(sessionStorage.getItem("tc_auth")!=="true"){window.location.replace("index.html");}</script>
+<div class="grid-bg"></div>
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+
+<div class="wrap">
+  <nav class="topnav">
+    <a href="index.html">← Back to Hub</a>
+    <div class="week-badge">🤖 Week 2</div>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-icon">🤖</div>
+    <div class="hero-title">Arduino & C Programming</div>
+    <p class="hero-sub">Learn how microcontrollers work, write real C code, and build hands-on hardware projects — LED blink, ultrasonic distance sensor, I2C LCD display and a final weather station.</p>
+    <div class="hero-dates">Apr 9 – Apr 15, 2026</div>
+  </div>
+
+  <div class="progress-strip">
+    <div class="p-day active" onclick="showDay(1)"><div class="p-num">1</div><div class="p-label">Arduino</div></div>
+    <div class="p-day" onclick="showDay(2)"><div class="p-num">2</div><div class="p-label">C Language</div></div>
+    <div class="p-day" onclick="showDay(3)"><div class="p-num">3</div><div class="p-label">LED & Sonic</div></div>
+    <div class="p-day" onclick="showDay(4)"><div class="p-num">4</div><div class="p-label">LCD & DHT11</div></div>
+    <div class="p-day" onclick="showDay(5)"><div class="p-num">5</div><div class="p-label">Final</div></div>
+    <div class="p-day" onclick="showDay(6)" style="background:rgba(251,191,36,0.08);border-color:rgba(251,191,36,0.3);"><div class="p-num" style="font-size:11px;">⚡</div><div class="p-label">Electronics</div></div>
+    <div class="p-day" onclick="showDay(7)" style="background:rgba(34,197,94,0.08);border-color:rgba(34,197,94,0.3);"><div class="p-num" style="font-size:14px;">▶</div><div class="p-label">C Console</div></div>
+  </div>
+
+  <!-- ===== DAY 1 ===== -->
+  <div class="lesson active" id="day1">
+
+    <div class="slide">
+      <div class="slide-tag">Day 1 · Microcontrollers</div>
+      <div class="slide-title">🧠 What is a Microcontroller?</div>
+      <div class="slide-body">
+        <p>A <strong>microcontroller</strong> is a tiny computer on a single chip. It contains a processor, memory, and programmable input/output pins — all in one. Unlike a PC that runs many programs, a microcontroller runs <strong>one program at a time, forever in a loop</strong>.</p>
+        <p>Microcontrollers are everywhere — inside your microwave, washing machine, TV remote, car dashboard, traffic lights, medical devices, and much more.</p>
+      </div>
+      <div class="vis-grid">
+        <div class="vis-card"><div class="vis-icon">⚡</div><div class="vis-label">CPU Core</div><div class="vis-desc">Processes your code instructions one by one.</div></div>
+        <div class="vis-card"><div class="vis-icon">💾</div><div class="vis-label">Flash Memory</div><div class="vis-desc">Stores your program permanently even when powered off.</div></div>
+        <div class="vis-card"><div class="vis-icon">🧮</div><div class="vis-label">RAM</div><div class="vis-desc">Temporary memory used while the program is running.</div></div>
+        <div class="vis-card"><div class="vis-icon">📌</div><div class="vis-label">I/O Pins</div><div class="vis-desc">Connect to LEDs, sensors, motors, displays — the real world.</div></div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 1 · Microcontroller Examples</div>
+      <div class="slide-title">🌍 Popular Microcontrollers</div>
+      <div class="slide-body"><p>Here are microcontrollers used by engineers, hobbyists and students worldwide:</p></div>
+      <table class="family-table">
+        <tr><th>Chip</th><th>Used In</th><th>Notes</th></tr>
+        <tr><td><strong>ATmega328P</strong></td><td>Arduino Uno</td><td>Most beginner-friendly. Perfect for learning.</td></tr>
+        <tr><td><strong>ESP8266</strong></td><td>NodeMCU</td><td>Built-in WiFi. Great for IoT projects.</td></tr>
+        <tr><td><strong>ESP32</strong></td><td>Dev boards</td><td>WiFi + Bluetooth + dual-core. Very powerful.</td></tr>
+        <tr><td><strong>STM32</strong></td><td>Industry boards</td><td>Used in professional and industrial products.</td></tr>
+        <tr><td><strong>PIC16F</strong></td><td>Home appliances</td><td>Inside microwaves and washing machines.</td></tr>
+        <tr><td><strong>RP2040</strong></td><td>Pi Pico</td><td>Dual-core ARM, cheap — programmable in Python or C.</td></tr>
+      </table>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 1 · Arduino Uno</div>
+      <div class="slide-title">🟦 Meet the Arduino Uno</div>
+      <div class="slide-body">
+        <p><strong>Arduino</strong> is a complete platform — the hardware board, the free IDE software, and a massive global community. The <strong>Arduino Uno</strong> is where every beginner starts. It uses the ATmega328P microcontroller and gives you clearly labelled pins, USB connection, and built-in power regulation.</p>
+      </div>
+      <img src="uno_photo.jpg" class="comp-img" alt="Arduino Uno board">
+      <div class="img-caption">Arduino Uno — The world's most popular beginner microcontroller board</div>
+      <img src="uno_diagram.jpg" class="comp-img" alt="Arduino Uno pin diagram">
+      <div class="img-caption">Arduino Uno Pin Diagram — Power, Digital, Analog and I2C pins labelled</div>
+      <div class="vis-grid">
+        <div class="vis-card"><div class="vis-icon">📌</div><div class="vis-label">14 Digital Pins</div><div class="vis-desc">Set HIGH (5V/on) or LOW (0V/off). Pins 3,5,6,9,10,11 support PWM.</div></div>
+        <div class="vis-card"><div class="vis-icon">〰️</div><div class="vis-label">6 Analog Pins</div><div class="vis-desc">A0–A5. Read voltages 0–5V as values 0–1023. Used for sensors.</div></div>
+        <div class="vis-card"><div class="vis-icon">🔌</div><div class="vis-label">Power Pins</div><div class="vis-desc">5V, 3.3V, GND, Vin (7–12V barrel jack input).</div></div>
+        <div class="vis-card"><div class="vis-icon">📡</div><div class="vis-label">I2C Pins</div><div class="vis-desc">A4 = SDA, A5 = SCL. Used for LCD, sensors with I2C protocol.</div></div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 1 · Arduino Family</div>
+      <div class="slide-title">👨‍👩‍👧‍👦 The Arduino Family</div>
+      <div class="slide-body"><p>There are many Arduino boards for different needs:</p></div>
+      <table class="family-table">
+        <tr><th>Board</th><th>Best For</th><th>Key Specs</th></tr>
+        <tr><td><strong>Arduino Uno 🏆</strong></td><td>Beginners — start here!</td><td>14 digital, 6 analog, 32KB flash, ATmega328P</td></tr>
+        <tr><td><strong>Arduino Nano</strong></td><td>Compact breadboard projects</td><td>Same as Uno but tiny — fits on a breadboard</td></tr>
+        <tr><td><strong>Arduino Mega</strong></td><td>Big projects, many pins</td><td>54 digital, 16 analog, 256KB flash</td></tr>
+        <tr><td><strong>Arduino Leonardo</strong></td><td>USB HID projects</td><td>Can act as keyboard or mouse over USB</td></tr>
+        <tr><td><strong>Arduino Due</strong></td><td>High-speed 32-bit projects</td><td>ARM processor, 3.3V only, much faster</td></tr>
+        <tr><td><strong>Arduino MKR WiFi</strong></td><td>IoT / internet projects</td><td>Built-in WiFi. Send sensor data to cloud.</td></tr>
+      </table>
+      <div class="tip-box"><div class="tip-icon">💡</div><div class="tip-text">We use the <strong>Arduino Uno</strong> for this boot camp — it's the most documented board in the world. Everything you learn transfers directly to other boards.</div></div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 1 · Hardware & Starter Kit</div>
+      <div class="slide-title">🧰 Do You Need Hardware?</div>
+      <div class="slide-body">
+        <p>To build real physical projects you'll need an <strong>Arduino Starter Kit</strong>. These come with the Arduino Uno board, breadboard, LEDs, resistors, sensors, motors, jumper wires and much more — everything you need to follow along with every project in this boot camp.</p>
+        <p><strong>Don't have a kit yet?</strong> No problem — you can simulate every single project in your browser for free using <strong>Wokwi</strong>. Every lesson has a simulation link.</p>
+      </div>
+      <div class="kit-imgs">
+        <div>
+          <img src="kit1.jpg" alt="Elegoo Arduino Starter Kit">
+          <div class="cap">Elegoo Starter Kit — Most popular beginner kit</div>
+        </div>
+        <div>
+          <img src="kit2.jpg" alt="Arduino Starter Kit">
+          <div class="cap">Mega Starter Kit — Includes extra sensors & components</div>
+        </div>
+      </div>
+      <div class="kit-box">
+        <div class="kit-title">📦 What's in a Starter Kit?</div>
+        <div class="kit-body">A good starter kit includes: <strong>Arduino Uno board</strong> · USB cable · Breadboard (400 or 830 tie points) · Jumper wires (male-to-male & male-to-female) · LEDs (various colours) · Resistors (220Ω, 1kΩ, 10kΩ) · Push buttons · Potentiometer · DHT11 sensor · Ultrasonic sensor (HC-SR04) · I2C LCD display · DC motor · Servo motor · Relay module · Buzzer · IR remote & receiver · 9V battery connector</div>
+        <div class="kit-btns">
+          <a class="kit-btn" href="https://wa.me/233554197193?text=Hi%2C%20I%20want%20to%20get%20an%20Arduino%20starter%20kit%20for%20TechCamp" target="_blank">📱 Ask for Kit</a>
+          <a class="kit-btn" href="https://wokwi.com" target="_blank">🖥️ Use Wokwi Instead</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 1 · Breadboard</div>
+      <div class="slide-title">🧩 Understanding the Breadboard</div>
+      <div class="slide-body">
+        <p>A <strong>breadboard</strong> is a reusable plastic board with metal clips inside that let you build circuits by pushing component legs and wires into the holes — <strong>no soldering required</strong>. It's the most important prototyping tool in electronics.</p>
+      </div>
+      <div class="circuit-box">
+        <div class="circuit-title">Breadboard Internal Connections</div>
+        <div class="circuit-diagram">
+<span class="pwr">+ Rail ────────────────────────────────</span>  <span class="note">Power (+5V) runs along full length</span>
+<span class="gnd">- Rail ────────────────────────────────</span>  <span class="note">Ground runs along full length</span>
+
+<span class="note">Rows (a–e and f–j) are connected horizontally:</span>
+<span class="comp">  [ a ][ b ][ c ][ d ][ e ]</span>  <span class="wire">←── all 5 holes in same row are connected</span>
+<span class="comp">  [ f ][ g ][ h ][ i ][ j ]</span>  <span class="wire">←── all 5 holes in same row are connected</span>
+
+<span class="note">The center gap (between e and f) breaks the connection</span>
+<span class="note">Columns run VERTICALLY in the power rails only</span>
+        </div>
+      </div>
+      <div class="terms-grid">
+        <div class="term"><div class="term-word">Power Rails</div><div class="term-def">The red (+) and blue (–) long strips on the sides. Connect 5V and GND here to power your whole circuit.</div></div>
+        <div class="term"><div class="term-word">Tie Points / Rows</div><div class="term-def">The numbered rows in the middle. Each row of 5 holes is internally connected. Components sharing a row are electrically joined.</div></div>
+        <div class="term"><div class="term-word">Center Gap</div><div class="term-def">The gap in the middle separates the two halves. Perfect for placing ICs (chips) so each pin is isolated.</div></div>
+      </div>
+      <div class="tip-box"><div class="tip-icon">💡</div><div class="tip-text">Always connect your Arduino's <strong>5V pin → red rail</strong> and <strong>GND pin → blue rail</strong> first. Then all your components can share power and ground from those rails easily.</div></div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 1 · Setup</div>
+      <div class="slide-title">⚙️ Setting Up Arduino IDE</div>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-text">Go to <strong>arduino.cc/en/software</strong> → Download <strong>Arduino IDE 2</strong> for your OS.</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-text">Install and open it. You'll see a code editor with <strong>setup()</strong> and <strong>loop()</strong> already written.</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-text">Connect your Arduino Uno via USB cable.</div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-text">Go to <strong>Tools → Board → Arduino AVR Boards → Arduino Uno</strong>.</div></div>
+        <div class="step"><div class="step-num">5</div><div class="step-text">Go to <strong>Tools → Port</strong> → select the port showing <em>Arduino Uno</em> (e.g. COM3 on Windows).</div></div>
+        <div class="step"><div class="step-num">6</div><div class="step-text">Click the <strong>→ Upload</strong> button to send code to the board. Done!</div></div>
+      </div>
+      <a class="link-card" href="https://www.arduino.cc/en/software" target="_blank">
+        <div class="link-icon">⬇️</div>
+        <div class="link-info"><div class="link-title">Download Arduino IDE 2 — Free</div><div class="link-url">arduino.cc/en/software</div></div>
+        <div class="link-arr">›</div>
+      </a>
+      <a class="wokwi-banner" href="https://wokwi.com" target="_blank">
+        <div class="wokwi-icon">🖥️</div>
+        <div class="wokwi-text">
+          <div class="wokwi-title">No hardware? Use Wokwi — Free Online Simulator</div>
+          <div class="wokwi-sub">Simulate every Arduino project in your browser. No board needed. wokwi.com</div>
+        </div>
+        <div class="wokwi-arr">›</div>
+      </a>
+    </div>
+
+    <div class="lesson-nav">
+      <div class="nav-btn primary" onclick="showDay(2)">Next: C Programming →</div>
+    </div>
+  </div>
+
+  <!-- ===== DAY 2 — C PROGRAMMING ===== -->
+  <div class="lesson" id="day2">
+
+    <div class="slide">
+      <div class="slide-tag">Day 2 · C Language</div>
+      <div class="slide-title">💻 C Programming for Arduino — The Structure</div>
+      <div class="slide-body">
+        <p>Arduino code is written in <strong>C/C++</strong>. Unlike Python, C is a <strong>strongly-typed, compiled language</strong> — you must declare what type every variable is, and every statement must end with a semicolon <strong>;</strong></p>
+        <p>Every single Arduino program — no exceptions — must have exactly these two functions:</p>
+      </div>
+      <div class="code-lang"><span>C / Arduino — the skeleton of EVERY program</span></div>
+      <div class="code-block"><pre><span class="cm">// ── SETUP ──────────────────────────────────────────
+// Runs ONE TIME only — when Arduino turns on or resets.
+// Use this to: set pin modes, start Serial, configure sensors.</span>
+<span class="kw">void</span> setup() {
+
+}
+
+<span class="cm">// ── LOOP ───────────────────────────────────────────
+// Runs FOREVER in a continuous loop until power is cut.
+// All your main program logic goes here.</span>
+<span class="kw">void</span> loop() {
+
+}</pre></div>
+      <div class="terms-grid">
+        <div class="term"><div class="term-word">void</div><div class="term-def">Means the function returns nothing. setup() and loop() don't return any value — they just execute code.</div></div>
+        <div class="term"><div class="term-word">setup()</div><div class="term-def">Like plugging in and turning on a device. You configure everything once before the main program runs.</div></div>
+        <div class="term"><div class="term-word">loop()</div><div class="term-def">Like a heartbeat. Arduino keeps executing the code inside loop() over and over, thousands of times per second.</div></div>
+        <div class="term"><div class="term-word">// comment</div><div class="term-def">A line starting with // is a comment — Arduino ignores it. Write notes to yourself and others explaining your code.</div></div>
+      </div>
+      <div class="tip-box"><div class="tip-icon">🔄</div><div class="tip-text"><strong>setup()</strong> = getting dressed in the morning — once. <strong>loop()</strong> = breathing — never stops while you're alive (powered on). If you remove the power and reconnect, setup() runs again first.</div></div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 2 · Variables & Data Types</div>
+      <div class="slide-title">📦 Variables — Storing Data in C</div>
+      <div class="slide-body">
+        <p>A <strong>variable</strong> is a named container that stores a value in memory. In C — unlike Python — you must tell the compiler exactly what <strong>type</strong> of data it holds before using it. This is because the Arduino has very limited RAM (only 2KB on the Uno!) so the type determines how many bytes to reserve.</p>
+      </div>
+      <div class="code-lang"><span>C — all data types explained</span></div>
+      <div class="code-block"><pre><span class="cm">// ── INTEGER (int) ───────────────────────────────────
+// Stores whole numbers. Range: -32,768 to 32,767
+// Uses 2 bytes of RAM. Most common type in Arduino.</span>
+<span class="kw">int</span> ledPin   = <span class="num">13</span>;
+<span class="kw">int</span> count    = <span class="num">0</span>;
+<span class="kw">int</span> distance = <span class="num">-5</span>;   <span class="cm">// can be negative</span>
+
+<span class="cm">// ── LONG ────────────────────────────────────────────
+// Bigger whole numbers. Range: -2,147,483,648 to 2,147,483,647
+// Use for millis(), big sensor values, timestamps.</span>
+<span class="kw">long</span> startTime = <span class="num">0</span>;
+<span class="kw">long</span> duration  = <span class="num">1500000</span>;
+
+<span class="cm">// ── FLOAT ───────────────────────────────────────────
+// Decimal numbers. Accurate to ~6-7 decimal places.
+// Slower to process — use only when you need decimals.</span>
+<span class="kw">float</span> temperature = <span class="num">36.5</span>;
+<span class="kw">float</span> voltage     = <span class="num">3.14</span>;
+
+<span class="cm">// ── BOOLEAN (bool) ──────────────────────────────────
+// Only TWO possible values: true or false (1 or 0)
+// Perfect for on/off, yes/no states.</span>
+<span class="kw">bool</span> ledOn    = <span class="kw">true</span>;
+<span class="kw">bool</span> buttonHeld = <span class="kw">false</span>;
+
+<span class="cm">// ── BYTE ────────────────────────────────────────────
+// Unsigned: 0 to 255. Uses only 1 byte of RAM.
+// Great for brightness values, PWM, pin numbers.</span>
+<span class="kw">byte</span> brightness = <span class="num">200</span>;
+<span class="kw">byte</span> speed      = <span class="num">128</span>;
+
+<span class="cm">// ── CHAR ────────────────────────────────────────────
+// A single character. Stored as its ASCII number.</span>
+<span class="kw">char</span> grade  = <span class="str">'A'</span>;
+
+<span class="cm">// ── STRING ──────────────────────────────────────────
+// Text. Use sparingly on Arduino — eats RAM fast!</span>
+String name = <span class="str">"TechCamp"</span>;</pre></div>
+      <div class="warn-box"><div class="warn-icon">⚠️</div><div class="warn-text">In C, <strong>every statement MUST end with a semicolon ;</strong> — missing it is the #1 beginner error. The compiler cannot find the next instruction without it and will refuse to compile.</div></div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 2 · pinMode()</div>
+      <div class="slide-title">📌 pinMode() — Configuring Pins</div>
+      <div class="slide-body">
+        <p>Before you can use any pin on the Arduino, you <strong>must</strong> tell it whether that pin will be sending signals (OUTPUT) or receiving signals (INPUT). This is done with <strong>pinMode()</strong> and it always goes in <strong>setup()</strong>.</p>
+        <p>Think of each pin as an employee. pinMode() is the job description — you tell them whether they will be speaking (OUTPUT) or listening (INPUT).</p>
+      </div>
+      <div class="code-lang"><span>C — pinMode() explained line by line</span></div>
+      <div class="code-block"><pre><span class="kw">void</span> setup() {
+
+  <span class="cm">// pinMode( PIN_NUMBER , MODE );
+  //         ↑             ↑
+  //         which pin     OUTPUT → pin sends voltage (5V or 0V)
+  //                       INPUT  → pin reads voltage from outside
+  //                       INPUT_PULLUP → reads, built-in pull-up resistor</span>
+
+  pinMode(<span class="num">13</span>, OUTPUT);    <span class="cm">// Pin 13 → sending (LED)</span>
+  pinMode(<span class="num">12</span>, OUTPUT);    <span class="cm">// Pin 12 → sending (another LED)</span>
+  pinMode(<span class="num">7</span>,  INPUT);     <span class="cm">// Pin 7  → receiving (button)</span>
+  pinMode(<span class="num">6</span>,  INPUT_PULLUP); <span class="cm">// Pin 6 → receiving w/ internal resistor</span>
+  pinMode(A0, INPUT);     <span class="cm">// Analog A0 → receiving (potentiometer/sensor)</span>
+
+}</pre></div>
+      <div class="terms-grid">
+        <div class="term"><div class="term-word">OUTPUT</div><div class="term-def">The pin drives current out. Use for LEDs, buzzers, relays, motors (via driver). The Arduino controls what happens.</div></div>
+        <div class="term"><div class="term-word">INPUT</div><div class="term-def">The pin reads voltage coming in from outside. Use for buttons, sensors. Requires an external pull-down resistor to work reliably.</div></div>
+        <div class="term"><div class="term-word">INPUT_PULLUP</div><div class="term-def">Same as INPUT but activates Arduino's built-in 20kΩ pull-up resistor. Saves a physical resistor. Pin reads HIGH normally, LOW when button pressed.</div></div>
+      </div>
+      <div class="warn-box"><div class="warn-icon">⚠️</div><div class="warn-text">If you forget to call <strong>pinMode()</strong> before using a pin, Arduino defaults to INPUT mode — your OUTPUT will silently not work and the LED won't light. Always set pinMode first in setup()!</div></div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 2 · digitalWrite()</div>
+      <div class="slide-title">⚡ digitalWrite() — Turning Things ON and OFF</div>
+      <div class="slide-body">
+        <p><strong>digitalWrite()</strong> controls digital OUTPUT pins. It sends either <strong>HIGH (5 volts)</strong> or <strong>LOW (0 volts)</strong> to a pin. That voltage change is what turns LEDs on/off, activates relays, sends signals to other devices.</p>
+        <p>Think of it as a light switch — HIGH = switch on, LOW = switch off.</p>
+      </div>
+      <div class="code-lang"><span>C — digitalWrite() deep dive</span></div>
+      <div class="code-block"><pre><span class="cm">// digitalWrite( PIN , VALUE );
+//              ↑       ↑
+//              pin     HIGH = send 5V (current flows → LED lights)
+//                      LOW  = send 0V (no current  → LED goes dark)</span>
+
+<span class="kw">void</span> setup() {
+  pinMode(<span class="num">13</span>, OUTPUT);  <span class="cm">// MUST set as OUTPUT first</span>
+}
+
+<span class="kw">void</span> loop() {
+
+  digitalWrite(<span class="num">13</span>, HIGH);  <span class="cm">// ← sends 5V → pin 13 goes HIGH → LED ON</span>
+  delay(<span class="num">1000</span>);              <span class="cm">// ← pause 1000ms (1 second)</span>
+
+  digitalWrite(<span class="num">13</span>, LOW);   <span class="cm">// ← sends 0V → pin 13 goes LOW → LED OFF</span>
+  delay(<span class="num">1000</span>);              <span class="cm">// ← pause 1 second before repeating</span>
+
+  <span class="cm">// This loop runs forever → LED blinks endlessly</span>
+}
+
+<span class="cm">// You can also use HIGH=1 and LOW=0 as numbers:
+// digitalWrite(13, 1);  // same as HIGH
+// digitalWrite(13, 0);  // same as LOW</span>
+
+<span class="cm">// Controlling multiple pins:
+// digitalWrite(13, HIGH);  // LED 1 ON
+// digitalWrite(12, LOW);   // LED 2 OFF
+// Both happen almost simultaneously (microseconds apart)</span></pre></div>
+      <div class="tip-box"><div class="tip-icon">⚡</div><div class="tip-text">digitalWrite() only works on <strong>digital pins (0–13)</strong> set as OUTPUT. Writing HIGH to a pin set as INPUT won't light an LED — it just enables the internal pull-up resistor. Always match pinMode and digitalWrite!</div></div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 2 · digitalRead()</div>
+      <div class="slide-title">👂 digitalRead() — Reading Buttons & Switches</div>
+      <div class="slide-body">
+        <p><strong>digitalRead()</strong> reads the voltage on a digital INPUT pin. It returns either <strong>HIGH</strong> (pin sees ~5V) or <strong>LOW</strong> (pin sees 0V). Use this to detect button presses, switch states, or digital sensor signals.</p>
+      </div>
+      <div class="code-lang"><span>C — digitalRead() with button — line by line</span></div>
+      <div class="code-block"><pre><span class="cm">// ── Button Wiring ──────────────────────────────────
+// One button leg → Pin 7
+// Other button leg → GND
+// 10kΩ resistor between Pin 7 and 5V (pull-down)</span>
+
+<span class="kw">int</span> buttonPin = <span class="num">7</span>;   <span class="cm">// button connected to pin 7</span>
+<span class="kw">int</span> ledPin    = <span class="num">13</span>;  <span class="cm">// LED on pin 13</span>
+<span class="kw">int</span> state     = <span class="num">0</span>;   <span class="cm">// variable to store the reading</span>
+
+<span class="kw">void</span> setup() {
+  pinMode(buttonPin, INPUT);   <span class="cm">// button → reading incoming signal</span>
+  pinMode(ledPin, OUTPUT);     <span class="cm">// LED → sending signal out</span>
+  Serial.begin(<span class="num">9600</span>);          <span class="cm">// open Serial Monitor</span>
+}
+
+<span class="kw">void</span> loop() {
+
+  state = digitalRead(buttonPin);
+  <span class="cm">// ↑ reads the voltage on pin 7
+  //   returns HIGH (1) if button pressed
+  //   returns LOW  (0) if button not pressed</span>
+
+  <span class="kw">if</span> (state == HIGH) {
+    digitalWrite(ledPin, HIGH);        <span class="cm">// button pressed → LED ON</span>
+    Serial.println(<span class="str">"Button PRESSED"</span>); <span class="cm">// print to monitor</span>
+  } <span class="kw">else</span> {
+    digitalWrite(ledPin, LOW);         <span class="cm">// not pressed → LED OFF</span>
+    Serial.println(<span class="str">"Button released"</span>);
+  }
+
+  delay(<span class="num">50</span>);  <span class="cm">// small delay to avoid reading too fast (debounce)</span>
+}
+
+<span class="cm">// ── With INPUT_PULLUP (no external resistor needed) ───
+// pinMode(7, INPUT_PULLUP);
+// → pin reads HIGH normally, LOW when button pressed
+// → Logic is INVERTED: LOW = pressed, HIGH = released!</span></pre></div>
+      <div class="terms-grid">
+        <div class="term"><div class="term-word">Pull-down Resistor</div><div class="term-def">A 10kΩ resistor between the pin and GND. Ensures the pin reads LOW when button is open (not pressed). Prevents the pin from "floating" between HIGH and LOW randomly.</div></div>
+        <div class="term"><div class="term-word">Floating Pin</div><div class="term-def">An INPUT pin with nothing connected — it picks up electrical noise and reads random HIGH/LOW values. Always use a pull-up or pull-down resistor on input pins!</div></div>
+        <div class="term"><div class="term-word">Debounce</div><div class="term-def">Physical buttons "bounce" — they rapidly toggle HIGH/LOW several times in the milliseconds after being pressed. A small delay(50) or debounce code prevents reading false multiple presses.</div></div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 2 · analogRead()</div>
+      <div class="slide-title">〰️ analogRead() — Reading Sensors & Potentiometers</div>
+      <div class="slide-body">
+        <p>Digital pins are all-or-nothing — HIGH or LOW. But the real world has in-between values — a temperature isn't just "hot" or "cold", it's 27.5°C. <strong>analogRead()</strong> reads a voltage anywhere between 0V and 5V and converts it to a number from <strong>0 to 1023</strong> using the Arduino's built-in 10-bit ADC (Analog-to-Digital Converter).</p>
+      </div>
+      <div class="code-lang"><span>C — analogRead() explained</span></div>
+      <div class="code-block"><pre><span class="cm">// analogRead( PIN );
+// Only works on analog pins: A0, A1, A2, A3, A4, A5
+// Returns a number: 0 (0V) to 1023 (5V)
+// 10-bit resolution → 2^10 = 1024 possible values</span>
+
+<span class="kw">int</span> sensorPin = A0;   <span class="cm">// potentiometer/sensor on A0</span>
+<span class="kw">int</span> sensorValue = <span class="num">0</span>; <span class="cm">// store the reading here</span>
+
+<span class="kw">void</span> setup() {
+  Serial.begin(<span class="num">9600</span>);
+  <span class="cm">// NOTE: analog pins don't need pinMode() for INPUT
+  // They are INPUT by default — just read them directly</span>
+}
+
+<span class="kw">void</span> loop() {
+
+  sensorValue = analogRead(A0);
+  <span class="cm">// ↑ reads voltage on A0
+  // 0V   → returns 0
+  // 2.5V → returns 511
+  // 5V   → returns 1023</span>
+
+  Serial.print(<span class="str">"Raw value: "</span>);
+  Serial.println(sensorValue);    <span class="cm">// e.g. 0 to 1023</span>
+
+  <span class="cm">// ── Converting to Voltage ─────────────────────────
+  // voltage = (sensorValue / 1023.0) × 5.0</span>
+  <span class="kw">float</span> voltage = (sensorValue / <span class="num">1023.0</span>) * <span class="num">5.0</span>;
+  Serial.print(<span class="str">"Voltage: "</span>);
+  Serial.print(voltage);
+  Serial.println(<span class="str">" V"</span>);
+
+  <span class="cm">// ── Converting to Percentage (0-100%) ────────────</span>
+  <span class="kw">int</span> percent = <span class="fn">map</span>(sensorValue, <span class="num">0</span>, <span class="num">1023</span>, <span class="num">0</span>, <span class="num">100</span>);
+  Serial.print(<span class="str">"Level: "</span>);
+  Serial.print(percent);
+  Serial.println(<span class="str">"%"</span>);
+
+  delay(<span class="num">500</span>);
+}</pre></div>
+      <div class="tip-box"><div class="tip-icon">🔧</div><div class="tip-text">The <strong>map()</strong> function is your best friend for analogRead. It re-maps a value from one range to another: <code style="font-family:monospace;color:#67e8f9;">map(value, fromLow, fromHigh, toLow, toHigh)</code>. Use it to turn 0–1023 into 0–255 for PWM, or 0–100 for percentages.</div></div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 2 · analogWrite() & PWM</div>
+      <div class="slide-title">🌊 analogWrite() — Dimming LEDs & Speed Control</div>
+      <div class="slide-body">
+        <p><strong>analogWrite()</strong> doesn't actually output a true analog voltage. Instead it uses <strong>PWM (Pulse Width Modulation)</strong> — it rapidly switches the pin between HIGH and LOW, so fast the LED appears to dim or the motor appears to slow down. The <strong>duty cycle</strong> (how long it stays HIGH vs LOW per cycle) controls the apparent power.</p>
+      </div>
+      <div class="circuit-box" style="background:#040d1a;border:1px solid rgba(6,182,212,0.2);border-radius:12px;padding:16px 14px;margin:12px 0;">
+        <div class="circuit-title">PWM Duty Cycle Visualised</div>
+        <div class="circuit-diagram">
+<span class="note">Duty 0%  (off):  </span><span class="gnd">_______________________________</span>  <span class="note">0 brightness</span>
+<span class="note">Duty 25%:        </span><span class="pwr">▌</span><span class="gnd">___</span><span class="pwr">▌</span><span class="gnd">___</span><span class="pwr">▌</span><span class="gnd">___</span><span class="pwr">▌</span><span class="gnd">___</span>            <span class="note">dim</span>
+<span class="note">Duty 50%:        </span><span class="pwr">▌▌</span><span class="gnd">__</span><span class="pwr">▌▌</span><span class="gnd">__</span><span class="pwr">▌▌</span><span class="gnd">__</span><span class="pwr">▌▌</span><span class="gnd">__</span>        <span class="note">half brightness</span>
+<span class="note">Duty 75%:        </span><span class="pwr">▌▌▌</span><span class="gnd">_</span><span class="pwr">▌▌▌</span><span class="gnd">_</span><span class="pwr">▌▌▌</span><span class="gnd">_</span><span class="pwr">▌▌▌</span><span class="gnd">_</span>      <span class="note">bright</span>
+<span class="note">Duty 100% (on):  </span><span class="pwr">▌▌▌▌▌▌▌▌▌▌▌▌▌▌▌▌</span>        <span class="note">full brightness</span>
+        </div>
+      </div>
+      <div class="code-lang"><span>C — analogWrite() line by line</span></div>
+      <div class="code-block"><pre><span class="cm">// analogWrite( PIN , VALUE );
+//             ↑       ↑
+//             pin     0   = fully OFF  (0% duty cycle)
+//                     128 = half power (50% duty cycle)
+//                     255 = fully ON   (100% duty cycle)
+//
+// ⚠ ONLY works on PWM pins: 3, 5, 6, 9, 10, 11
+//   (marked with ~ tilde on Arduino Uno board)</span>
+
+<span class="kw">int</span> ledPin = <span class="num">9</span>;   <span class="cm">// must be a PWM pin (~)</span>
+
+<span class="kw">void</span> setup() {
+  pinMode(ledPin, OUTPUT);
+}
+
+<span class="kw">void</span> loop() {
+
+  <span class="cm">// ── Fade LED in (0% → 100%) ──────────────────────</span>
+  <span class="kw">for</span> (<span class="kw">int</span> brightness = <span class="num">0</span>; brightness <= <span class="num">255</span>; brightness++) {
+    analogWrite(ledPin, brightness);
+    <span class="cm">// ↑ each iteration increases brightness by 1</span>
+    delay(<span class="num">8</span>);  <span class="cm">// small delay so fade is visible</span>
+  }
+
+  <span class="cm">// ── Fade LED out (100% → 0%) ─────────────────────</span>
+  <span class="kw">for</span> (<span class="kw">int</span> brightness = <span class="num">255</span>; brightness >= <span class="num">0</span>; brightness--) {
+    analogWrite(ledPin, brightness);
+    delay(<span class="num">8</span>);
+  }
+
+  <span class="cm">// ── Control motor speed from sensor ──────────────</span>
+  <span class="kw">int</span> sensorVal = analogRead(A0);       <span class="cm">// 0 to 1023</span>
+  <span class="kw">int</span> speed     = <span class="fn">map</span>(sensorVal, <span class="num">0</span>, <span class="num">1023</span>, <span class="num">0</span>, <span class="num">255</span>);
+  <span class="cm">// ↑ converts sensor range to PWM range</span>
+  analogWrite(<span class="num">10</span>, speed);  <span class="cm">// motor speed follows sensor</span>
+}</pre></div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 2 · delay() & millis()</div>
+      <div class="slide-title">⏱️ delay() & millis() — Controlling Time</div>
+      <div class="slide-body">
+        <p><strong>delay()</strong> pauses the program for a number of milliseconds. It is the simplest timing tool — but it <strong>freezes the entire Arduino</strong> during the wait. While delay() is running, Arduino can't read sensors, check buttons, or do anything else.</p>
+        <p><strong>millis()</strong> returns how many milliseconds have passed since Arduino turned on — without stopping anything. Think of it as checking a stopwatch while still running.</p>
+      </div>
+      <div class="code-lang"><span>C — delay() vs millis() explained</span></div>
+      <div class="code-block"><pre><span class="cm">// ── delay() — simple but BLOCKS everything ──────────
+// delay( MILLISECONDS );
+// 1000ms = 1 second, 500ms = 0.5 sec, 100ms = 0.1 sec</span>
+
+<span class="kw">void</span> loop() {
+  digitalWrite(<span class="num">13</span>, HIGH);
+  delay(<span class="num">1000</span>);   <span class="cm">// ← Arduino FROZEN for 1 second</span>
+                  <span class="cm">//   cannot read buttons, sensors etc.</span>
+  digitalWrite(<span class="num">13</span>, LOW);
+  delay(<span class="num">1000</span>);   <span class="cm">// ← frozen again</span>
+}
+
+<span class="cm">// ── millis() — non-blocking timing ──────────────────
+// Returns unsigned long (time since Arduino started, in ms)
+// Use when you need to do multiple things at the same time</span>
+
+<span class="kw">unsigned long</span> previousTime = <span class="num">0</span>;
+<span class="kw">int</span> interval = <span class="num">1000</span>;   <span class="cm">// blink every 1000ms</span>
+<span class="kw">bool</span> ledState = <span class="kw">false</span>;
+
+<span class="kw">void</span> loop() {
+  <span class="kw">unsigned long</span> currentTime = millis();
+  <span class="cm">// ↑ get current time — doesn't pause anything</span>
+
+  <span class="kw">if</span> (currentTime - previousTime >= interval) {
+    <span class="cm">// ↑ has 1000ms passed since last blink?</span>
+    previousTime = currentTime;   <span class="cm">// save current time</span>
+    ledState = !ledState;         <span class="cm">// toggle LED on/off</span>
+    digitalWrite(<span class="num">13</span>, ledState);
+  }
+
+  <span class="cm">// ↓ This still runs while LED is "waiting" to blink
+  // Read sensor, check button — no freezing!</span>
+  <span class="kw">int</span> sensor = analogRead(A0);
+}</pre></div>
+      <div class="tip-box"><div class="tip-icon">⏱️</div><div class="tip-text">For beginner projects <strong>delay() is fine</strong>. Once you build more complex projects that need to do several things simultaneously (blink LED AND read sensor AND check button), switch to <strong>millis()</strong> for non-blocking timing.</div></div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 2 · Serial Communication</div>
+      <div class="slide-title">🖥️ Serial.begin() & Serial.print() — Talking to Your PC</div>
+      <div class="slide-body">
+        <p>The <strong>Serial</strong> port lets Arduino communicate with your computer over the USB cable — the same cable you use to upload code. This is your most powerful debugging tool. You can print sensor values, debug messages, variable values — anything — to the <strong>Serial Monitor</strong> in Arduino IDE.</p>
+      </div>
+      <div class="code-lang"><span>C — all Serial functions explained</span></div>
+      <div class="code-block"><pre><span class="kw">void</span> setup() {
+  Serial.begin(<span class="num">9600</span>);
+  <span class="cm">// ↑ MUST call this first in setup() before any Serial use
+  // 9600 = baud rate (bits per second)
+  // Must match baud rate in Serial Monitor dropdown
+  // Common: 9600, 115200. 9600 is fine for beginners.</span>
+}
+
+<span class="kw">void</span> loop() {
+  <span class="kw">int</span> temp = <span class="num">27</span>;
+  <span class="kw">float</span> voltage = <span class="num">3.14</span>;
+
+  <span class="cm">// ── Serial.print() — prints WITHOUT newline ──────</span>
+  Serial.print(<span class="str">"Temperature: "</span>);   <span class="cm">// cursor stays on same line</span>
+  Serial.print(temp);               <span class="cm">// prints the number</span>
+  Serial.print(<span class="str">" degrees"</span>);
+
+  <span class="cm">// ── Serial.println() — prints WITH newline ────────</span>
+  Serial.println();                 <span class="cm">// just moves to next line</span>
+  Serial.println(temp);             <span class="cm">// prints number + newline</span>
+  Serial.println(<span class="str">"Hello World"</span>);  <span class="cm">// prints text + newline</span>
+  Serial.println(voltage, <span class="num">2</span>);      <span class="cm">// float with 2 decimal places</span>
+
+  <span class="cm">// ── Best practice — use labels ───────────────────</span>
+  Serial.print(<span class="str">"Temp: "</span>);   Serial.print(temp);
+  Serial.print(<span class="str">"  |  Voltage: "</span>);   Serial.println(voltage);
+  <span class="cm">// Output: Temp: 27  |  Voltage: 3.14</span>
+
+  <span class="cm">// ── Serial.available() — check for incoming data ──
+  // Reads what YOU type in the Serial Monitor</span>
+  <span class="kw">if</span> (Serial.available() > <span class="num">0</span>) {
+    <span class="kw">char</span> received = Serial.read();  <span class="cm">// read one character</span>
+    Serial.print(<span class="str">"You sent: "</span>);
+    Serial.println(received);
+  }
+
+  delay(<span class="num">1000</span>);
+}</pre></div>
+      <div class="tip-box"><div class="tip-icon">🖥️</div><div class="tip-text">Open Serial Monitor: <strong>Tools → Serial Monitor</strong> (or Ctrl+Shift+M). Make sure the baud rate in the bottom dropdown matches your Serial.begin() number. If you see gibberish — the rates don't match!</div></div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 2 · Loops & Functions</div>
+      <div class="slide-title">🔁 Loops & Writing Your Own Functions</div>
+      <div class="slide-body"><p>Loops repeat code automatically. Functions let you organise and reuse code — like creating your own Arduino commands.</p></div>
+      <div class="code-lang"><span>C — loops and custom functions</span></div>
+      <div class="code-block"><pre><span class="cm">// ── FOR LOOP — repeat exact number of times ──────────
+// for ( start ; condition ; increment ) { }
+//      ↑          ↑              ↑
+//      int i=0   runs while     i++ means i = i + 1</span>
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i < <span class="num">5</span>; i++) {
+  digitalWrite(<span class="num">13</span>, HIGH); delay(<span class="num">200</span>);
+  digitalWrite(<span class="num">13</span>, LOW);  delay(<span class="num">200</span>);
+  <span class="cm">// blinks 5 times then stops</span>
+}
+
+<span class="cm">// ── WHILE LOOP — repeat while condition is true ───────</span>
+<span class="kw">int</span> count = <span class="num">0</span>;
+<span class="kw">while</span> (count < <span class="num">10</span>) {
+  Serial.println(count);
+  count++;   <span class="cm">// count = count + 1  (MUST update or infinite loop!)</span>
+}
+
+<span class="cm">// ── WRITING YOUR OWN FUNCTIONS ────────────────────────
+// return_type functionName( parameters ) { body }
+// void = returns nothing</span>
+
+<span class="kw">void</span> <span class="fn">blinkLED</span>(<span class="kw">int</span> pin, <span class="kw">int</span> times, <span class="kw">int</span> speed) {
+  <span class="cm">// ↑ custom function: which pin, how many blinks, delay</span>
+  <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i < times; i++) {
+    digitalWrite(pin, HIGH); delay(speed);
+    digitalWrite(pin, LOW);  delay(speed);
+  }
+}
+
+<span class="kw">int</span> <span class="fn">addNumbers</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) {
+  <span class="cm">// ↑ returns an int result</span>
+  <span class="kw">return</span> a + b;  <span class="cm">// sends the value back to the caller</span>
+}
+
+<span class="kw">void</span> setup() { pinMode(<span class="num">13</span>, OUTPUT); }
+
+<span class="kw">void</span> loop() {
+  <span class="fn">blinkLED</span>(<span class="num">13</span>, <span class="num">3</span>, <span class="num">500</span>);  <span class="cm">// blink pin 13, 3 times, 500ms each</span>
+  <span class="fn">blinkLED</span>(<span class="num">13</span>, <span class="num">1</span>, <span class="num">100</span>);  <span class="cm">// blink pin 13, 1 time, fast</span>
+  <span class="kw">int</span> result = <span class="fn">addNumbers</span>(<span class="num">10</span>, <span class="num">25</span>);
+  Serial.println(result);  <span class="cm">// prints 35</span>
+  delay(<span class="num">2000</span>);
+}</pre></div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 2 · Quick Reference</div>
+      <div class="slide-title">📋 Complete Arduino Function Reference</div>
+      <div class="slide-body"><p>Here's every key function you'll use — with exactly what each argument means:</p></div>
+      <div class="code-explain">
+        <div class="ce-row"><div class="ce-code">pinMode(pin, mode)</div><div class="ce-desc"><strong>pin</strong> = 0–13 or A0–A5. <strong>mode</strong> = OUTPUT, INPUT, or INPUT_PULLUP. Always call in setup() before using any pin.</div></div>
+        <div class="ce-row"><div class="ce-code">digitalWrite(pin, val)</div><div class="ce-desc"><strong>pin</strong> = digital pin 0–13. <strong>val</strong> = HIGH (5V, on) or LOW (0V, off). Pin must be OUTPUT.</div></div>
+        <div class="ce-row"><div class="ce-code">digitalRead(pin)</div><div class="ce-desc"><strong>pin</strong> = digital pin 0–13. Returns HIGH or LOW. Pin must be INPUT. Use for buttons/switches.</div></div>
+        <div class="ce-row"><div class="ce-code">analogRead(pin)</div><div class="ce-desc"><strong>pin</strong> = A0–A5 only. Returns 0–1023. No pinMode needed. Used for sensors, potentiometers.</div></div>
+        <div class="ce-row"><div class="ce-code">analogWrite(pin, val)</div><div class="ce-desc"><strong>pin</strong> = PWM pins ONLY: 3,5,6,9,10,11 (marked ~). <strong>val</strong> = 0 (off) to 255 (full). Controls brightness/speed via PWM.</div></div>
+        <div class="ce-row"><div class="ce-code">delay(ms)</div><div class="ce-desc"><strong>ms</strong> = milliseconds to pause. 1000 = 1 second. Freezes everything during wait.</div></div>
+        <div class="ce-row"><div class="ce-code">millis()</div><div class="ce-desc">Returns unsigned long — milliseconds since Arduino started. Never resets. Use for non-blocking timing.</div></div>
+        <div class="ce-row"><div class="ce-code">Serial.begin(baud)</div><div class="ce-desc"><strong>baud</strong> = communication speed. 9600 for beginners, 115200 for faster. Must match Serial Monitor setting.</div></div>
+        <div class="ce-row"><div class="ce-code">Serial.print(val)</div><div class="ce-desc">Prints <strong>val</strong> (text, number, variable) to Serial Monitor. No newline after. Cursor stays on same line.</div></div>
+        <div class="ce-row"><div class="ce-code">Serial.println(val)</div><div class="ce-desc">Same as print() but adds newline at end. Each println goes on its own line in Serial Monitor.</div></div>
+        <div class="ce-row"><div class="ce-code">map(val,iL,iH,oL,oH)</div><div class="ce-desc">Re-maps a number from input range to output range. e.g. map(512,0,1023,0,255) → 128. Essential for scaling sensor values.</div></div>
+        <div class="ce-row"><div class="ce-code">constrain(val,min,max)</div><div class="ce-desc">Clamps a value between min and max. e.g. constrain(300,0,255) → 255. Prevents values going out of range.</div></div>
+      </div>
+
+      <a class="link-card" href="https://www.arduino.cc/reference/en/" target="_blank" style="margin-top:16px;">
+        <div class="link-icon">📚</div>
+        <div class="link-info">
+          <div class="link-title">Arduino Language Reference — Official Docs</div>
+          <div class="link-url">arduino.cc/reference/en — Every function, operator and constant explained with examples</div>
+        </div>
+        <div class="link-arr">›</div>
+      </a>
+      <a class="link-card" href="https://docs.arduino.cc/learn/starting-guide/getting-started-arduino/" target="_blank">
+        <div class="link-icon">🎓</div>
+        <div class="link-info">
+          <div class="link-title">Arduino Getting Started Guide — Official</div>
+          <div class="link-url">docs.arduino.cc — Official beginner tutorials for every board and topic</div>
+        </div>
+        <div class="link-arr">›</div>
+      </a>
+    </div>
+
+    <div class="lesson-nav">
+      <div class="nav-btn" onclick="showDay(1)">← Day 1</div>
+      <div class="nav-btn primary" onclick="showDay(3)">Next: Projects →</div>
+    </div>
+  </div>
+
+  <!-- ===== DAY 3 — LED BLINK + ULTRASONIC ===== -->
+  <div class="lesson" id="day3">
+
+    <!-- PROJECT 1: LED BLINK -->
+    <div class="slide">
+      <div class="slide-tag">Day 3 · Project 1</div>
+      <div class="slide-title">💡 Project 1 — LED Blink</div>
+      <div class="slide-body">
+        <p>The <strong>LED Blink</strong> is the "Hello World" of Arduino. We make an LED turn on and off repeatedly. The Arduino Uno has a <strong>built-in LED on Pin 13</strong> — so you don't even need extra parts to run your first program!</p>
+      </div>
+      <div class="vis-grid">
+        <div class="vis-card"><div class="vis-icon">🛒</div><div class="vis-label">Parts Needed</div><div class="vis-desc">Arduino Uno · 1x LED · 1x 220Ω resistor · Breadboard · Jumper wires</div></div>
+        <div class="vis-card"><div class="vis-icon">⚡</div><div class="vis-label">Why the Resistor?</div><div class="vis-desc">Limits current so the LED doesn't burn out. Always use one!</div></div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 3 · Project 1 · Wiring</div>
+      <div class="slide-title">🔌 LED Blink — Circuit Diagram</div>
+      <div class="circuit-box">
+        <div class="circuit-title">LED Wiring — Pin 13 to Breadboard</div>
+        <div class="circuit-diagram">
+  <span class="pin">Arduino Pin 13</span> <span class="wire">────</span> <span class="comp">[220Ω Resistor]</span> <span class="wire">────</span> <span class="comp">LED Anode (+)</span>
+                                                          <span class="comp">LED Cathode (–)</span> <span class="wire">────</span> <span class="gnd">Arduino GND</span>
+
+  <span class="note">Longer leg of LED = Anode (+) → connects toward resistor</span>
+  <span class="note">Shorter leg of LED = Cathode (–) → connects to GND</span>
+        </div>
+      </div>
+      <table class="pin-table">
+        <tr><th>From</th><th>To</th><th>Wire Colour</th></tr>
+        <tr><td class="from">Arduino Pin 13</td><td class="to">Resistor Leg 1</td><td>Any</td></tr>
+        <tr><td class="from">Resistor Leg 2</td><td class="to">LED Anode (+)</td><td>Any</td></tr>
+        <tr><td class="from">LED Cathode (–)</td><td class="to">Arduino GND</td><td>Black</td></tr>
+      </table>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 3 · Project 1 · Code</div>
+      <div class="slide-title">📝 LED Blink — Full Code</div>
+      <div class="code-lang">
+        <span>C / Arduino — LED Blink</span>
+        <a class="sim-link" href="https://wokwi.com/projects/459752694293987329" target="_blank">▶ Open Simulation on Wokwi</a>
+      </div>
+      <div class="code-block"><pre><span class="cm">// LED Blink — TechCamp Week 2 Project 1</span>
+
+<span class="kw">int</span> ledPin = <span class="num">13</span>;   <span class="cm">// LED on pin 13</span>
+
+<span class="kw">void</span> setup() {
+  pinMode(ledPin, OUTPUT); <span class="cm">// set pin 13 as output</span>
+}
+
+<span class="kw">void</span> loop() {
+  digitalWrite(ledPin, HIGH); <span class="cm">// LED ON  (5V)</span>
+  delay(<span class="num">1000</span>);                <span class="cm">// wait 1 second</span>
+  digitalWrite(ledPin, LOW);  <span class="cm">// LED OFF (0V)</span>
+  delay(<span class="num">1000</span>);                <span class="cm">// wait 1 second</span>
+}</pre></div>
+      <div class="code-explain">
+        <div class="ce-row"><div class="ce-code">int ledPin = 13</div><div class="ce-desc">Store pin number in a variable so it's easy to change later.</div></div>
+        <div class="ce-row"><div class="ce-code">pinMode(13, OUTPUT)</div><div class="ce-desc">Tell Arduino pin 13 is an output — it will send voltage out.</div></div>
+        <div class="ce-row"><div class="ce-code">digitalWrite(13, HIGH)</div><div class="ce-desc">Send 5V to pin → current flows → LED lights up.</div></div>
+        <div class="ce-row"><div class="ce-code">delay(1000)</div><div class="ce-desc">Pause 1000 milliseconds = 1 full second. Try 200 for fast blink!</div></div>
+      </div>
+      <a class="wokwi-banner" href="https://wokwi.com/projects/459752694293987329" target="_blank">
+        <div class="wokwi-icon">▶️</div>
+        <div class="wokwi-text">
+          <div class="wokwi-title">Run LED Blink Simulation</div>
+          <div class="wokwi-sub">Click to open the live project on Wokwi — no hardware needed</div>
+        </div>
+        <div class="wokwi-arr">›</div>
+      </a>
+    </div>
+
+    <!-- PROJECT 2: ULTRASONIC -->
+    <div class="slide">
+      <div class="slide-tag">Day 3 · Project 2</div>
+      <div class="slide-title">📡 Project 2 — Ultrasonic Distance Sensor</div>
+      <div class="slide-body">
+        <p>The <strong>HC-SR04</strong> is an ultrasonic distance sensor. It works like a bat — it sends out a high-frequency sound pulse (TRIG pin), which bounces off objects and returns (ECHO pin). By measuring the time it takes, we calculate the distance in centimetres.</p>
+        <p>This is the same principle used in <strong>car parking sensors, drones, robots</strong> and industrial automation.</p>
+      </div>
+      <div class="vis-grid">
+        <div class="vis-card"><div class="vis-icon">🛒</div><div class="vis-label">Parts Needed</div><div class="vis-desc">Arduino Uno · HC-SR04 sensor · Breadboard · 4x Jumper wires</div></div>
+        <div class="vis-card"><div class="vis-icon">📏</div><div class="vis-label">Range</div><div class="vis-desc">Measures 2cm to 400cm (4 metres). Accuracy ±3mm.</div></div>
+        <div class="vis-card"><div class="vis-icon">📤</div><div class="vis-label">TRIG Pin</div><div class="vis-desc">Trigger — send a 10µs pulse to start a measurement.</div></div>
+        <div class="vis-card"><div class="vis-icon">📥</div><div class="vis-label">ECHO Pin</div><div class="vis-desc">Echo — goes HIGH for the duration of the return pulse.</div></div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 3 · Project 2 · Wiring</div>
+      <div class="slide-title">🔌 HC-SR04 — Circuit Diagram</div>
+      <div class="circuit-box">
+        <div class="circuit-title">HC-SR04 Ultrasonic Sensor Wiring</div>
+        <div class="circuit-diagram">
+<span class="comp">[ HC-SR04 ]</span>
+  <span class="wire">├─</span> <span class="pwr">VCC</span>  <span class="wire">──────────</span> <span class="pwr">Arduino 5V</span>
+  <span class="wire">├─</span> <span class="sig">TRIG</span> <span class="wire">──────────</span> <span class="pin">Arduino Pin 9</span>   <span class="note">(output — triggers pulse)</span>
+  <span class="wire">├─</span> <span class="sig">ECHO</span> <span class="wire">──────────</span> <span class="pin">Arduino Pin 10</span>  <span class="note">(input — reads return)</span>
+  <span class="wire">└─</span> <span class="gnd">GND</span>  <span class="wire">──────────</span> <span class="gnd">Arduino GND</span>
+
+<span class="note">The two silver cylinders on the sensor:
+  Left cylinder  = Transmitter (sends sound pulse)
+  Right cylinder = Receiver (listens for echo)</span>
+        </div>
+      </div>
+      <table class="pin-table">
+        <tr><th>HC-SR04 Pin</th><th>Arduino Pin</th><th>Purpose</th></tr>
+        <tr><td class="from">VCC</td><td class="to">5V</td><td>Power</td></tr>
+        <tr><td class="from">TRIG</td><td class="to">Pin 9</td><td>Trigger pulse (output from Arduino)</td></tr>
+        <tr><td class="from">ECHO</td><td class="to">Pin 10</td><td>Echo return (input to Arduino)</td></tr>
+        <tr><td class="from">GND</td><td class="to">GND</td><td>Ground</td></tr>
+      </table>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 3 · Project 2 · Code</div>
+      <div class="slide-title">📝 Ultrasonic Distance — Full Code</div>
+      <div class="code-lang">
+        <span>C / Arduino — HC-SR04 Distance</span>
+        <a class="sim-link" href="https://wokwi.com/projects/459753134450597889" target="_blank">▶ Open Simulation on Wokwi</a>
+      </div>
+      <div class="code-block"><pre><span class="cm">// Ultrasonic Distance Sensor — TechCamp Week 2 Project 2</span>
+
+<span class="kw">int</span> trigPin = <span class="num">9</span>;
+<span class="kw">int</span> echoPin = <span class="num">10</span>;
+
+<span class="kw">void</span> setup() {
+  Serial.begin(<span class="num">9600</span>);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  Serial.println(<span class="str">"Distance Sensor Ready!"</span>);
+}
+
+<span class="kw">void</span> loop() {
+  <span class="cm">// Step 1: Send trigger pulse</span>
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(<span class="num">2</span>);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(<span class="num">10</span>);   <span class="cm">// 10 microsecond pulse</span>
+  digitalWrite(trigPin, LOW);
+
+  <span class="cm">// Step 2: Measure echo duration</span>
+  <span class="kw">long</span> duration = pulseIn(echoPin, HIGH);
+
+  <span class="cm">// Step 3: Calculate distance</span>
+  <span class="cm">// Speed of sound = 0.034 cm/µs</span>
+  <span class="cm">// Divide by 2 because pulse travels there AND back</span>
+  <span class="kw">int</span> distance = duration * <span class="num">0.034</span> / <span class="num">2</span>;
+
+  <span class="cm">// Step 4: Print to Serial Monitor</span>
+  Serial.print(<span class="str">"Distance: "</span>);
+  Serial.print(distance);
+  Serial.println(<span class="str">" cm"</span>);
+
+  <span class="cm">// Step 5: Danger alert with LED on pin 13</span>
+  <span class="kw">if</span> (distance < <span class="num">10</span>) {
+    digitalWrite(<span class="num">13</span>, HIGH);  <span class="cm">// LED on — too close!</span>
+    Serial.println(<span class="str">"⚠ WARNING: Object too close!"</span>);
+  } <span class="kw">else</span> {
+    digitalWrite(<span class="num">13</span>, LOW);   <span class="cm">// LED off — safe distance</span>
+  }
+
+  delay(<span class="num">500</span>);  <span class="cm">// read every 0.5 seconds</span>
+}</pre></div>
+      <div class="code-explain">
+        <div class="ce-row"><div class="ce-code">delayMicroseconds(10)</div><div class="ce-desc">Sends a 10 microsecond HIGH pulse on TRIG — this fires the ultrasonic burst.</div></div>
+        <div class="ce-row"><div class="ce-code">pulseIn(echoPin, HIGH)</div><div class="ce-desc">Measures how long ECHO stays HIGH in microseconds — this is the travel time.</div></div>
+        <div class="ce-row"><div class="ce-code">duration * 0.034 / 2</div><div class="ce-desc">Converts time to cm. Sound = 0.034 cm/µs. Divide by 2 (round trip).</div></div>
+        <div class="ce-row"><div class="ce-code">if (distance &lt; 10)</div><div class="ce-desc">If closer than 10cm, turn on warning LED on pin 13.</div></div>
+      </div>
+      <a class="wokwi-banner" href="https://wokwi.com/projects/459753134450597889" target="_blank">
+        <div class="wokwi-icon">▶️</div>
+        <div class="wokwi-text">
+          <div class="wokwi-title">Run Ultrasonic Distance Simulation</div>
+          <div class="wokwi-sub">Move the slider on the sensor to change distance — see it print live on Wokwi</div>
+        </div>
+        <div class="wokwi-arr">›</div>
+      </a>
+    </div>
+
+    <div class="lesson-nav">
+      <div class="nav-btn" onclick="showDay(2)">← Day 2</div>
+      <div class="nav-btn primary" onclick="showDay(4)">Next: LCD & DHT11 →</div>
+    </div>
+  </div>
+
+  <!-- ===== DAY 4 — I2C LCD + DHT11 ===== -->
+  <div class="lesson" id="day4">
+
+    <div class="slide">
+      <div class="slide-tag">Day 4 · Project 3</div>
+      <div class="slide-title">📟 Project 3 — I2C LCD Display "Hello World"</div>
+      <div class="slide-body">
+        <p>An <strong>I2C LCD (16x2)</strong> can display 2 rows of 16 characters. Normally an LCD needs 6+ wires — but the <strong>I2C backpack module</strong> reduces this to just <strong>4 wires</strong> using a communication protocol called I2C (Inter-Integrated Circuit).</p>
+        <p>I2C uses only 2 signal wires — <strong>SDA</strong> (data) and <strong>SCL</strong> (clock) — to talk to many devices on the same bus. This is very common in professional electronics.</p>
+      </div>
+      <div class="img-row">
+        <div>
+          <img src="lcd.jpg" alt="I2C LCD 16x2 module">
+          <div class="cap">I2C LCD 16x2 — backpack module (top) and display (bottom)</div>
+        </div>
+        <div>
+          <img src="lcd.jpg" alt="LCD Hello World" style="object-position:bottom;">
+          <div class="cap">LCD showing "hello, world!" — 16 characters × 2 rows</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 4 · Project 3 · Wiring</div>
+      <div class="slide-title">🔌 I2C LCD — Circuit Diagram</div>
+      <div class="circuit-box">
+        <div class="circuit-title">I2C LCD Wiring to Arduino Uno</div>
+        <div class="circuit-diagram">
+<span class="comp">[ I2C LCD Module ]</span>  (4 pins on backpack: GND VCC SDA SCL)
+  <span class="wire">├─</span> <span class="gnd">GND</span>  <span class="wire">──────────────</span> <span class="gnd">Arduino GND</span>
+  <span class="wire">├─</span> <span class="pwr">VCC</span>  <span class="wire">──────────────</span> <span class="pwr">Arduino 5V</span>
+  <span class="wire">├─</span> <span class="sig">SDA</span>  <span class="wire">──────────────</span> <span class="pin">Arduino A4</span>   <span class="note">(I2C Data)</span>
+  <span class="wire">└─</span> <span class="sig">SCL</span>  <span class="wire">──────────────</span> <span class="pin">Arduino A5</span>   <span class="note">(I2C Clock)</span>
+
+<span class="note">I2C address is usually 0x27 or 0x3F — check your module</span>
+        </div>
+      </div>
+      <table class="pin-table">
+        <tr><th>LCD Pin</th><th>Arduino Pin</th><th>Purpose</th></tr>
+        <tr><td class="from">GND</td><td class="to">GND</td><td>Ground</td></tr>
+        <tr><td class="from">VCC</td><td class="to">5V</td><td>Power</td></tr>
+        <tr><td class="from">SDA</td><td class="to">A4</td><td>I2C Data line</td></tr>
+        <tr><td class="from">SCL</td><td class="to">A5</td><td>I2C Clock line</td></tr>
+      </table>
+      <div class="tip-box"><div class="tip-icon">🔧</div><div class="tip-text">If screen is blank, adjust the <strong>blue contrast potentiometer</strong> on the back of the I2C module with a small screwdriver until text appears.</div></div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 4 · Project 3 · Code</div>
+      <div class="slide-title">📝 I2C LCD — Hello World Code</div>
+      <div class="slide-body"><p>Install <strong>LiquidCrystal I2C</strong> by Frank de Brabander via Library Manager first, then upload:</p></div>
+      <div class="code-lang"><span>C / Arduino — I2C LCD Hello World</span></div>
+      <div class="code-block"><pre><span class="kw">#include</span> &lt;Wire.h&gt;
+<span class="kw">#include</span> &lt;LiquidCrystal_I2C.h&gt;
+
+<span class="cm">// Create LCD: address 0x27, 16 columns, 2 rows</span>
+LiquidCrystal_I2C lcd(<span class="num">0x27</span>, <span class="num">16</span>, <span class="num">2</span>);
+
+<span class="kw">void</span> setup() {
+  lcd.init();         <span class="cm">// initialize the LCD</span>
+  lcd.backlight();    <span class="cm">// turn on backlight</span>
+
+  lcd.setCursor(<span class="num">0</span>, <span class="num">0</span>);      <span class="cm">// column 0, row 0 (top)</span>
+  lcd.print(<span class="str">"Hello, World!"</span>);
+
+  lcd.setCursor(<span class="num">0</span>, <span class="num">1</span>);      <span class="cm">// column 0, row 1 (bottom)</span>
+  lcd.print(<span class="str">"TechCamp 2026"</span>);
+}
+
+<span class="kw">void</span> loop() {
+  <span class="cm">// message stays — nothing to loop</span>
+}</pre></div>
+      <div class="code-explain">
+        <div class="ce-row"><div class="ce-code">lcd(0x27, 16, 2)</div><div class="ce-desc">I2C address 0x27, 16 columns, 2 rows. Change to 0x3F if blank.</div></div>
+        <div class="ce-row"><div class="ce-code">lcd.setCursor(col, row)</div><div class="ce-desc">Move cursor. Col = 0–15, Row = 0 (top) or 1 (bottom).</div></div>
+        <div class="ce-row"><div class="ce-code">lcd.print("text")</div><div class="ce-desc">Print text at current cursor position.</div></div>
+      </div>
+    </div>
+
+    <!-- PROJECT 4: DHT11 -->
+    <div class="slide">
+      <div class="slide-tag">Day 4 · Project 4</div>
+      <div class="slide-title">🌡️ Project 4 — DHT11 Temperature & Humidity</div>
+      <div class="slide-body">
+        <p>The <strong>DHT11</strong> is a digital sensor that measures temperature (0–50°C) and humidity (20–90% RH) in one small package. Used in weather stations, smart thermostats, greenhouses and HVAC systems.</p>
+      </div>
+      <div class="img-row">
+        <div>
+          <img src="dht11.jpg" alt="DHT11 sensor module">
+          <div class="cap">DHT11 Module (3-pin) — VCC · OUT · GND</div>
+        </div>
+        <div>
+          <img src="dht11_pins.jpg" alt="DHT11 pin diagram">
+          <div class="cap">DHT11 Pin Diagram — VCC+ · DATA · GROUND</div>
+        </div>
+      </div>
+      <div class="vis-grid">
+        <div class="vis-card"><div class="vis-icon">🌡️</div><div class="vis-label">Temperature</div><div class="vis-desc">Range: 0°C to 50°C · Accuracy ±2°C</div></div>
+        <div class="vis-card"><div class="vis-icon">💧</div><div class="vis-label">Humidity</div><div class="vis-desc">Range: 20% to 90% RH · Accuracy ±5%</div></div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 4 · Project 4 · Wiring</div>
+      <div class="slide-title">🔌 DHT11 — Circuit Diagram</div>
+      <div class="circuit-box">
+        <div class="circuit-title">DHT11 3-Pin Module Wiring</div>
+        <div class="circuit-diagram">
+<span class="comp">[ DHT11 Module ]</span>  (3 pins: + out -)
+  <span class="wire">├─</span> <span class="pwr">+ (VCC)</span>    <span class="wire">──────────────</span> <span class="pwr">Arduino 5V</span>
+  <span class="wire">├─</span> <span class="sig">out (DATA)</span> <span class="wire">──────────────</span> <span class="pin">Arduino Pin 2</span>
+  <span class="wire">└─</span> <span class="gnd">- (GND)</span>    <span class="wire">──────────────</span> <span class="gnd">Arduino GND</span>
+
+<span class="note">Note: 3-pin modules have a built-in pull-up resistor.
+      4-pin raw sensors need an external 10kΩ resistor
+      between DATA and VCC.</span>
+        </div>
+      </div>
+      <div class="code-lang"><span>C / Arduino — DHT11 Sensor</span></div>
+      <div class="code-block"><pre><span class="kw">#include</span> &lt;DHT.h&gt;
+<span class="kw">#define</span> DHTPIN  <span class="num">2</span>
+<span class="kw">#define</span> DHTTYPE DHT11
+
+DHT dht(DHTPIN, DHTTYPE);
+
+<span class="kw">void</span> setup() {
+  Serial.begin(<span class="num">9600</span>);
+  dht.begin();
+}
+
+<span class="kw">void</span> loop() {
+  delay(<span class="num">2000</span>);
+  <span class="kw">float</span> h = dht.readHumidity();
+  <span class="kw">float</span> t = dht.readTemperature();
+
+  <span class="kw">if</span> (isnan(h) || isnan(t)) {
+    Serial.println(<span class="str">"Sensor error!"</span>);
+    <span class="kw">return</span>;
+  }
+  Serial.print(<span class="str">"Temp: "</span>); Serial.print(t); Serial.print(<span class="str">"°C  "</span>);
+  Serial.print(<span class="str">"Humidity: "</span>); Serial.print(h); Serial.println(<span class="str">"%"</span>);
+}</pre></div>
+      <div class="tip-box"><div class="tip-icon">⏱️</div><div class="tip-text">DHT11 needs at least <strong>2 seconds between readings</strong> — never reduce that delay() or you'll get errors.</div></div>
+    </div>
+
+    <div class="lesson-nav">
+      <div class="nav-btn" onclick="showDay(3)">← Day 3</div>
+      <div class="nav-btn primary" onclick="showDay(5)">Next: Final Project →</div>
+    </div>
+  </div>
+
+  <!-- ===== DAY 5 — FINAL PROJECT ===== -->
+  <div class="lesson" id="day5">
+
+    <div class="slide">
+      <div class="slide-tag">Day 5 · Final Project</div>
+      <div class="slide-title">🏆 Final Project — DHT11 Readings on I2C LCD</div>
+      <div class="slide-body">
+        <p>We combine everything into one real project: read <strong>live temperature and humidity</strong> from the DHT11 sensor and display it on the <strong>I2C LCD screen</strong>, updating every 2 seconds. This is exactly how a commercial weather station works!</p>
+      </div>
+      <div class="vis-grid">
+        <div class="vis-card"><div class="vis-icon">🛒</div><div class="vis-label">Parts Needed</div><div class="vis-desc">Arduino Uno · DHT11 sensor · I2C LCD 16x2 · Breadboard · Jumper wires</div></div>
+        <div class="vis-card"><div class="vis-icon">📟</div><div class="vis-label">What Shows</div><div class="vis-desc">Row 1: "Temp: 27.5 C" · Row 2: "Humidity: 65 %" — live, updating every 2s</div></div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 5 · Final Project · Wiring</div>
+      <div class="slide-title">🔌 Complete Circuit — DHT11 + I2C LCD</div>
+      <div class="circuit-box">
+        <div class="circuit-title">Full Wiring — DHT11 + I2C LCD + Arduino Uno</div>
+        <div class="circuit-diagram">
+<span class="comp">[ DHT11 Sensor ]</span>
+  <span class="pwr">+</span>    <span class="wire">──────</span> <span class="pwr">Arduino 5V</span>
+  <span class="sig">out</span>  <span class="wire">──────</span> <span class="pin">Arduino Pin 2</span>
+  <span class="gnd">-</span>    <span class="wire">──────</span> <span class="gnd">Arduino GND</span>
+
+<span class="comp">[ I2C LCD 16x2 ]</span>
+  <span class="gnd">GND</span>  <span class="wire">──────</span> <span class="gnd">Arduino GND</span>
+  <span class="pwr">VCC</span>  <span class="wire">──────</span> <span class="pwr">Arduino 5V</span>
+  <span class="sig">SDA</span>  <span class="wire">──────</span> <span class="pin">Arduino A4</span>
+  <span class="sig">SCL</span>  <span class="wire">──────</span> <span class="pin">Arduino A5</span>
+
+<span class="note">Use breadboard power rails: connect 5V and GND to the
+red (+) and blue (–) rails, then tap from there for both modules.</span>
+        </div>
+      </div>
+      <table class="pin-table">
+        <tr><th>Component</th><th>Pin</th><th>Arduino</th></tr>
+        <tr><td>DHT11</td><td class="from">+ (VCC)</td><td class="to">5V</td></tr>
+        <tr><td>DHT11</td><td class="from">out (DATA)</td><td class="to">Pin 2</td></tr>
+        <tr><td>DHT11</td><td class="from">- (GND)</td><td class="to">GND</td></tr>
+        <tr><td>I2C LCD</td><td class="from">VCC</td><td class="to">5V</td></tr>
+        <tr><td>I2C LCD</td><td class="from">GND</td><td class="to">GND</td></tr>
+        <tr><td>I2C LCD</td><td class="from">SDA</td><td class="to">A4</td></tr>
+        <tr><td>I2C LCD</td><td class="from">SCL</td><td class="to">A5</td></tr>
+      </table>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 5 · Final Project · Code</div>
+      <div class="slide-title">📝 DHT11 on LCD — Full Code</div>
+      <div class="code-lang">
+        <span>C / Arduino — Final Project</span>
+        <a class="sim-link" href="https://wokwi.com/projects/459751961915973633" target="_blank">▶ Open Final Project on Wokwi</a>
+      </div>
+      <div class="code-block"><pre><span class="cm">// ═══════════════════════════════════════════
+//  FINAL PROJECT: DHT11 Readings on I2C LCD
+//  TechCamp Boot Camp — Week 2
+//  Instructor: Gyamerah Afriyie Philimon
+// ═══════════════════════════════════════════</span>
+
+<span class="kw">#include</span> &lt;Wire.h&gt;
+<span class="kw">#include</span> &lt;LiquidCrystal_I2C.h&gt;
+<span class="kw">#include</span> &lt;DHT.h&gt;
+
+<span class="kw">#define</span> DHTPIN  <span class="num">2</span>
+<span class="kw">#define</span> DHTTYPE DHT11
+
+DHT dht(DHTPIN, DHTTYPE);
+LiquidCrystal_I2C lcd(<span class="num">0x27</span>, <span class="num">16</span>, <span class="num">2</span>);
+
+<span class="kw">void</span> setup() {
+  Serial.begin(<span class="num">9600</span>);
+  lcd.init();
+  lcd.backlight();
+  dht.begin();
+
+  <span class="cm">// Startup message</span>
+  lcd.setCursor(<span class="num">0</span>, <span class="num">0</span>); lcd.print(<span class="str">"TechCamp 2026"</span>);
+  lcd.setCursor(<span class="num">0</span>, <span class="num">1</span>); lcd.print(<span class="str">"Reading sensor.."</span>);
+  delay(<span class="num">2000</span>);
+  lcd.clear();
+}
+
+<span class="kw">void</span> loop() {
+  delay(<span class="num">2000</span>);
+
+  <span class="kw">float</span> h = dht.readHumidity();
+  <span class="kw">float</span> t = dht.readTemperature();
+
+  <span class="kw">if</span> (isnan(h) || isnan(t)) {
+    lcd.clear();
+    lcd.setCursor(<span class="num">0</span>, <span class="num">0</span>);
+    lcd.print(<span class="str">"Sensor Error!"</span>);
+    <span class="kw">return</span>;
+  }
+
+  lcd.clear();
+
+  <span class="cm">// Row 0 — Temperature</span>
+  lcd.setCursor(<span class="num">0</span>, <span class="num">0</span>);
+  lcd.print(<span class="str">"Temp: "</span>);
+  lcd.print(t, <span class="num">1</span>);    <span class="cm">// 1 decimal place</span>
+  lcd.print(<span class="str">" C"</span>);
+
+  <span class="cm">// Row 1 — Humidity</span>
+  lcd.setCursor(<span class="num">0</span>, <span class="num">1</span>);
+  lcd.print(<span class="str">"Humidity: "</span>);
+  lcd.print(h, <span class="num">0</span>);    <span class="cm">// whole number</span>
+  lcd.print(<span class="str">" %"</span>);
+
+  Serial.print(<span class="str">"Temp: "</span>); Serial.print(t);
+  Serial.print(<span class="str">"C | Humidity: "</span>); Serial.print(h);
+  Serial.println(<span class="str">"%"</span>);
+}</pre></div>
+      <a class="wokwi-banner" href="https://wokwi.com/projects/459751961915973633" target="_blank">
+        <div class="wokwi-icon">▶️</div>
+        <div class="wokwi-text">
+          <div class="wokwi-title">▶ Run Final Project Live on Wokwi</div>
+          <div class="wokwi-sub">See DHT11 readings appear on the LCD in real-time — move the sliders to change temperature & humidity</div>
+        </div>
+        <div class="wokwi-arr">›</div>
+      </a>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 5 · Summary</div>
+      <div class="slide-title">✅ Week 2 Complete — Full Summary</div>
+      <div class="steps">
+        <div class="step"><div class="step-num">✓</div><div class="step-text">Understood what microcontrollers are and where they're used in real life</div></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-text">Explored the Arduino family — Uno, Nano, Mega, MKR and more</div></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-text">Learned the breadboard and how to build circuits without soldering</div></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-text">Set up Arduino IDE and understood setup() and loop()</div></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-text">Wrote C code — variables, data types, if/else, loops, functions</div></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-text">Built LED Blink — the classic first Arduino project</div></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-text">Built an ultrasonic distance sensor with warning alert</div></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-text">Displayed text on an I2C LCD using the LiquidCrystal library</div></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-text">Read live temperature & humidity from a DHT11 sensor</div></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-text">Combined DHT11 + LCD into a working weather station — the final project!</div></div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 5 · Go Further</div>
+      <div class="slide-title">🚀 Want to Build More Amazing Projects?</div>
+      <div class="slide-body"><p>This week is just the beginning. Explore these resources for more projects:</p></div>
+      <a class="link-card" href="https://www.youtube.com/@GreatScottLab" target="_blank">
+        <div class="link-icon">▶️</div>
+        <div class="link-info"><div class="link-title">GreatScott! — YouTube</div><div class="link-url">Amazing Arduino & electronics projects with clear explanations</div></div>
+        <div class="link-arr">›</div>
+      </a>
+      <a class="link-card" href="https://www.youtube.com/@PaulMcWhorter" target="_blank">
+        <div class="link-icon">▶️</div>
+        <div class="link-info"><div class="link-title">Paul McWhorter — YouTube</div><div class="link-url">Best beginner Arduino series on YouTube — step by step</div></div>
+        <div class="link-arr">›</div>
+      </a>
+      <a class="link-card" href="https://create.arduino.cc/projecthub" target="_blank">
+        <div class="link-icon">🤖</div>
+        <div class="link-info"><div class="link-title">Arduino Project Hub</div><div class="link-url">create.arduino.cc — Hundreds of free tutorials with code & diagrams</div></div>
+        <div class="link-arr">›</div>
+      </a>
+      <a class="link-card" href="https://www.tiktok.com/@_phil.jr" target="_blank">
+        <div class="link-icon">🎵</div>
+        <div class="link-info"><div class="link-title">@_phil.jr on TikTok</div><div class="link-url">Short project demos and tips from your instructor</div></div>
+        <div class="link-arr">›</div>
+      </a>
+
+      <div class="reach-box">
+        <div class="reach-title">💬 Want to Dive Deeper?</div>
+        <div class="reach-body">More boot camps are coming — advanced Arduino, IoT, robotics and embedded systems. Reach out if you want to continue learning or need help getting a starter kit.</div>
+        <div class="reach-btns">
+          <a class="reach-btn" href="https://wa.me/233554197193?text=Hi%2C%20I%20want%20to%20learn%20more%20Arduino%20after%20TechCamp" target="_blank">📱 WhatsApp</a>
+          <a class="reach-btn" href="https://www.linkedin.com/in/gyamerah-afriyie-philimon-32a11525b" target="_blank">in LinkedIn</a>
+          <a class="reach-btn" href="https://www.instagram.com/_phil.jr" target="_blank">📸 Instagram</a>
+          <a class="reach-btn" href="https://www.tiktok.com/@_phil.jr" target="_blank">🎵 TikTok</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="lesson-nav">
+      <div class="nav-btn" onclick="showDay(4)">← Day 4</div>
+      <a class="nav-btn primary" href="week3.html">Week 3: Python →</a>
+    </div>
+  </div>
+
+  <!-- ===== DAY 6 — ELECTRONICS ===== -->
+  <div class="lesson" id="day6">
+
+    <div class="slide">
+      <div class="slide-tag">Electronics · Fundamentals</div>
+      <div class="slide-title">⚡ Electricity Basics — Voltage, Current & Resistance</div>
+      <div class="slide-body">
+        <p>Before building any circuit, you need to understand the three fundamental properties of electricity. They work together in every circuit you will ever build.</p>
+      </div>
+      <div class="terms-grid">
+        <div class="term">
+          <div class="term-word">⚡ Voltage (V) — the "pressure"</div>
+          <div class="term-def">Voltage is the electrical force that pushes electrons through a circuit. Measured in <strong>Volts (V)</strong>. Think of it like water pressure in a pipe — higher pressure pushes more water. Arduino operates at <strong>5V</strong>. A USB port is 5V. A AA battery is 1.5V. A phone charger is typically 5V.</div>
+        </div>
+        <div class="term">
+          <div class="term-word">🌊 Current (I) — the "flow"</div>
+          <div class="term-def">Current is the actual flow of electrons through the circuit. Measured in <strong>Amperes / Amps (A)</strong> or milliamps (mA). Think of it like the volume of water flowing through the pipe. An Arduino pin can safely supply a maximum of <strong>40mA</strong> per pin. An LED needs about 20mA.</div>
+        </div>
+        <div class="term">
+          <div class="term-word">🧱 Resistance (R) — the "restriction"</div>
+          <div class="term-def">Resistance opposes the flow of current. Measured in <strong>Ohms (Ω)</strong>. Think of it like a narrow section of pipe slowing water flow. Resistors are components that add resistance on purpose — to protect LEDs, limit current, and divide voltage.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Electronics · Ohm's Law</div>
+      <div class="slide-title">🔺 Ohm's Law — The Most Important Formula in Electronics</div>
+      <div class="slide-body">
+        <p><strong>Ohm's Law</strong> describes the relationship between Voltage, Current and Resistance. Know this formula and you can calculate anything in a basic circuit.</p>
+      </div>
+      <div class="circuit-box">
+        <div class="circuit-title">Ohm's Law Triangle — cover what you want to find</div>
+        <div class="circuit-diagram" style="text-align:center;font-size:18px;line-height:2.5;">
+        <span class="pwr">     V      </span>
+        <span class="note">← Voltage (Volts)</span>
+        <span class="wire">  ─────────</span>
+        <span class="comp">  I  ×  R  </span>
+        <span class="note">← Current × Resistance</span>
+        </div>
+      </div>
+      <div class="terms-grid">
+        <div class="term"><div class="term-word">V = I × R</div><div class="term-def">Voltage = Current × Resistance. If you know current and resistance, calculate voltage.</div></div>
+        <div class="term"><div class="term-word">I = V ÷ R</div><div class="term-def">Current = Voltage ÷ Resistance. Used to find how much current flows. Most important for LED circuits!</div></div>
+        <div class="term"><div class="term-word">R = V ÷ I</div><div class="term-def">Resistance = Voltage ÷ Current. Used to calculate what resistor value to use.</div></div>
+      </div>
+      <div class="code-block"><pre><span class="cm">// ── Practical Example: What resistor for an LED? ───────
+//
+// LED forward voltage (Vf)  = 2.0V  (red LED typical)
+// Arduino pin voltage (Vs)  = 5.0V
+// LED desired current (I)   = 20mA = 0.020A
+//
+// Voltage across resistor = Vs - Vf = 5.0 - 2.0 = 3.0V
+// R = V ÷ I = 3.0 ÷ 0.020 = 150Ω
+//
+// → Use a 150Ω or the nearest standard value: 220Ω (safer)
+// → Lower resistance = more current = brighter but may burn LED
+// → Higher resistance = less current = dimmer but safer</span></pre></div>
+      <div class="tip-box"><div class="tip-icon">💡</div><div class="tip-text">The most common beginner mistake is connecting an LED directly to 5V without a resistor. Without it, current is unlimited, the LED burns out instantly. <strong>Always use a resistor!</strong> When in doubt, 220Ω is safe for most LEDs at 5V.</div></div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Electronics · Resistors</div>
+      <div class="slide-title">🧱 Resistors — Reading Colour Codes</div>
+      <div class="slide-body">
+        <p>Resistors have <strong>colour bands</strong> painted on them that tell you their resistance value. Learning to read them means you can identify any resistor without measuring it. The most common are 4-band resistors.</p>
+      </div>
+      <div class="circuit-box">
+        <div class="circuit-title">4-Band Resistor Colour Code</div>
+        <div class="circuit-diagram" style="font-size:12px;line-height:2;">
+<span class="note">Band 1 (1st digit)  Band 2 (2nd digit)  Band 3 (multiplier)  Band 4 (tolerance)</span>
+<span class="pwr">BLACK  = 0</span>   <span class="note">  Brown = 1</span>   <span class="sig">Green = 5</span>   <span class="teal-p" style="color:#67e8f9;">Blue  = 6</span>
+<span class="comp">RED    = 2</span>   <span class="note">  Orange= 3</span>   <span class="note">Yellow= 4</span>   <span class="comp">Violet= 7</span>
+<span class="note">Grey   = 8</span>   <span class="note">  White = 9</span>
+
+<span class="note">Multiplier: Black=×1  Brown=×10  Red=×100  Orange=×1000  Yellow=×10000</span>
+<span class="note">Tolerance:  Gold=±5%  Silver=±10%  None=±20%</span>
+
+<span class="note">Example: Red Red Brown Gold</span>
+<span class="comp">           2    2    ×10   ±5%</span>  <span class="sig">= 220Ω ±5%</span>
+        </div>
+      </div>
+      <div class="terms-grid">
+        <div class="term"><div class="term-word">220Ω — Orange Red Brown</div><div class="term-def">The most used resistor for LEDs with 5V Arduino. Limits current to ~15mA. Safe and bright.</div></div>
+        <div class="term"><div class="term-word">1kΩ (1000Ω) — Brown Black Red</div><div class="term-def">Used for buttons (pull-down), base resistors for transistors, general limiting.</div></div>
+        <div class="term"><div class="term-word">10kΩ (10,000Ω) — Brown Black Orange</div><div class="term-def">Standard pull-up/pull-down resistor for buttons and sensor data lines. Very common.</div></div>
+      </div>
+      <div class="tip-box"><div class="tip-icon">🔧</div><div class="tip-text">Can't read the colours? Use a <strong>multimeter</strong> set to Ohms (Ω) and touch the probes to both legs of the resistor. It will display the exact value. Or use the free <strong>Resistor Color Code Calculator</strong> at resistorguide.com.</div></tip-text></div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Electronics · LEDs</div>
+      <div class="slide-title">💡 LEDs — Light Emitting Diodes</div>
+      <div class="slide-body">
+        <p>An <strong>LED (Light Emitting Diode)</strong> is a semiconductor component that emits light when current flows through it in the correct direction. Unlike a light bulb, LEDs are polarised — they only work one way round.</p>
+      </div>
+      <div class="circuit-box">
+        <div class="circuit-title">LED Anatomy & Polarity</div>
+        <div class="circuit-diagram" style="font-size:12px;line-height:2.2;">
+          <span class="note">    ┌─────────┐</span>
+          <span class="note">    │  LED    │   Round dome</span>
+          <span class="note">    │         │</span>
+          <span class="note">    └────┬────┘</span>
+          <span class="sig">         │  ← Longer leg = ANODE (+) = connect to POSITIVE / resistor side</span>
+          <span class="gnd">        │   ← Shorter leg = CATHODE (–) = connect to GND</span>
+          <span class="note">  Also: flat side of the dome = Cathode (–)</span>
+        </div>
+      </div>
+      <div class="vis-grid">
+        <div class="vis-card"><div class="vis-icon">🔴</div><div class="vis-label">Red LED</div><div class="vis-desc">Forward voltage ~2.0V. Most common. 1.8–2.2V typical.</div></div>
+        <div class="vis-card"><div class="vis-icon">🟢</div><div class="vis-label">Green LED</div><div class="vis-desc">Forward voltage ~2.1V. Similar to red.</div></div>
+        <div class="vis-card"><div class="vis-icon">🔵</div><div class="vis-label">Blue LED</div><div class="vis-desc">Forward voltage ~3.2V. Needs a different resistor calculation.</div></div>
+        <div class="vis-card"><div class="vis-icon">⚪</div><div class="vis-label">White LED</div><div class="vis-desc">Forward voltage ~3.2–3.4V. Brightest. Same as blue.</div></div>
+      </div>
+      <div class="warn-box"><div class="warn-icon">⚠️</div><div class="warn-text">If you connect an LED the <strong>wrong way round</strong> (backwards), it simply won't light up — it won't break. Just flip it around. However, connecting it <strong>without a resistor</strong> WILL burn it out permanently within seconds!</div></div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Electronics · Push Buttons</div>
+      <div class="slide-title">🔘 Push Buttons & Switches</div>
+      <div class="slide-body">
+        <p>A <strong>push button</strong> is a simple switch — it connects two points in a circuit when pressed and disconnects them when released. Buttons in starter kits are typically <strong>momentary tactile switches</strong> with 4 legs.</p>
+      </div>
+      <div class="circuit-box">
+        <div class="circuit-title">4-Leg Push Button — Internal Connections</div>
+        <div class="circuit-diagram" style="font-size:12px;line-height:2.2;">
+<span class="sig">  A ──┤├── B</span>    <span class="note">← A and B are connected internally (same side)</span>
+<span class="wire">  │        │</span>
+<span class="note">  switch   switch</span>    <span class="note">← when pressed, bridges A-B to C-D</span>
+<span class="wire">  │        │</span>
+<span class="sig">  C ──┤├── D</span>    <span class="note">← C and D are connected internally (same side)</span>
+
+<span class="note">Simple wiring: One leg → Pin 7,  Diagonal leg → GND</span>
+<span class="note">Add 10kΩ between Pin 7 and 5V (pull-down resistor)</span>
+        </div>
+      </div>
+      <div class="terms-grid">
+        <div class="term"><div class="term-word">Momentary Switch</div><div class="term-def">Connected only while held down. Releases back when you let go. Used in keyboards, game controllers, doorbells.</div></div>
+        <div class="term"><div class="term-word">Latching Switch</div><div class="term-def">Stays in its new position after pressing. Like a light wall switch. Less common in Arduino kits.</div></div>
+        <div class="term"><div class="term-word">Debouncing</div><div class="term-def">Physical buttons mechanically bounce 2–5ms when pressed. Arduino reads this as multiple presses. Fix with delay(50) or software debounce libraries.</div></div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Electronics · Capacitors</div>
+      <div class="slide-title">🔋 Capacitors — Storing & Smoothing Energy</div>
+      <div class="slide-body">
+        <p>A <strong>capacitor</strong> stores electrical charge and releases it quickly. Think of it like a small rechargeable battery that charges and discharges very fast. Capacitors are used to smooth out voltage spikes, filter noise in power lines, and create time delays in circuits.</p>
+      </div>
+      <div class="vis-grid">
+        <div class="vis-card"><div class="vis-icon">🔵</div><div class="vis-label">Electrolytic</div><div class="vis-desc">Polarised — has a + and – leg. The longer leg is +. Common in power supply filtering. e.g. 100µF, 1000µF.</div></div>
+        <div class="vis-card"><div class="vis-icon">🟡</div><div class="vis-label">Ceramic</div><div class="vis-desc">Small, non-polarised (no polarity). Used for high-frequency noise filtering. e.g. 100nF (0.1µF).</div></div>
+        <div class="vis-card"><div class="vis-icon">📊</div><div class="vis-label">Measured in Farads</div><div class="vis-desc">µF = microfarads (millionths). nF = nanofarads. pF = picofarads. Bigger = more charge stored.</div></div>
+        <div class="vis-card"><div class="vis-icon">⚡</div><div class="vis-label">Common Use</div><div class="vis-desc">Place 100nF ceramic cap between 5V and GND near sensors to filter electrical noise from motors.</div></div>
+      </div>
+      <div class="tip-box"><div class="tip-icon">⚠️</div><div class="tip-text">Electrolytic capacitors are <strong>polarised</strong> — connect + to positive and – to negative. Reverse polarity can cause them to <strong>explode</strong>. The negative leg is usually marked with a white stripe on the side of the capacitor.</div></div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Electronics · Breadboard Deep Dive</div>
+      <div class="slide-title">🧩 Breadboard — Full Guide</div>
+      <div class="slide-body">
+        <p>The breadboard is your prototyping workspace. Understanding how connections work inside it is essential — the most common beginner mistakes come from misunderstanding the breadboard's internal connections.</p>
+      </div>
+      <div class="circuit-box">
+        <div class="circuit-title">Breadboard Internal Connections — Top View</div>
+        <div class="circuit-diagram" style="font-size:11px;line-height:2;">
+<span class="pwr">+  +  +  +  +  +  +  +  +  +  +  +  +  +  +</span>  <span class="note">← Power rail (+) — full length horizontal</span>
+<span class="gnd">-  -  -  -  -  -  -  -  -  -  -  -  -  -  -</span>  <span class="note">← Ground rail (–) — full length horizontal</span>
+<span class="wire">                                               </span>
+<span class="comp">a  b  c  d  e    f  g  h  i  j</span>   Row 1  <span class="note">← a-e connected, f-j connected, gap in middle</span>
+<span class="comp">a  b  c  d  e    f  g  h  i  j</span>   Row 2  <span class="note">← completely separate from row 1</span>
+<span class="comp">a  b  c  d  e    f  g  h  i  j</span>   Row 3
+<span class="note">                 ↑</span>
+<span class="note">              CENTER GAP — breaks connection between e and f</span>
+<span class="note">              ICs (chips) straddle this gap so each pin is isolated</span>
+
+<span class="gnd">-  -  -  -  -  -  -  -  -  -  -  -  -  -  -</span>  <span class="note">← Ground rail (–)</span>
+<span class="pwr">+  +  +  +  +  +  +  +  +  +  +  +  +  +  +</span>  <span class="note">← Power rail (+)</span>
+        </div>
+      </div>
+      <div class="terms-grid">
+        <div class="term"><div class="term-word">Power Rails (Red +, Blue –)</div><div class="term-def">Run the full length horizontally. Connect Arduino 5V to red (+) and GND to blue (–). All components share power from these rails with short jumper wires.</div></div>
+        <div class="term"><div class="term-word">Terminal Rows (numbered)</div><div class="term-def">Each numbered row has TWO groups of 5 holes. Holes a-b-c-d-e in the same row number are all connected. f-g-h-i-j in the same row are also all connected to each other. But a-e and f-j are NOT connected (separated by the centre gap).</div></div>
+        <div class="term"><div class="term-word">Centre Gap (DIP spacing)</div><div class="term-def">The gap between columns e and f is exactly the right size for IC chips (like the 555 timer or ATmega). Place a chip across the gap so each leg is on its own isolated row.</div></div>
+        <div class="term"><div class="term-word">Jumper Wires</div><div class="term-def">Short wires that make connections on the breadboard. Male-to-male for breadboard-to-breadboard. Male-to-female for breadboard-to-Arduino pins. Colour code: Red=5V, Black/Brown=GND, other colours=signals.</div></div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Electronics · Components Guide</div>
+      <div class="slide-title">🛒 Components in Your Starter Kit — Explained</div>
+      <div class="slide-body"><p>Here's every common component in a starter kit and exactly what it does:</p></div>
+      <div class="terms-grid">
+        <div class="term"><div class="term-word">🔴 LED (Light Emitting Diode)</div><div class="term-def">Emits light when current flows through it. Polarised — longer leg (+). Always needs a current-limiting resistor (220Ω for 5V). Forward voltage: ~2V red/green, ~3.2V blue/white.</div></div>
+        <div class="term"><div class="term-word">🧱 Resistor</div><div class="term-def">Limits current flow. Value in Ohms (Ω). Read by colour bands. 220Ω for LEDs, 10kΩ for pull-ups, 1kΩ for general. Non-polarised — any direction.</div></div>
+        <div class="term"><div class="term-word">🔵 Capacitor (Electrolytic)</div><div class="term-def">Stores charge. Polarised — longer leg (+). Used for filtering power supply noise. Common values: 10µF, 100µF, 1000µF.</div></div>
+        <div class="term"><div class="term-word">🔘 Push Button</div><div class="term-def">Momentary switch. Connects circuit when pressed. 4 legs — A&B connected, C&D connected. Press bridges A/B to C/D. Needs pull-up or pull-down resistor.</div></div>
+        <div class="term"><div class="term-word">🌀 Potentiometer</div><div class="term-def">Variable resistor with a dial. 3 legs: left=GND, middle=signal (wiper), right=5V. Rotate to output 0–5V on the middle pin. Read with analogRead(). Great for controlling brightness/speed.</div></div>
+        <div class="term"><div class="term-word">🔊 Buzzer (Active)</div><div class="term-def">Makes a tone when 5V is applied. Active buzzers have a built-in oscillator — just power them. Passive buzzers need a PWM signal (analogWrite or tone()) to make different pitches.</div></div>
+        <div class="term"><div class="term-word">🌡️ DHT11 Sensor</div><div class="term-def">Measures temperature (0–50°C) and humidity (20–90%). Digital output — one data wire. Uses a single-wire protocol. Needs DHT library. Takes reading every 2 seconds minimum.</div></div>
+        <div class="term"><div class="term-word">📡 HC-SR04 Ultrasonic</div><div class="term-def">Measures distance 2cm–400cm using sound pulses. Two signal pins: TRIG (send) and ECHO (receive). Calculate: distance = duration × 0.034 / 2.</div></div>
+        <div class="term"><div class="term-word">⚙️ DC Motor</div><div class="term-def">Spins when current flows — direction depends on polarity. Cannot be powered directly from Arduino pin (too much current). Needs a motor driver like L298N or L293D. Speed via PWM.</div></div>
+        <div class="term"><div class="term-word">🔁 Servo Motor</div><div class="term-def">Rotates to a specific angle (0°–180°). 3 wires: Red=5V, Brown=GND, Orange=Signal. Controlled with the Servo library. servo.write(90) rotates to 90 degrees.</div></div>
+        <div class="term"><div class="term-word">⚡ Transistor (NPN)</div><div class="term-def">Electronic switch. 3 legs: Base (control), Collector (load), Emitter (GND). Small signal on Base controls large current through Collector. Used to switch motors, relays, high-power LEDs from Arduino's tiny pin current.</div></div>
+        <div class="term"><div class="term-word">🔌 Relay Module</div><div class="term-def">Electrically controlled switch. Lets Arduino switch 240V mains devices. Signal pin LOW=relay closes, HIGH=relay opens. Always isolate mains connections carefully!</div></div>
+      </div>
+
+      <a class="link-card" href="https://www.arduino.cc/en/Tutorial/Foundations" target="_blank" style="margin-top:14px;">
+        <div class="link-icon">📚</div>
+        <div class="link-info"><div class="link-title">Arduino Foundation Tutorials — Electronics & Circuits</div><div class="link-url">arduino.cc/en/Tutorial/Foundations — Voltage, current, PWM, I2C, SPI all explained</div></div>
+        <div class="link-arr">›</div>
+      </a>
+      <a class="link-card" href="https://www.electronics-tutorials.ws/resistor/res_1.html" target="_blank">
+        <div class="link-icon">🧱</div>
+        <div class="link-info"><div class="link-title">Electronics Tutorials — Resistors, Capacitors, LEDs</div><div class="link-url">electronics-tutorials.ws — Deep dives into every electronic component</div></div>
+        <div class="link-arr">›</div>
+      </a>
+    </div>
+
+    <div class="lesson-nav">
+      <div class="nav-btn" onclick="showDay(5)">← Day 5</div>
+      <div class="nav-btn primary" onclick="showDay(7)">C++ Console →</div>
+    </div>
+  </div>
+
+  <!-- ===== DAY 7 — C++ CONSOLE ===== -->
+  <div class="lesson" id="day7">
+
+    <div class="slide">
+      <div class="slide-tag">C++ Console</div>
+      <div class="slide-title">▶ Interactive C/C++ Console</div>
+      <div class="slide-body">
+        <p>Write and run real C/C++ code in your browser. Powered by the <strong>Wandbox API</strong> — a free online compiler that runs your code on a real GCC compiler server. This lets you practice all the C programming concepts from Day 2 before uploading to Arduino.</p>
+        <p style="margin-top:8px;font-size:12px;color:rgba(255,255,255,0.45);">📡 Requires an internet connection. Runs on real GCC — output appears in 1–3 seconds. <strong>Arduino functions</strong> like pinMode() and digitalWrite() won't work here — use standard C++ only (printf, cout, for/while loops, functions etc.)</p>
+      </div>
+    </div>
+
+    <!-- CONSOLE UI -->
+    <div style="background:#040d1a;border:1px solid rgba(6,182,212,0.3);border-radius:16px;overflow:hidden;margin-bottom:18px;">
+      <!-- TOP BAR -->
+      <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(6,182,212,0.1);padding:10px 16px;border-bottom:1px solid rgba(6,182,212,0.15);">
+        <div style="display:flex;gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:#ef4444;display:inline-block;"></span><span style="width:10px;height:10px;border-radius:50%;background:#fbbf24;display:inline-block;"></span><span style="width:10px;height:10px;border-radius:50%;background:#22c55e;display:inline-block;"></span></div>
+        <div style="font-family:'Orbitron',monospace;font-size:11px;font-weight:700;color:var(--teal-p);letter-spacing:2px;">C/C++ Console</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.3);">GCC via Wandbox</div>
+      </div>
+      <!-- SNIPPET BUTTONS -->
+      <div style="display:flex;gap:6px;padding:10px 12px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,0.05);">
+        <button onclick="loadCSnippet('hello')" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);border-radius:6px;padding:4px 11px;font-size:10px;font-weight:600;color:var(--teal-p);cursor:pointer;font-family:'Exo 2',sans-serif;">Hello World</button>
+        <button onclick="loadCSnippet('variables')" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);border-radius:6px;padding:4px 11px;font-size:10px;font-weight:600;color:var(--teal-p);cursor:pointer;font-family:'Exo 2',sans-serif;">Variables</button>
+        <button onclick="loadCSnippet('ifelse')" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);border-radius:6px;padding:4px 11px;font-size:10px;font-weight:600;color:var(--teal-p);cursor:pointer;font-family:'Exo 2',sans-serif;">If / Else</button>
+        <button onclick="loadCSnippet('forloop')" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);border-radius:6px;padding:4px 11px;font-size:10px;font-weight:600;color:var(--teal-p);cursor:pointer;font-family:'Exo 2',sans-serif;">For Loop</button>
+        <button onclick="loadCSnippet('whileloop')" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);border-radius:6px;padding:4px 11px;font-size:10px;font-weight:600;color:var(--teal-p);cursor:pointer;font-family:'Exo 2',sans-serif;">While Loop</button>
+        <button onclick="loadCSnippet('functions')" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);border-radius:6px;padding:4px 11px;font-size:10px;font-weight:600;color:var(--teal-p);cursor:pointer;font-family:'Exo 2',sans-serif;">Functions</button>
+        <button onclick="loadCSnippet('arrays')" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);border-radius:6px;padding:4px 11px;font-size:10px;font-weight:600;color:var(--teal-p);cursor:pointer;font-family:'Exo 2',sans-serif;">Arrays</button>
+        <button onclick="loadCSnippet('math')" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);border-radius:6px;padding:4px 11px;font-size:10px;font-weight:600;color:var(--teal-p);cursor:pointer;font-family:'Exo 2',sans-serif;">Math Ops</button>
+        <button onclick="loadCSnippet('simulate')" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);border-radius:6px;padding:4px 11px;font-size:10px;font-weight:600;color:var(--teal-p);cursor:pointer;font-family:'Exo 2',sans-serif;">Simulate LED</button>
+        <button onclick="loadCSnippet('sensor')" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);border-radius:6px;padding:4px 11px;font-size:10px;font-weight:600;color:var(--teal-p);cursor:pointer;font-family:'Exo 2',sans-serif;">Sensor Sim</button>
+      </div>
+      <!-- EDITOR -->
+      <textarea id="c-code" spellcheck="false" autocorrect="off" autocapitalize="off" style="width:100%;min-height:240px;background:#040d1a;border:none;outline:none;color:#e2e8f0;font-family:'Fira Code',monospace;font-size:12.5px;line-height:1.75;padding:16px;resize:vertical;display:block;">#include &lt;stdio.h&gt;
+
+// Your first C program!
+// Write any C/C++ code here and click Run
+
+int main() {
+    printf("Hello from TechCamp!\n");
+    printf("Welcome to C programming.\n");
+
+    int x = 10;
+    int y = 25;
+    int sum = x + y;
+
+    printf("%d + %d = %d\n", x, y, sum);
+
+    return 0;
+}</textarea>
+      <!-- RUN BAR -->
+      <div style="display:flex;gap:10px;padding:10px 12px;border-top:1px solid rgba(255,255,255,0.05);align-items:center;">
+        <button id="c-run-btn" onclick="runCCode()" style="background:var(--teal);border:none;border-radius:8px;padding:9px 20px;font-family:'Exo 2',sans-serif;font-size:13px;font-weight:700;color:#fff;cursor:pointer;">▶ Run</button>
+        <button onclick="clearCOutput()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:9px 16px;font-family:'Exo 2',sans-serif;font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);cursor:pointer;">Clear</button>
+        <span id="c-status" style="font-size:10px;color:rgba(255,255,255,0.35);flex:1;">Click ▶ Run to compile and execute</span>
+      </div>
+      <!-- OUTPUT -->
+      <div style="border-top:1px solid rgba(6,182,212,0.1);">
+        <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(103,232,249,0.4);padding:8px 16px 4px;">Output</div>
+        <div id="c-output" style="font-family:'Fira Code',monospace;font-size:12.5px;color:#67e8f9;padding:10px 16px 16px;min-height:60px;white-space:pre-wrap;line-height:1.75;">Your output will appear here after clicking Run ▶</div>
+      </div>
+    </div>
+
+    <!-- TRY IT CHALLENGES -->
+    <div class="slide">
+      <div class="slide-tag">C Console · Challenges</div>
+      <div class="slide-title">🏋️ Try It Yourself — Coding Challenges</div>
+      <div class="slide-body"><p>Load the starter code for each challenge, edit it in the console above, and run it!</p></div>
+      <div class="terms-grid">
+        <div class="term">
+          <div class="term-word">Challenge 1 — Times Table</div>
+          <div class="term-def">Write a for loop that prints the times table for any number from 1 to 12. Start with the "For Loop" snippet and modify it. Output should look like: "5 × 1 = 5" through "5 × 12 = 60".</div>
+        </div>
+        <div class="term">
+          <div class="term-word">Challenge 2 — Grade Calculator</div>
+          <div class="term-def">Write a function called getGrade(int score) that returns a char grade (A, B, C, D, F). Call it with different scores and print the grade. Load the "Functions" snippet to start.</div>
+        </div>
+        <div class="term">
+          <div class="term-word">Challenge 3 — LED Blink Simulator</div>
+          <div class="term-def">Load the "Simulate LED" snippet. Modify it to blink 3 times fast (200ms), then pause 2 seconds, then blink 3 times slow (1000ms). Repeat 5 cycles total.</div>
+        </div>
+        <div class="term">
+          <div class="term-word">Challenge 4 — Sensor Range Check</div>
+          <div class="term-def">Load the "Sensor Sim" snippet. Add an if/else inside the loop: if distance < 10 print "DANGER!", if distance < 30 print "WARNING", else print "SAFE". Use the map formula to scale the value.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">C Console · Tips</div>
+      <div class="slide-title">💡 Console Tips</div>
+      <div class="terms-grid">
+        <div class="term"><div class="term-word">printf() vs cout</div><div class="term-def">Both work. printf() is C style — use %d for int, %f for float, %s for string, %c for char, \n for newline. cout is C++ style — use &lt;&lt; and endl.</div></div>
+        <div class="term"><div class="term-word">Arduino Functions Won't Work</div><div class="term-def">digitalWrite(), analogRead() etc. are Arduino-specific. In the console, simulate them with printf() showing what would happen: printf("Pin 13: HIGH\n");</div></div>
+        <div class="term"><div class="term-word">Compiler Errors</div><div class="term-def">If you see a red error — read it carefully. The line number is shown. Most errors: missing semicolons ;, wrong types, undeclared variables, mismatched braces {}.</div></div>
+        <div class="term"><div class="term-word">Return 0</div><div class="term-def">Every C main() function must end with return 0; — this tells the OS the program finished successfully. Forgetting it on some compilers causes a warning.</div></div>
+      </div>
+    </div>
+
+    <div class="lesson-nav">
+      <div class="nav-btn" onclick="showDay(6)">← Electronics</div>
+      <a class="nav-btn primary" href="week3.html">Week 3: Python →</a>
+    </div>
+  </div>
+
+  <footer>TechCamp Boot Camp · Week 2 · Arduino & C Programming · April 2026<br>
+    <span style="opacity:0.5;">Instructor: Gyamerah Afriyie Philimon</span>
+  </footer>
+</div>
+
+<script>
+  // ── Day navigation ──────────────────────────────────
+  function showDay(n) {
+    document.querySelectorAll('.lesson').forEach(l => l.classList.remove('active'));
+    document.querySelectorAll('.p-day').forEach(d => d.classList.remove('active'));
+    document.getElementById('day' + n).classList.add('active');
+    document.querySelectorAll('.p-day')[n - 1].classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── C/C++ Console via Wandbox API ────────────────────
+  async function runCCode() {
+    const code   = document.getElementById('c-code').value;
+    const output = document.getElementById('c-output');
+    const btn    = document.getElementById('c-run-btn');
+    const status = document.getElementById('c-status');
+
+    btn.disabled = true;
+    btn.textContent = '⏳ Compiling...';
+    status.textContent = 'Sending to GCC compiler...';
+    output.style.color = '#67e8f9';
+
+    try {
+      const res = await fetch('https://wandbox.org/api/compile.json', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          compiler: 'gcc-head',
+          code: code,
+          options: 'warning,gnu++17',
+          'compiler-option-raw': '-lm'
+        })
+      });
+
+      if (!res.ok) throw new Error('Wandbox server error: ' + res.status);
+
+      const data = await res.json();
+
+      if (data.program_output || data.program_error) {
+        const out = (data.program_output || '') + (data.program_error || '');
+        output.textContent = out || '(No output produced)';
+        output.style.color = data.program_error ? '#fca5a5' : '#67e8f9';
+        status.textContent = data.status == 0 ? '✅ Compiled & ran successfully' : '⚠ Ran with warnings/errors';
+      } else if (data.compiler_error) {
+        output.textContent = '❌ Compile Error:\n' + data.compiler_error;
+        output.style.color = '#fca5a5';
+        status.textContent = '❌ Compile failed — check your code';
+      } else {
+        output.textContent = '(No output — add printf() statements to see results)';
+        status.textContent = '✅ Ran successfully';
+      }
+    } catch(err) {
+      output.textContent = '❌ Network Error: ' + err.message + '\n\nCheck your internet connection.\nWandbox API requires internet access.';
+      output.style.color = '#fca5a5';
+      status.textContent = '❌ Could not reach compiler';
+    }
+
+    btn.disabled = false;
+    btn.textContent = '▶ Run';
+  }
+
+  function clearCOutput() {
+    document.getElementById('c-output').textContent = 'Cleared.';
+    document.getElementById('c-output').style.color = '#67e8f9';
+    document.getElementById('c-status').textContent = 'Click ▶ Run to compile and execute';
+  }
+
+  // ── C/C++ Snippets ────────────────────────────────────
+  const cSnippets = {
+    hello:
+`#include <stdio.h>
+
+int main() {
+    // printf prints to screen
+    // \\n = newline (go to next line)
+    printf("Hello, World!\\n");
+    printf("Welcome to TechCamp C Programming!\\n");
+    printf("This is line 3\\n");
+    return 0;
+}`,
+
+    variables:
+`#include <stdio.h>
+
+int main() {
+    // Declare variables with their TYPE first
+    int   ledPin     = 13;        // whole number
+    int   count      = 0;
+    float temperature = 36.5;     // decimal
+    bool  isOn       = true;      // true=1, false=0  (use 1/0 in C)
+    char  grade      = 'A';       // single character
+
+    // printf format codes:
+    // %d = int,  %f = float,  %c = char,  %s = string
+    printf("LED Pin: %d\\n", ledPin);
+    printf("Temp:    %.1f degrees\\n", temperature); // .1 = 1 decimal
+    printf("Is on:   %d\\n", isOn);
+    printf("Grade:   %c\\n", grade);
+
+    // Basic arithmetic
+    int a = 10, b = 3;
+    printf("Add:      %d\\n", a + b);
+    printf("Subtract: %d\\n", a - b);
+    printf("Multiply: %d\\n", a * b);
+    printf("Divide:   %.2f\\n", (float)a / b); // cast to float!
+    printf("Modulus:  %d\\n", a % b);  // remainder
+
+    return 0;
+}`,
+
+    ifelse:
+`#include <stdio.h>
+
+int main() {
+    int distance = 15;  // change this value and re-run!
+
+    printf("Distance: %d cm\\n", distance);
+
+    if (distance < 10) {
+        printf("Status: DANGER! Too close!\\n");
+    } else if (distance < 30) {
+        printf("Status: WARNING — getting close\\n");
+    } else if (distance < 100) {
+        printf("Status: OK — safe distance\\n");
+    } else {
+        printf("Status: CLEAR — far away\\n");
+    }
+
+    // Comparison operators:
+    // ==  equal to
+    // !=  not equal
+    // >   greater than
+    // <   less than
+    // >= greater or equal
+    // <= less or equal
+    // && AND (both conditions)
+    // || OR  (either condition)
+
+    int temp = 38;
+    int humidity = 80;
+
+    if (temp > 35 && humidity > 75) {
+        printf("Alert: Hot AND humid!\\n");
+    }
+
+    return 0;
+}`,
+
+    forloop:
+`#include <stdio.h>
+
+int main() {
+    // FOR LOOP structure:
+    // for (start; condition; increment) { body }
+
+    printf("-- Count 1 to 10 --\\n");
+    for (int i = 1; i <= 10; i++) {
+        printf("Count: %d\\n", i);
+    }
+
+    printf("\\n-- 7 Times Table --\\n");
+    for (int i = 1; i <= 12; i++) {
+        printf("7 x %2d = %2d\\n", i, 7 * i);
+    }
+
+    printf("\\n-- Simulating LED blink 5 times --\\n");
+    for (int blink = 1; blink <= 5; blink++) {
+        printf("Blink %d: LED ON  (delay 500ms)\\n", blink);
+        printf("Blink %d: LED OFF (delay 500ms)\\n", blink);
+    }
+
+    printf("\\n-- Even numbers 0 to 20 --\\n");
+    for (int n = 0; n <= 20; n += 2) {
+        printf("%d ", n);
+    }
+    printf("\\n");
+
+    return 0;
+}`,
+
+    whileloop:
+`#include <stdio.h>
+
+int main() {
+    // WHILE LOOP — runs while condition is true
+    printf("-- Countdown 10 to 0 --\\n");
+    int count = 10;
+    while (count >= 0) {
+        printf("T-minus: %d\\n", count);
+        count--;  // count = count - 1
+    }
+    printf("LAUNCH!\\n");
+
+    // Simulating a sensor reading loop
+    printf("\\n-- Sensor Reading Loop --\\n");
+    int reading = 0;
+    while (reading < 5) {
+        int sensorValue = (reading * 137 + 42) % 1023; // fake sensor
+        float voltage = (sensorValue / 1023.0) * 5.0;
+        printf("Reading %d: raw=%d  voltage=%.2fV\\n",
+               reading + 1, sensorValue, voltage);
+        reading++;
+    }
+
+    return 0;
+}`,
+
+    functions:
+`#include <stdio.h>
+
+// ── Define functions BEFORE main() ─────────────────
+
+// void = returns nothing
+void blinkLED(int pin, int times, int delayMs) {
+    printf("-- Blinking pin %d, %d times, %dms delay --\\n",
+           pin, times, delayMs);
+    for (int i = 0; i < times; i++) {
+        printf("  Blink %d: HIGH\\n", i + 1);
+        printf("  Blink %d: LOW (delay %dms)\\n", i + 1, delayMs);
+    }
+}
+
+// int = returns an integer
+int addNumbers(int a, int b) {
+    return a + b;
+}
+
+// float = returns a decimal
+float celsiusToFahrenheit(float c) {
+    return (c * 9.0 / 5.0) + 32.0;
+}
+
+// char = returns a character (grade)
+char getGrade(int score) {
+    if (score >= 80) return 'A';
+    if (score >= 70) return 'B';
+    if (score >= 60) return 'C';
+    if (score >= 50) return 'D';
+    return 'F';
+}
+
+int main() {
+    blinkLED(13, 3, 500);
+    blinkLED(12, 1, 100);
+
+    printf("\\n10 + 25 = %d\\n", addNumbers(10, 25));
+    printf("36.5C = %.1fF\\n", celsiusToFahrenheit(36.5));
+
+    int scores[] = {92, 75, 61, 48, 83};
+    printf("\\n-- Grades --\\n");
+    for (int i = 0; i < 5; i++) {
+        printf("Score %d → Grade %c\\n", scores[i], getGrade(scores[i]));
+    }
+
+    return 0;
+}`,
+
+    arrays:
+`#include <stdio.h>
+
+int main() {
+    // ARRAY — stores multiple values of the same type
+    // Declared as: type name[size] = {values};
+
+    int sensorReadings[5] = {45, 312, 789, 201, 567};
+    float temps[4] = {25.5, 27.3, 29.1, 26.8};
+    char letters[4] = {'A', 'B', 'C', 'D'};
+
+    // Access by index — starts at 0!
+    printf("First reading: %d\\n", sensorReadings[0]);
+    printf("Last reading:  %d\\n", sensorReadings[4]);
+
+    // Loop through array
+    printf("\\n-- All Sensor Readings --\\n");
+    for (int i = 0; i < 5; i++) {
+        float voltage = (sensorReadings[i] / 1023.0) * 5.0;
+        printf("  [%d] raw=%-4d  voltage=%.2fV\\n",
+               i, sensorReadings[i], voltage);
+    }
+
+    // Find min and max
+    int minVal = sensorReadings[0];
+    int maxVal = sensorReadings[0];
+    for (int i = 1; i < 5; i++) {
+        if (sensorReadings[i] < minVal) minVal = sensorReadings[i];
+        if (sensorReadings[i] > maxVal) maxVal = sensorReadings[i];
+    }
+    printf("\\nMin: %d  |  Max: %d\\n", minVal, maxVal);
+
+    return 0;
+}`,
+
+    math:
+`#include <stdio.h>
+#include <math.h>  // math library
+
+int main() {
+    printf("-- Math Operations --\\n");
+
+    // Basic
+    printf("10 + 3 = %d\\n",  10 + 3);
+    printf("10 - 3 = %d\\n",  10 - 3);
+    printf("10 * 3 = %d\\n",  10 * 3);
+    printf("10 / 3 = %d\\n",  10 / 3);   // integer division!
+    printf("10 / 3 = %.4f\\n", 10.0/3.0); // float division
+    printf("10 %% 3 = %d\\n", 10 % 3);    // modulus (remainder)
+
+    // Math.h functions
+    printf("\\n-- math.h Functions --\\n");
+    printf("sqrt(144)     = %.1f\\n", sqrt(144.0));
+    printf("pow(2, 10)    = %.0f\\n", pow(2, 10));
+    printf("abs(-42)      = %d\\n",   abs(-42));
+    printf("ceil(4.3)     = %.0f\\n", ceil(4.3));
+    printf("floor(4.9)    = %.0f\\n", floor(4.9));
+    printf("round(4.5)    = %.0f\\n", round(4.5));
+    printf("fabs(-3.14)   = %.2f\\n", fabs(-3.14));
+
+    // Arduino map() equivalent
+    printf("\\n-- map() Equivalent --\\n");
+    // map(value, inMin, inMax, outMin, outMax)
+    int sensorVal = 512;
+    int pwmVal = (sensorVal - 0) * (255 - 0) / (1023 - 0);
+    printf("Sensor 512 → PWM %d\\n", pwmVal);
+
+    // constrain equivalent
+    int raw = 300;
+    int constrained = raw < 0 ? 0 : (raw > 255 ? 255 : raw);
+    printf("constrain(300, 0, 255) = %d\\n", constrained);
+
+    return 0;
+}`,
+
+    simulate:
+`#include <stdio.h>
+
+// Simulating Arduino LED blink in standard C
+// In real Arduino: use digitalWrite() and delay()
+// Here: we print what WOULD happen on the board
+
+void simulateDigitalWrite(int pin, int value) {
+    const char* state = value ? "HIGH (LED ON  💡)" : "LOW  (LED OFF 🔴)";
+    printf("  Pin %d → %s\\n", pin, state);
+}
+
+void simulateDelay(int ms) {
+    printf("  [waiting %dms...]\\n", ms);
+}
+
+void blinkPattern(int pin, int onTime, int offTime, int times) {
+    printf("\\n▶ Blinking pin %d — %dms ON, %dms OFF, %d times\\n",
+           pin, onTime, offTime, times);
+    for (int i = 0; i < times; i++) {
+        simulateDigitalWrite(pin, 1);  // HIGH
+        simulateDelay(onTime);
+        simulateDigitalWrite(pin, 0);  // LOW
+        simulateDelay(offTime);
+    }
+}
+
+int main() {
+    printf("=== Arduino LED Simulator ===\\n");
+
+    // Simulate setup()
+    printf("\\n[setup()]\\n");
+    printf("  pinMode(13, OUTPUT) — configured\\n");
+    printf("  Serial.begin(9600) — Serial started\\n");
+
+    // Simulate a few loop() cycles
+    printf("\\n[loop() — 3 cycles]\\n");
+
+    blinkPattern(13, 1000, 1000, 3);   // 3 slow blinks
+    blinkPattern(13, 100, 100, 5);    // 5 fast blinks
+
+    printf("\\n✅ Simulation complete!\\n");
+    printf("Upload the equivalent code to Arduino to see it for real.\\n");
+
+    return 0;
+}`,
+
+    sensor:
+`#include <stdio.h>
+
+// Simulating sensor readings and distance calculations
+// This is the LOGIC you'd put in an Arduino sketch
+
+// Simulate analogRead() returning 0-1023
+int fakeAnalogRead(int step) {
+    // fake a changing sensor value
+    int values[] = {0, 128, 256, 512, 768, 900, 1023, 600, 300, 100};
+    return values[step % 10];
+}
+
+// Convert raw analog value to voltage (0-5V)
+float rawToVoltage(int raw) {
+    return (raw / 1023.0) * 5.0;
+}
+
+// Arduino map() function equivalent
+int mapValue(int val, int inMin, int inMax, int outMin, int outMax) {
+    return (val - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+}
+
+// Simulated ultrasonic distance calculation
+float calcDistance(long duration) {
+    // duration in microseconds
+    // speed of sound = 0.034 cm/microsecond
+    // divide by 2 because sound travels TO target and BACK
+    return duration * 0.034 / 2.0;
+}
+
+int main() {
+    printf("=== Sensor Simulation ===\\n\\n");
+
+    // Potentiometer readings
+    printf("-- Potentiometer (A0) --\\n");
+    printf("  %-5s  %-8s  %-8s  %-6s\\n",
+           "Step", "Raw", "Voltage", "PWM");
+    for (int step = 0; step < 10; step++) {
+        int raw  = fakeAnalogRead(step);
+        float v  = rawToVoltage(raw);
+        int pwm  = mapValue(raw, 0, 1023, 0, 255);
+        printf("  %-5d  %-8d  %-8.2fV  %-6d\\n", step, raw, v, pwm);
+    }
+
+    // Ultrasonic distance
+    printf("\\n-- Ultrasonic HC-SR04 --\\n");
+    long durations[] = {500, 1200, 2500, 4800, 8000};
+    for (int i = 0; i < 5; i++) {
+        float dist = calcDistance(durations[i]);
+        const char* status =
+            dist < 10 ? "⚠ DANGER!" :
+            dist < 30 ? "WARNING" : "SAFE";
+        printf("  duration=%4ldµs → %.1f cm → %s\\n",
+               durations[i], dist, status);
+    }
+
+    return 0;
+}`
+  };
+
+  function loadCSnippet(name) {
+    document.getElementById('c-code').value = cSnippets[name];
+    showDay(7);
+    document.getElementById('c-output').textContent = 'Snippet loaded — click ▶ Run to compile!';
+    document.getElementById('c-output').style.color = '#67e8f9';
+  }
+</script>
+</body>
+</html>
+</html>

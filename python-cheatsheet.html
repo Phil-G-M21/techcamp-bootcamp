@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Cheat Sheet — TechCamp</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green:#22c55e; --green-l:#4ade80; --green-p:#86efac;
+    --dark:#020e2e; --sky:#0ea5e9;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--dark); font-family:'Exo 2',sans-serif; color:#fff; min-height:100vh; }
+
+  .grid-bg { position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:linear-gradient(rgba(34,197,94,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(34,197,94,0.03) 1px,transparent 1px);
+    background-size:32px 32px; }
+  .blob { position:fixed; border-radius:50%; filter:blur(90px); pointer-events:none; z-index:0; }
+  .b1 { width:300px;height:300px; background:rgba(34,197,94,0.12); top:-60px; right:-60px; }
+  .b2 { width:250px;height:250px; background:rgba(14,165,233,0.08); bottom:0; left:-50px; }
+
+  .wrap { position:relative; z-index:1; max-width:800px; margin:0 auto; padding:28px 16px 60px; }
+
+  /* HEADER */
+  .header { text-align:center; margin-bottom:36px; }
+  .header-top { display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:10px; }
+  .snake { font-size:36px; filter:drop-shadow(0 0 16px rgba(34,197,94,0.6)); }
+  .header-title { font-family:'Orbitron',monospace; font-weight:900; font-size:24px; color:#fff; text-shadow:0 0 30px rgba(34,197,94,0.4); }
+  .header-sub { font-size:12px; font-weight:300; color:rgba(255,255,255,0.45); letter-spacing:2px; text-transform:uppercase; margin-top:4px; }
+
+  /* PRINT + BACK BTNS */
+  .action-bar { display:flex; gap:10px; justify-content:center; margin-bottom:28px; flex-wrap:wrap; }
+  .action-btn { text-decoration:none; display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.06); border:1px solid rgba(34,197,94,0.2); border-radius:8px; padding:8px 16px; font-size:12px; font-weight:700; color:var(--green-p); cursor:pointer; font-family:'Exo 2',sans-serif; }
+  .action-btn.primary { background:rgba(34,197,94,0.15); border-color:rgba(34,197,94,0.4); }
+  .action-btn:hover { background:rgba(34,197,94,0.2); }
+
+  /* SEARCH */
+  .search-bar { display:flex; gap:8px; margin-bottom:24px; }
+  #search-input { flex:1; background:rgba(255,255,255,0.06); border:1px solid rgba(34,197,94,0.2); border-radius:8px; padding:10px 16px; font-family:'Exo 2',sans-serif; font-size:13px; color:#fff; outline:none; }
+  #search-input::placeholder { color:rgba(255,255,255,0.3); }
+  #search-input:focus { border-color:rgba(34,197,94,0.5); }
+
+  /* SECTION FILTERS */
+  .filters { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:22px; }
+  .filter-btn { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:20px; padding:5px 14px; font-size:10px; font-weight:700; color:rgba(255,255,255,0.5); cursor:pointer; letter-spacing:1px; text-transform:uppercase; font-family:'Exo 2',sans-serif; transition:all 0.2s; }
+  .filter-btn.active, .filter-btn:hover { background:rgba(34,197,94,0.15); border-color:rgba(34,197,94,0.4); color:var(--green-p); }
+
+  /* SECTION */
+  .section { margin-bottom:28px; display:block; }
+  .section.hidden { display:none; }
+  .section-header { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .section-icon { font-size:20px; }
+  .section-title { font-family:'Orbitron',monospace; font-size:13px; font-weight:700; color:var(--green-l); letter-spacing:1px; }
+  .section-line { flex:1; height:1px; background:linear-gradient(90deg,rgba(34,197,94,0.3),transparent); }
+
+  /* CARDS GRID */
+  .cards { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .cards.single { grid-template-columns:1fr; }
+  @media(max-width:520px){ .cards { grid-template-columns:1fr; } }
+
+  /* CARD */
+  .card { background:rgba(255,255,255,0.05); border:1px solid rgba(34,197,94,0.12); border-radius:10px; padding:14px; position:relative; overflow:hidden; }
+  .card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--green),transparent); }
+  .card-label { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(134,239,172,0.55); margin-bottom:6px; }
+  .card-title { font-size:12.5px; font-weight:700; color:#fff; margin-bottom:8px; }
+
+  /* CODE in cards */
+  .c { font-family:'Fira Code',monospace; font-size:11.5px; line-height:1.75; display:block; }
+  .c .kw { color:#4ade80; }
+  .c .str { color:#fbbf24; }
+  .c .cm { color:#4b5563; }
+  .c .num { color:#f472b6; }
+  .c .fn { color:#60a5fa; }
+  .c .bi { color:#67e8f9; }
+
+  .code-block-mini { background:#040d1a; border:1px solid rgba(34,197,94,0.15); border-radius:8px; padding:10px 12px; margin-top:6px; overflow-x:auto; }
+
+  /* INLINE BADGE */
+  .badge { display:inline-block; background:rgba(34,197,94,0.15); border:1px solid rgba(34,197,94,0.25); border-radius:4px; padding:1px 6px; font-family:'Fira Code',monospace; font-size:10.5px; color:var(--green-p); }
+  .badge.red { background:rgba(239,68,68,0.12); border-color:rgba(239,68,68,0.25); color:#fca5a5; }
+  .badge.blue { background:rgba(96,165,250,0.12); border-color:rgba(96,165,250,0.25); color:#93c5fd; }
+
+  /* QUICK REF TABLE */
+  .ref-table { width:100%; border-collapse:collapse; font-size:11.5px; }
+  .ref-table th { background:rgba(34,197,94,0.1); color:var(--green-p); font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:7px 10px; text-align:left; }
+  .ref-table td { padding:7px 10px; border-bottom:1px solid rgba(255,255,255,0.04); color:rgba(255,255,255,0.7); vertical-align:top; }
+  .ref-table td:first-child { font-family:'Fira Code',monospace; color:#4ade80; white-space:nowrap; }
+  .ref-table tr:hover td { background:rgba(255,255,255,0.02); }
+
+  /* TIP */
+  .tip { background:rgba(34,197,94,0.07); border:1px solid rgba(34,197,94,0.2); border-radius:8px; padding:10px 14px; font-size:11.5px; color:rgba(134,239,172,0.8); margin-top:8px; display:flex; gap:8px; align-items:flex-start; line-height:1.55; }
+  .warn { background:rgba(251,191,36,0.07); border:1px solid rgba(251,191,36,0.2); border-radius:8px; padding:10px 14px; font-size:11.5px; color:rgba(253,230,138,0.8); margin-top:8px; display:flex; gap:8px; align-items:flex-start; line-height:1.55; }
+
+  /* FOOTER */
+  .footer { text-align:center; margin-top:32px; font-size:11px; color:rgba(255,255,255,0.2); line-height:1.8; }
+
+  /* PRINT STYLES */
+  @media print {
+    body { background:#fff !important; color:#000 !important; }
+    .grid-bg, .blob, .action-bar, .filters, .search-bar { display:none !important; }
+    .wrap { max-width:100%; padding:10px; }
+    .card { border:1px solid #ccc; background:#f9f9f9 !important; break-inside:avoid; }
+    .code-block-mini { background:#f0f0f0 !important; border:1px solid #ddd; }
+    .c { color:#000 !important; }
+    .c .kw { color:#007700 !important; }
+    .c .str { color:#aa4400 !important; }
+    .c .num { color:#0000aa !important; }
+    .c .fn { color:#0000cc !important; }
+    .c .cm { color:#888 !important; }
+    .ref-table td, .ref-table th { border:1px solid #ccc; }
+    .section-title { color:#006600 !important; }
+    .card-title { color:#000 !important; }
+    .card-label { color:#555 !important; }
+    .header-title { color:#000 !important; }
+    .tip, .warn { border:1px solid #999; background:#f5f5f5 !important; color:#333 !important; }
+    .badge { border:1px solid #999; background:#eee !important; color:#333 !important; }
+  }
+</style>
+</head>
+<body>
+<script>if(sessionStorage.getItem("tc_auth")!=="true"){window.location.replace("index.html");}</script>
+<div class="grid-bg"></div>
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <span class="snake">🐍</span>
+      <span class="header-title">Python Cheat Sheet</span>
+    </div>
+    <div class="header-sub">TechCamp Boot Camp · April 2026 · Quick Reference</div>
+  </div>
+
+  <!-- ACTION BUTTONS -->
+  <div class="action-bar">
+    <a class="action-btn" href="week3.html">← Back to Week 3</a>
+    <button class="action-btn primary" onclick="window.print()">🖨️ Print / Save as PDF</button>
+    <a class="action-btn" href="index.html">🏠 Hub</a>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-bar">
+    <input type="text" id="search-input" placeholder="🔍  Search anything... e.g. 'list', 'for loop', 'function'..." oninput="filterCards()">
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters">
+    <button class="filter-btn active" onclick="filterSection('all',this)">All</button>
+    <button class="filter-btn" onclick="filterSection('basics',this)">Basics</button>
+    <button class="filter-btn" onclick="filterSection('strings',this)">Strings</button>
+    <button class="filter-btn" onclick="filterSection('lists',this)">Lists & Data</button>
+    <button class="filter-btn" onclick="filterSection('control',this)">Control Flow</button>
+    <button class="filter-btn" onclick="filterSection('functions',this)">Functions</button>
+    <button class="filter-btn" onclick="filterSection('files',this)">Files & Errors</button>
+    <button class="filter-btn" onclick="filterSection('modules',this)">Modules</button>
+    <button class="filter-btn" onclick="filterSection('builtins',this)">Built-ins</button>
+  </div>
+
+  <!-- ══════════════ 1. BASICS ══════════════ -->
+  <div class="section" data-cat="basics">
+    <div class="section-header">
+      <span class="section-icon">📦</span>
+      <span class="section-title">Variables & Data Types</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="cards">
+      <div class="card" data-search="variable types int float bool string">
+        <div class="card-label">Data Types</div>
+        <div class="code-block-mini"><code class="c">
+<span class="cm"># No type declaration needed — Python figures it out</span>
+name    = <span class="str">"Kwame"</span>       <span class="cm"># str  — text</span>
+age     = <span class="num">21</span>            <span class="cm"># int  — whole number</span>
+temp    = <span class="num">36.5</span>          <span class="cm"># float — decimal</span>
+active  = <span class="kw">True</span>          <span class="cm"># bool — True or False</span>
+nothing = <span class="kw">None</span>          <span class="cm"># NoneType — no value</span>
+<span class="cm"># Check type:</span>
+<span class="fn">print</span>(<span class="bi">type</span>(age))        <span class="cm"># &lt;class 'int'&gt;</span>
+        </code></div>
+      </div>
+
+      <div class="card" data-search="print output fstring format">
+        <div class="card-label">Output & f-strings</div>
+        <div class="code-block-mini"><code class="c">
+name = <span class="str">"Ama"</span>; age = <span class="num">20</span>
+<span class="fn">print</span>(<span class="str">"Hello"</span>)
+<span class="fn">print</span>(<span class="str">"Name:"</span>, name)
+<span class="fn">print</span>(<span class="str">f"Hi {name}, you are {age}"</span>)
+<span class="fn">print</span>(<span class="str">f"{age + 1} next year"</span>)
+<span class="fn">print</span>(<span class="str">f"{<span class="num">3.14159</span>:.2f}"</span>)      <span class="cm"># 3.14 (2 decimals)</span>
+<span class="fn">print</span>(<span class="str">f"{'hello':>10}"</span>)     <span class="cm"># right-align 10 chars</span>
+<span class="fn">print</span>(<span class="str">f"{'hi':<10}"</span>)      <span class="cm"># left-align 10 chars</span>
+        </code></div>
+      </div>
+
+      <div class="card" data-search="input user keyboard int float">
+        <div class="card-label">User Input</div>
+        <div class="code-block-mini"><code class="c">
+name = <span class="fn">input</span>(<span class="str">"Your name: "</span>)    <span class="cm"># always a string</span>
+age  = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Age: "</span>))  <span class="cm"># convert to int</span>
+temp = <span class="fn">float</span>(<span class="fn">input</span>(<span class="str">"Temp: "</span>)) <span class="cm"># convert to float</span>
+<span class="cm"># Safe input with error handling:</span>
+<span class="kw">try</span>:
+    n = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Number: "</span>))
+<span class="kw">except</span> ValueError:
+    <span class="fn">print</span>(<span class="str">"That's not a number!"</span>)
+        </code></div>
+      </div>
+
+      <div class="card" data-search="arithmetic math operators add subtract multiply divide modulus power">
+        <div class="card-label">Arithmetic Operators</div>
+        <div class="code-block-mini"><code class="c">
+<span class="num">10</span> + <span class="num">3</span>   <span class="cm"># 13   addition</span>
+<span class="num">10</span> - <span class="num">3</span>   <span class="cm"># 7    subtraction</span>
+<span class="num">10</span> * <span class="num">3</span>   <span class="cm"># 30   multiplication</span>
+<span class="num">10</span> / <span class="num">3</span>   <span class="cm"># 3.333 division (always float)</span>
+<span class="num">10</span> // <span class="num">3</span>  <span class="cm"># 3    floor division (no decimal)</span>
+<span class="num">10</span> % <span class="num">3</span>   <span class="cm"># 1    modulus (remainder)</span>
+<span class="num">10</span> ** <span class="num">3</span>  <span class="cm"># 1000 power (10 cubed)</span>
+x += <span class="num">5</span>   <span class="cm"># x = x + 5  (shorthand)</span>
+x -= <span class="num">2</span>   <span class="cm"># x = x - 2</span>
+x *= <span class="num">3</span>   <span class="cm"># x = x * 3</span>
+        </code></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ 2. STRINGS ══════════════ -->
+  <div class="section" data-cat="strings">
+    <div class="section-header">
+      <span class="section-icon">📝</span>
+      <span class="section-title">Strings</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="cards">
+      <div class="card" data-search="string methods upper lower strip replace split">
+        <div class="card-label">String Methods</div>
+        <div class="code-block-mini"><code class="c">
+s = <span class="str">"  Hello, World!  "</span>
+s.upper()        <span class="cm"># "  HELLO, WORLD!  "</span>
+s.lower()        <span class="cm"># "  hello, world!  "</span>
+s.strip()        <span class="cm"># "Hello, World!"</span>
+s.strip().lower() <span class="cm"># "hello, world!"</span>
+s.replace(<span class="str">"World"</span>, <span class="str">"TechCamp"</span>)
+s.split(<span class="str">","</span>)     <span class="cm"># ["  Hello", " World!  "]</span>
+s.startswith(<span class="str">"  Hello"</span>)   <span class="cm"># True</span>
+s.endswith(<span class="str">"!"</span>)           <span class="cm"># True (after strip)</span>
+s.count(<span class="str">"l"</span>)             <span class="cm"># 3</span>
+s.find(<span class="str">"World"</span>)           <span class="cm"># 9 (index)</span>
+        </code></div>
+      </div>
+
+      <div class="card" data-search="string slicing index substring">
+        <div class="card-label">Slicing & Indexing</div>
+        <div class="code-block-mini"><code class="c">
+s = <span class="str">"TechCamp"</span>
+s[<span class="num">0</span>]      <span class="cm"># "T"   (first char)</span>
+s[-<span class="num">1</span>]     <span class="cm"># "p"   (last char)</span>
+s[<span class="num">0</span>:<span class="num">4</span>]    <span class="cm"># "Tech" (chars 0,1,2,3)</span>
+s[<span class="num">4</span>:]     <span class="cm"># "Camp" (from 4 to end)</span>
+s[:<span class="num">4</span>]     <span class="cm"># "Tech" (from start to 3)</span>
+s[::-<span class="num">1</span>]   <span class="cm"># "pmaCcheT" (reversed)</span>
+<span class="bi">len</span>(s)    <span class="cm"># 8   (length)</span>
+<span class="str">"Tech"</span> <span class="kw">in</span> s  <span class="cm"># True (substring check)</span>
+<span class="str">"-"</span>.join([<span class="str">"a"</span>,<span class="str">"b"</span>,<span class="str">"c"</span>]) <span class="cm"># "a-b-c"</span>
+        </code></div>
+      </div>
+
+      <div class="card" data-search="multiline string triple quote">
+        <div class="card-label">Multi-line Strings</div>
+        <div class="code-block-mini"><code class="c">
+text = <span class="str">"""This is
+a multi-line
+string."""</span>
+<span class="cm"># Raw string (no escape processing):</span>
+path = <span class="str">r"C:\Users\Name\file.txt"</span>
+<span class="cm"># Escape characters:</span>
+<span class="cm"># \n = newline</span>
+<span class="cm"># \t = tab</span>
+<span class="cm"># \\ = backslash</span>
+<span class="cm"># \" = quote inside string</span>
+        </code></div>
+      </div>
+
+      <div class="card" data-search="string format number decimal percent">
+        <div class="card-label">Number Formatting</div>
+        <div class="code-block-mini"><code class="c">
+pi = <span class="num">3.14159265</span>
+<span class="fn">print</span>(<span class="str">f"{pi:.2f}"</span>)    <span class="cm"># 3.14</span>
+<span class="fn">print</span>(<span class="str">f"{pi:.4f}"</span>)    <span class="cm"># 3.1416</span>
+<span class="fn">print</span>(<span class="str">f"{<span class="num">1234567</span>:,}"</span>) <span class="cm"># 1,234,567</span>
+<span class="fn">print</span>(<span class="str">f"{<span class="num">0.75</span>:.0%}"</span>)  <span class="cm"># 75%</span>
+<span class="fn">print</span>(<span class="str">f"{<span class="num">42</span>:05d}"</span>)    <span class="cm"># 00042 (zero-padded)</span>
+<span class="fn">print</span>(<span class="str">f"{<span class="num">255</span>:b}"</span>)     <span class="cm"># 11111111 (binary)</span>
+<span class="fn">print</span>(<span class="str">f"{<span class="num">255</span>:x}"</span>)     <span class="cm"># ff (hexadecimal)</span>
+        </code></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ 3. LISTS & DATA STRUCTURES ══════════════ -->
+  <div class="section" data-cat="lists">
+    <div class="section-header">
+      <span class="section-icon">📋</span>
+      <span class="section-title">Lists, Tuples, Dicts & Sets</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="cards">
+      <div class="card" data-search="list append remove pop sort reverse index len">
+        <div class="card-label">Lists</div>
+        <div class="code-block-mini"><code class="c">
+nums = [<span class="num">3</span>, <span class="num">1</span>, <span class="num">4</span>, <span class="num">1</span>, <span class="num">5</span>]
+nums.append(<span class="num">9</span>)      <span class="cm"># add to end</span>
+nums.insert(<span class="num">0</span>, <span class="num">0</span>)   <span class="cm"># insert at index 0</span>
+nums.remove(<span class="num">1</span>)      <span class="cm"># remove first 1</span>
+nums.pop()          <span class="cm"># remove & return last</span>
+nums.pop(<span class="num">0</span>)         <span class="cm"># remove & return index 0</span>
+nums.sort()         <span class="cm"># sort ascending</span>
+nums.sort(reverse=<span class="kw">True</span>) <span class="cm"># sort descending</span>
+nums.reverse()      <span class="cm"># reverse in place</span>
+nums.index(<span class="num">5</span>)      <span class="cm"># find index of 5</span>
+nums.count(<span class="num">1</span>)       <span class="cm"># count occurrences of 1</span>
+<span class="bi">len</span>(nums)           <span class="cm"># number of items</span>
+<span class="bi">sum</span>(nums)           <span class="cm"># sum of all numbers</span>
+<span class="bi">min</span>(nums); <span class="bi">max</span>(nums) <span class="cm"># min and max value</span>
+        </code></div>
+      </div>
+
+      <div class="card" data-search="dictionary dict key value update get items">
+        <div class="card-label">Dictionaries</div>
+        <div class="code-block-mini"><code class="c">
+student = {<span class="str">"name"</span>:<span class="str">"Kofi"</span>, <span class="str">"age"</span>:<span class="num">20</span>}
+student[<span class="str">"name"</span>]         <span class="cm"># "Kofi"</span>
+student.get(<span class="str">"city"</span>, <span class="str">"N/A"</span>) <span class="cm"># safe get</span>
+student[<span class="str">"city"</span>] = <span class="str">"Accra"</span> <span class="cm"># add key</span>
+student.update({<span class="str">"age"</span>:<span class="num">21</span>}) <span class="cm"># update</span>
+<span class="kw">del</span> student[<span class="str">"city"</span>]       <span class="cm"># delete key</span>
+student.keys()            <span class="cm"># all keys</span>
+student.values()          <span class="cm"># all values</span>
+student.items()           <span class="cm"># key-value pairs</span>
+<span class="str">"name"</span> <span class="kw">in</span> student         <span class="cm"># True (key check)</span>
+student.pop(<span class="str">"age"</span>)        <span class="cm"># remove & return</span>
+        </code></div>
+      </div>
+
+      <div class="card" data-search="tuple immutable">
+        <div class="card-label">Tuples (immutable lists)</div>
+        <div class="code-block-mini"><code class="c">
+point = (<span class="num">10</span>, <span class="num">20</span>)     <span class="cm"># cannot change after creation</span>
+x, y = point        <span class="cm"># unpack into variables</span>
+point[<span class="num">0</span>]            <span class="cm"># 10 (access by index)</span>
+<span class="bi">len</span>(point)          <span class="cm"># 2</span>
+<span class="cm"># Use tuples for: coordinates, RGB colours,</span>
+<span class="cm"># function returning multiple values</span>
+<span class="kw">def</span> <span class="fn">minmax</span>(lst):
+    <span class="kw">return</span> <span class="bi">min</span>(lst), <span class="bi">max</span>(lst)  <span class="cm"># returns tuple</span>
+lo, hi = <span class="fn">minmax</span>([<span class="num">3</span>,<span class="num">1</span>,<span class="num">4</span>,<span class="num">1</span>,<span class="num">5</span>])
+        </code></div>
+      </div>
+
+      <div class="card" data-search="set unique union intersection">
+        <div class="card-label">Sets (unique values)</div>
+        <div class="code-block-mini"><code class="c">
+a = {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">3</span>}   <span class="cm"># {1, 2, 3} — duplicates removed</span>
+b = {<span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>}
+a | b    <span class="cm"># {1,2,3,4}  — union</span>
+a & b    <span class="cm"># {2,3}      — intersection</span>
+a - b    <span class="cm"># {1}        — difference</span>
+a.add(<span class="num">5</span>)
+a.remove(<span class="num">1</span>)
+<span class="bi">len</span>(a)
+<span class="num">3</span> <span class="kw">in</span> a   <span class="cm"># True</span>
+<span class="cm"># Turn list to set to remove duplicates:</span>
+unique = <span class="bi">list</span>(<span class="bi">set</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">2</span>,<span class="num">3</span>]))
+        </code></div>
+      </div>
+
+      <div class="card" data-search="list comprehension">
+        <div class="card-label">List Comprehensions</div>
+        <div class="code-block-mini"><code class="c">
+<span class="cm"># Short way to create lists</span>
+squares = [x**<span class="num">2</span> <span class="kw">for</span> x <span class="kw">in</span> <span class="bi">range</span>(<span class="num">1</span>,<span class="num">6</span>)]
+<span class="cm"># [1, 4, 9, 16, 25]</span>
+
+evens = [x <span class="kw">for</span> x <span class="kw">in</span> <span class="bi">range</span>(<span class="num">20</span>) <span class="kw">if</span> x % <span class="num">2</span> == <span class="num">0</span>]
+<span class="cm"># [0, 2, 4, 6, ... 18]</span>
+
+words = [<span class="str">"hi"</span>, <span class="str">"hello"</span>, <span class="str">"hey"</span>]
+upper = [w.upper() <span class="kw">for</span> w <span class="kw">in</span> words]
+<span class="cm"># ["HI", "HELLO", "HEY"]</span>
+        </code></div>
+      </div>
+
+      <div class="card" data-search="zip enumerate range">
+        <div class="card-label">zip, enumerate, range</div>
+        <div class="code-block-mini"><code class="c">
+<span class="cm"># range()</span>
+<span class="bi">range</span>(<span class="num">5</span>)        <span class="cm"># 0,1,2,3,4</span>
+<span class="bi">range</span>(<span class="num">1</span>,<span class="num">6</span>)      <span class="cm"># 1,2,3,4,5</span>
+<span class="bi">range</span>(<span class="num">0</span>,<span class="num">10</span>,<span class="num">2</span>)   <span class="cm"># 0,2,4,6,8 (step 2)</span>
+<span class="cm"># enumerate() — get index AND value</span>
+<span class="kw">for</span> i, val <span class="kw">in</span> <span class="bi">enumerate</span>([<span class="str">"a"</span>,<span class="str">"b"</span>], <span class="num">1</span>):
+    <span class="fn">print</span>(i, val)  <span class="cm"># 1 a,  2 b</span>
+<span class="cm"># zip() — loop two lists together</span>
+names = [<span class="str">"Ama"</span>,<span class="str">"Kofi"</span>]; scores = [<span class="num">85</span>,<span class="num">92</span>]
+<span class="kw">for</span> n, s <span class="kw">in</span> <span class="bi">zip</span>(names, scores):
+    <span class="fn">print</span>(<span class="str">f"{n}: {s}"</span>)
+        </code></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ 4. CONTROL FLOW ══════════════ -->
+  <div class="section" data-cat="control">
+    <div class="section-header">
+      <span class="section-icon">🔀</span>
+      <span class="section-title">Control Flow</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="cards">
+      <div class="card" data-search="if elif else condition comparison">
+        <div class="card-label">If / Elif / Else</div>
+        <div class="code-block-mini"><code class="c">
+score = <span class="num">75</span>
+<span class="kw">if</span> score >= <span class="num">80</span>:
+    <span class="fn">print</span>(<span class="str">"A"</span>)
+<span class="kw">elif</span> score >= <span class="num">70</span>:
+    <span class="fn">print</span>(<span class="str">"B"</span>)     <span class="cm"># ← this one runs</span>
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">"C or below"</span>)
+<span class="cm"># One-liner (ternary):</span>
+grade = <span class="str">"Pass"</span> <span class="kw">if</span> score >= <span class="num">50</span> <span class="kw">else</span> <span class="str">"Fail"</span>
+<span class="cm"># Comparison operators:</span>
+<span class="cm"># ==  !=  >  <  >=  <=</span>
+<span class="cm"># and  or  not  in  not in  is  is not</span>
+        </code></div>
+      </div>
+
+      <div class="card" data-search="for loop range iterate">
+        <div class="card-label">For Loops</div>
+        <div class="code-block-mini"><code class="c">
+<span class="cm"># Loop n times</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(<span class="num">5</span>):        <span class="cm"># 0 to 4</span>
+    <span class="fn">print</span>(i)
+
+<span class="cm"># Loop through list</span>
+<span class="kw">for</span> name <span class="kw">in</span> [<span class="str">"Ama"</span>, <span class="str">"Kofi"</span>]:
+    <span class="fn">print</span>(name)
+
+<span class="cm"># Loop through dict</span>
+d = {<span class="str">"a"</span>:<span class="num">1</span>, <span class="str">"b"</span>:<span class="num">2</span>}
+<span class="kw">for</span> key, val <span class="kw">in</span> d.items():
+    <span class="fn">print</span>(key, val)
+
+<span class="cm"># Loop through string chars</span>
+<span class="kw">for</span> ch <span class="kw">in</span> <span class="str">"Python"</span>:
+    <span class="fn">print</span>(ch)
+        </code></div>
+      </div>
+
+      <div class="card" data-search="while loop break continue">
+        <div class="card-label">While + break / continue</div>
+        <div class="code-block-mini"><code class="c">
+<span class="kw">while</span> <span class="kw">True</span>:             <span class="cm"># loop forever</span>
+    x = <span class="fn">input</span>(<span class="str">"Enter: "</span>)
+    <span class="kw">if</span> x == <span class="str">"quit"</span>:
+        <span class="kw">break</span>           <span class="cm"># exit loop immediately</span>
+    <span class="kw">if</span> x == <span class="str">""</span>:
+        <span class="kw">continue</span>        <span class="cm"># skip this iteration</span>
+    <span class="fn">print</span>(<span class="str">f"You typed: {x}"</span>)
+
+<span class="cm"># Loop with else (runs if loop didn't break):</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(<span class="num">5</span>):
+    <span class="kw">if</span> i == <span class="num">10</span>: <span class="kw">break</span>
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">"Loop finished without break"</span>)
+        </code></div>
+      </div>
+
+      <div class="card" data-search="match case switch">
+        <div class="card-label">Match / Case (Python 3.10+)</div>
+        <div class="code-block-mini"><code class="c">
+day = <span class="str">"Monday"</span>
+<span class="kw">match</span> day:
+    <span class="kw">case</span> <span class="str">"Monday"</span> | <span class="str">"Tuesday"</span>:
+        <span class="fn">print</span>(<span class="str">"Early week"</span>)
+    <span class="kw">case</span> <span class="str">"Friday"</span>:
+        <span class="fn">print</span>(<span class="str">"TGIF!"</span>)
+    <span class="kw">case</span> _:          <span class="cm"># default (like else)</span>
+        <span class="fn">print</span>(<span class="str">"Mid-week"</span>)
+<span class="cm"># Like switch/case in other languages</span>
+        </code></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ 5. FUNCTIONS ══════════════ -->
+  <div class="section" data-cat="functions">
+    <div class="section-header">
+      <span class="section-icon">🧩</span>
+      <span class="section-title">Functions</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="cards">
+      <div class="card" data-search="def function define parameters return">
+        <div class="card-label">Defining Functions</div>
+        <div class="code-block-mini"><code class="c">
+<span class="cm"># Basic function</span>
+<span class="kw">def</span> <span class="fn">greet</span>(name):
+    <span class="fn">print</span>(<span class="str">f"Hello {name}!"</span>)
+
+<span class="cm"># Function with return value</span>
+<span class="kw">def</span> <span class="fn">add</span>(a, b):
+    <span class="kw">return</span> a + b
+
+<span class="cm"># Default parameter</span>
+<span class="kw">def</span> <span class="fn">power</span>(base, exp=<span class="num">2</span>):
+    <span class="kw">return</span> base ** exp
+
+<span class="fn">power</span>(<span class="num">5</span>)      <span class="cm"># 25 (uses default exp=2)</span>
+<span class="fn">power</span>(<span class="num">2</span>, <span class="num">10</span>)  <span class="cm"># 1024</span>
+
+<span class="cm"># Return multiple values (as tuple)</span>
+<span class="kw">def</span> <span class="fn">stats</span>(lst):
+    <span class="kw">return</span> <span class="bi">min</span>(lst), <span class="bi">max</span>(lst), <span class="bi">sum</span>(lst)
+lo, hi, total = <span class="fn">stats</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>])
+        </code></div>
+      </div>
+
+      <div class="card" data-search="args kwargs variable arguments">
+        <div class="card-label">*args & **kwargs</div>
+        <div class="code-block-mini"><code class="c">
+<span class="cm"># *args — accept any number of positional args</span>
+<span class="kw">def</span> <span class="fn">total</span>(*nums):
+    <span class="kw">return</span> <span class="bi">sum</span>(nums)
+<span class="fn">total</span>(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>)   <span class="cm"># 10</span>
+
+<span class="cm"># **kwargs — accept any keyword arguments</span>
+<span class="kw">def</span> <span class="fn">info</span>(**details):
+    <span class="kw">for</span> k, v <span class="kw">in</span> details.items():
+        <span class="fn">print</span>(<span class="str">f"{k}: {v}"</span>)
+<span class="fn">info</span>(name=<span class="str">"Ama"</span>, age=<span class="num">20</span>, city=<span class="str">"Kumasi"</span>)
+
+<span class="cm"># Lambda — one-line anonymous function</span>
+square = <span class="kw">lambda</span> x: x**<span class="num">2</span>
+<span class="fn">print</span>(<span class="fn">square</span>(<span class="num">5</span>))   <span class="cm"># 25</span>
+        </code></div>
+      </div>
+
+      <div class="card" data-search="scope global local">
+        <div class="card-label">Scope</div>
+        <div class="code-block-mini"><code class="c">
+x = <span class="num">10</span>             <span class="cm"># global variable</span>
+
+<span class="kw">def</span> <span class="fn">example</span>():
+    y = <span class="num">20</span>          <span class="cm"># local — only exists here</span>
+    <span class="fn">print</span>(x)        <span class="cm"># can READ global x</span>
+    <span class="kw">global</span> x        <span class="cm"># declare to WRITE global x</span>
+    x = <span class="num">99</span>          <span class="cm"># now changes global x</span>
+
+<span class="cm"># Rule: LEGB — Local, Enclosing, Global, Built-in</span>
+<span class="cm"># Python looks up names in this order</span>
+        </code></div>
+      </div>
+
+      <div class="card" data-search="docstring documentation">
+        <div class="card-label">Docstrings</div>
+        <div class="code-block-mini"><code class="c">
+<span class="kw">def</span> <span class="fn">greet</span>(name, greeting=<span class="str">"Hello"</span>):
+    <span class="str">"""
+    Greet a person by name.
+
+    Args:
+        name (str): The person's name.
+        greeting (str): The greeting word.
+    Returns:
+        str: The greeting message.
+    """</span>
+    <span class="kw">return</span> <span class="str">f"{greeting}, {name}!"</span>
+
+<span class="cm"># Access it:</span>
+<span class="fn">print</span>(<span class="fn">greet</span>.__doc__)
+<span class="fn">help</span>(<span class="fn">greet</span>)
+        </code></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ 6. FILES & ERRORS ══════════════ -->
+  <div class="section" data-cat="files">
+    <div class="section-header">
+      <span class="section-icon">📁</span>
+      <span class="section-title">File Handling & Error Handling</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="cards">
+      <div class="card" data-search="open file read write append with">
+        <div class="card-label">Reading & Writing Files</div>
+        <div class="code-block-mini"><code class="c">
+<span class="cm"># Write (creates or overwrites)</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"data.txt"</span>, <span class="str">"w"</span>) <span class="kw">as</span> f:
+    f.write(<span class="str">"Line 1\n"</span>)
+    f.writelines([<span class="str">"Line 2\n"</span>, <span class="str">"Line 3\n"</span>])
+
+<span class="cm"># Read whole file</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"data.txt"</span>, <span class="str">"r"</span>) <span class="kw">as</span> f:
+    content = f.read()       <span class="cm"># whole string</span>
+    lines   = f.readlines()  <span class="cm"># list of lines</span>
+
+<span class="cm"># Append without overwriting</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"data.txt"</span>, <span class="str">"a"</span>) <span class="kw">as</span> f:
+    f.write(<span class="str">"Line 4\n"</span>)
+
+<span class="cm"># Loop through lines</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"data.txt"</span>) <span class="kw">as</span> f:
+    <span class="kw">for</span> line <span class="kw">in</span> f:
+        <span class="fn">print</span>(line.strip())
+        </code></div>
+      </div>
+
+      <div class="card" data-search="try except finally error exception ValueError">
+        <div class="card-label">Try / Except / Finally</div>
+        <div class="code-block-mini"><code class="c">
+<span class="kw">try</span>:
+    n = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Number: "</span>))
+    result = <span class="num">100</span> / n
+<span class="kw">except</span> ValueError:
+    <span class="fn">print</span>(<span class="str">"Not a number!"</span>)
+<span class="kw">except</span> ZeroDivisionError:
+    <span class="fn">print</span>(<span class="str">"Can't divide by zero!"</span>)
+<span class="kw">except</span> Exception <span class="kw">as</span> e:
+    <span class="fn">print</span>(<span class="str">f"Unexpected: {e}"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">f"Result: {result}"</span>) <span class="cm"># runs if NO error</span>
+<span class="kw">finally</span>:
+    <span class="fn">print</span>(<span class="str">"Always runs"</span>)  <span class="cm"># runs regardless</span>
+        </code></div>
+      </div>
+
+      <div class="card" data-search="os path file exist directory">
+        <div class="card-label">os Module — File System</div>
+        <div class="code-block-mini"><code class="c">
+<span class="kw">import</span> os
+os.getcwd()              <span class="cm"># current directory</span>
+os.listdir(<span class="str">"."</span>)         <span class="cm"># list files here</span>
+os.path.exists(<span class="str">"x.txt"</span>) <span class="cm"># True/False</span>
+os.path.join(<span class="str">"dir"</span>,<span class="str">"file"</span>) <span class="cm"># safe path join</span>
+os.makedirs(<span class="str">"mydir"</span>, exist_ok=<span class="kw">True</span>) <span class="cm"># create dir</span>
+os.remove(<span class="str">"file.txt"</span>)   <span class="cm"># delete file</span>
+os.rename(<span class="str">"old"</span>, <span class="str">"new"</span>) <span class="cm"># rename</span>
+os.path.getsize(<span class="str">"f.txt"</span>) <span class="cm"># size in bytes</span>
+        </code></div>
+      </div>
+
+      <div class="card" data-search="raise custom exception assert">
+        <div class="card-label">Raising Exceptions</div>
+        <div class="code-block-mini"><code class="c">
+<span class="cm"># Raise your own errors</span>
+<span class="kw">def</span> <span class="fn">set_age</span>(age):
+    <span class="kw">if</span> age < <span class="num">0</span>:
+        <span class="kw">raise</span> ValueError(<span class="str">"Age cannot be negative"</span>)
+    <span class="kw">if</span> age > <span class="num">150</span>:
+        <span class="kw">raise</span> ValueError(<span class="str">"Age too high"</span>)
+    <span class="kw">return</span> age
+
+<span class="cm"># assert — for debugging/testing</span>
+x = <span class="num">5</span>
+<span class="kw">assert</span> x > <span class="num">0</span>, <span class="str">"x must be positive"</span>
+<span class="cm"># AssertionError if x <= 0</span>
+        </code></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ 7. MODULES ══════════════ -->
+  <div class="section" data-cat="modules">
+    <div class="section-header">
+      <span class="section-icon">📦</span>
+      <span class="section-title">Useful Modules</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="cards">
+      <div class="card" data-search="math sqrt ceil floor pow">
+        <div class="card-label">math</div>
+        <div class="code-block-mini"><code class="c">
+<span class="kw">import</span> math
+math.sqrt(<span class="num">144</span>)    <span class="cm"># 12.0</span>
+math.pi            <span class="cm"># 3.14159...</span>
+math.e             <span class="cm"># 2.71828...</span>
+math.pow(<span class="num">2</span>, <span class="num">8</span>)     <span class="cm"># 256.0</span>
+math.ceil(<span class="num">4.1</span>)    <span class="cm"># 5  (round up)</span>
+math.floor(<span class="num">4.9</span>)   <span class="cm"># 4  (round down)</span>
+math.log(<span class="num">100</span>, <span class="num">10</span>) <span class="cm"># 2.0</span>
+math.sin(<span class="num">0</span>)        <span class="cm"># 0.0</span>
+math.gcd(<span class="num">12</span>, <span class="num">8</span>)   <span class="cm"># 4</span>
+math.factorial(<span class="num">5</span>) <span class="cm"># 120</span>
+math.inf           <span class="cm"># infinity</span>
+        </code></div>
+      </div>
+
+      <div class="card" data-search="random randint choice shuffle">
+        <div class="card-label">random</div>
+        <div class="code-block-mini"><code class="c">
+<span class="kw">import</span> random
+random.randint(<span class="num">1</span>, <span class="num">6</span>)      <span class="cm"># dice roll 1-6</span>
+random.random()            <span class="cm"># float 0.0–1.0</span>
+random.uniform(<span class="num">1.0</span>, <span class="num">5.0</span>) <span class="cm"># float in range</span>
+random.choice([<span class="str">"a"</span>,<span class="str">"b"</span>,<span class="str">"c"</span>]) <span class="cm"># random item</span>
+random.choices([<span class="str">"a"</span>,<span class="str">"b"</span>], k=<span class="num">3</span>) <span class="cm"># 3 random picks</span>
+random.sample([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>], <span class="num">2</span>)  <span class="cm"># 2 unique picks</span>
+lst = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>]
+random.shuffle(lst)        <span class="cm"># shuffle in place</span>
+random.seed(<span class="num">42</span>)           <span class="cm"># reproducible results</span>
+        </code></div>
+      </div>
+
+      <div class="card" data-search="datetime date time now strftime">
+        <div class="card-label">datetime</div>
+        <div class="code-block-mini"><code class="c">
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime, date, timedelta
+now  = datetime.now()
+today = date.today()
+<span class="fn">print</span>(now.year, now.month, now.day)
+<span class="fn">print</span>(now.hour, now.minute, now.second)
+<span class="cm"># Format:</span>
+now.strftime(<span class="str">"%d %B %Y"</span>)    <span class="cm"># 02 April 2026</span>
+now.strftime(<span class="str">"%H:%M:%S"</span>)    <span class="cm"># 14:30:00</span>
+now.strftime(<span class="str">"%Y-%m-%d"</span>)    <span class="cm"># 2026-04-02</span>
+<span class="cm"># Arithmetic:</span>
+tomorrow = today + timedelta(days=<span class="num">1</span>)
+last_week = today - timedelta(weeks=<span class="num">1</span>)
+        </code></div>
+      </div>
+
+      <div class="card" data-search="sys argv command line exit">
+        <div class="card-label">sys</div>
+        <div class="code-block-mini"><code class="c">
+<span class="kw">import</span> sys
+sys.version          <span class="cm"># Python version string</span>
+sys.exit()           <span class="cm"># exit the program</span>
+sys.exit(<span class="num">1</span>)          <span class="cm"># exit with error code</span>
+sys.argv             <span class="cm"># command-line arguments list</span>
+sys.argv[<span class="num">0</span>]          <span class="cm"># script name</span>
+sys.argv[<span class="num">1</span>]          <span class="cm"># first argument</span>
+sys.stdin.readline() <span class="cm"># read from stdin</span>
+sys.platform         <span class="cm"># 'win32', 'linux', 'darwin'</span>
+        </code></div>
+      </div>
+
+      <div class="card" data-search="json load dump serialize">
+        <div class="card-label">json</div>
+        <div class="code-block-mini"><code class="c">
+<span class="kw">import</span> json
+data = {<span class="str">"name"</span>:<span class="str">"Ama"</span>, <span class="str">"score"</span>:<span class="num">95</span>}
+<span class="cm"># Dict → JSON string</span>
+js = json.dumps(data)
+js = json.dumps(data, indent=<span class="num">2</span>)   <span class="cm"># pretty</span>
+<span class="cm"># JSON string → Dict</span>
+d = json.loads(js)
+<span class="cm"># Write to file</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"data.json"</span>, <span class="str">"w"</span>) <span class="kw">as</span> f:
+    json.dump(data, f, indent=<span class="num">2</span>)
+<span class="cm"># Read from file</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"data.json"</span>) <span class="kw">as</span> f:
+    data = json.load(f)
+        </code></div>
+      </div>
+
+      <div class="card" data-search="time sleep clock perf">
+        <div class="card-label">time</div>
+        <div class="code-block-mini"><code class="c">
+<span class="kw">import</span> time
+time.sleep(<span class="num">2</span>)       <span class="cm"># pause 2 seconds</span>
+time.sleep(<span class="num">0.5</span>)     <span class="cm"># pause 0.5 seconds</span>
+time.time()         <span class="cm"># Unix timestamp (float)</span>
+time.ctime()        <span class="cm"># human-readable time string</span>
+<span class="cm"># Measure execution time:</span>
+start = time.perf_counter()
+<span class="cm"># ... your code here ...</span>
+end = time.perf_counter()
+<span class="fn">print</span>(<span class="str">f"Took {end - start:.4f} seconds"</span>)
+        </code></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ 8. BUILT-INS ══════════════ -->
+  <div class="section" data-cat="builtins">
+    <div class="section-header">
+      <span class="section-icon">⚡</span>
+      <span class="section-title">Built-in Functions Quick Reference</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="cards single">
+      <div class="card" data-search="builtin len sum min max type int str float list dict sorted reversed any all map filter">
+        <div class="card-label">All Key Built-ins</div>
+        <table class="ref-table">
+          <tr><th>Function</th><th>What it does</th><th>Example</th></tr>
+          <tr><td>print(x)</td><td>Display x to screen</td><td>print("Hello")</td></tr>
+          <tr><td>input(msg)</td><td>Read keyboard input</td><td>name = input("Name: ")</td></tr>
+          <tr><td>len(x)</td><td>Length of string/list/dict</td><td>len([1,2,3]) → 3</td></tr>
+          <tr><td>type(x)</td><td>Returns the type of x</td><td>type(42) → &lt;class 'int'&gt;</td></tr>
+          <tr><td>int(x)</td><td>Convert to integer</td><td>int("42") → 42</td></tr>
+          <tr><td>float(x)</td><td>Convert to float</td><td>float("3.14") → 3.14</td></tr>
+          <tr><td>str(x)</td><td>Convert to string</td><td>str(42) → "42"</td></tr>
+          <tr><td>bool(x)</td><td>Convert to boolean</td><td>bool(0) → False</td></tr>
+          <tr><td>list(x)</td><td>Convert to list</td><td>list("abc") → ['a','b','c']</td></tr>
+          <tr><td>dict()</td><td>Create/convert to dict</td><td>dict(a=1, b=2)</td></tr>
+          <tr><td>range(n)</td><td>Range of numbers</td><td>range(5) → 0,1,2,3,4</td></tr>
+          <tr><td>sum(lst)</td><td>Sum all numbers in list</td><td>sum([1,2,3]) → 6</td></tr>
+          <tr><td>min(lst)</td><td>Smallest value</td><td>min([3,1,4]) → 1</td></tr>
+          <tr><td>max(lst)</td><td>Largest value</td><td>max([3,1,4]) → 4</td></tr>
+          <tr><td>abs(x)</td><td>Absolute value</td><td>abs(-5) → 5</td></tr>
+          <tr><td>round(x, n)</td><td>Round to n decimals</td><td>round(3.14159, 2) → 3.14</td></tr>
+          <tr><td>sorted(lst)</td><td>Return sorted copy</td><td>sorted([3,1,2]) → [1,2,3]</td></tr>
+          <tr><td>reversed(lst)</td><td>Return reversed iterator</td><td>list(reversed([1,2,3]))</td></tr>
+          <tr><td>enumerate(lst)</td><td>Index + value pairs</td><td>for i, v in enumerate(lst)</td></tr>
+          <tr><td>zip(a, b)</td><td>Pair two iterables</td><td>for x,y in zip(a,b)</td></tr>
+          <tr><td>map(fn, lst)</td><td>Apply function to each item</td><td>list(map(str,[1,2,3]))</td></tr>
+          <tr><td>filter(fn, lst)</td><td>Keep items where fn is True</td><td>list(filter(bool, [0,1,2]))</td></tr>
+          <tr><td>any(lst)</td><td>True if at least one is True</td><td>any([0, 0, 1]) → True</td></tr>
+          <tr><td>all(lst)</td><td>True if ALL are True</td><td>all([1, 1, 0]) → False</td></tr>
+          <tr><td>open(f, mode)</td><td>Open a file</td><td>open("data.txt", "r")</td></tr>
+          <tr><td>help(x)</td><td>Show docs for x</td><td>help(str)</td></tr>
+          <tr><td>dir(x)</td><td>List all methods of x</td><td>dir([])</td></tr>
+          <tr><td>id(x)</td><td>Memory address of x</td><td>id(name)</td></tr>
+          <tr><td>isinstance(x, t)</td><td>Check if x is type t</td><td>isinstance(5, int) → True</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    🐍 TechCamp Python Cheat Sheet · April 2026 · Instructor: Gyamerah Afriyie Philimon<br>
+    <span style="opacity:0.6;">Reference: <a href="https://docs.python.org/3/" style="color:var(--green-p);">docs.python.org</a></span>
+  </div>
+
+</div>
+
+<script>
+  function filterCards() {
+    const q = document.getElementById('search-input').value.toLowerCase();
+    document.querySelectorAll('.card').forEach(card => {
+      const text = (card.dataset.search + card.textContent).toLowerCase();
+      card.style.display = text.includes(q) ? '' : 'none';
+    });
+    document.querySelectorAll('.section').forEach(sec => {
+      const visible = [...sec.querySelectorAll('.card')].some(c => c.style.display !== 'none');
+      sec.style.display = visible ? 'block' : 'none';
+    });
+  }
+
+  function filterSection(cat, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('search-input').value = '';
+    document.querySelectorAll('.card').forEach(c => c.style.display = '');
+    if (cat === 'all') {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('hidden'));
+    } else {
+      document.querySelectorAll('.section').forEach(s => {
+        s.classList.toggle('hidden', s.dataset.cat !== cat);
+      });
+    }
+  }
+</script>
+</body>
+</html>

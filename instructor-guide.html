@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instructor Guide — TechCamp</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#020e2e;font-family:'Exo 2',sans-serif;color:#fff;padding:30px 18px 60px;}
+  .wrap{max-width:680px;margin:0 auto;}
+  h1{font-family:'Orbitron',monospace;font-size:22px;color:#ffd700;margin-bottom:6px;}
+  .sub{font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:32px;letter-spacing:1px;}
+  h2{font-size:14px;font-weight:800;color:#fff;margin:28px 0 12px;letter-spacing:1px;text-transform:uppercase;border-left:3px solid #ffd700;padding-left:12px;}
+  p{font-size:13px;color:rgba(255,255,255,0.65);line-height:1.8;margin-bottom:10px;}
+  strong{color:#fff;}
+  .step{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px;}
+  .sn{width:28px;height:28px;border-radius:50%;background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.4);display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:11px;font-weight:700;color:#ffd700;flex-shrink:0;margin-top:2px;}
+  .st{font-size:13px;color:rgba(255,255,255,0.7);line-height:1.7;}
+  .st strong{color:#fff;}
+  .code-block{background:#040d1a;border:1px solid rgba(255,215,0,0.2);border-radius:10px;padding:16px;margin:12px 0;overflow-x:auto;}
+  .code-block pre{font-family:'Fira Code',monospace;font-size:12.5px;color:#e2e8f0;line-height:1.8;white-space:pre;}
+  .kw{color:#4ade80;} .str{color:#fbbf24;} .cm{color:#4b5563;} .num{color:#f472b6;}
+  .tip{background:rgba(14,165,233,0.08);border:1px solid rgba(14,165,233,0.25);border-radius:10px;padding:14px 16px;margin:12px 0;font-size:12.5px;color:rgba(125,211,252,0.85);line-height:1.6;}
+  .warn{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:10px;padding:14px 16px;margin:12px 0;font-size:12.5px;color:rgba(252,165,165,0.85);line-height:1.6;}
+  .wa-msg{background:#075E54;border-radius:12px;padding:14px 16px;font-size:13px;color:#fff;line-height:1.7;margin:12px 0;font-style:italic;}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:10px;}
+  th{background:rgba(255,215,0,0.1);color:#ffd700;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:8px 12px;text-align:left;}
+  td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.05);color:rgba(255,255,255,0.7);}
+  td:first-child{font-family:'Fira Code',monospace;color:#4ade80;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>🔐 Instructor Guide</h1>
+  <div class="sub">TechCamp Boot Camp · Managing Student Access · techcamp.live</div>
+
+  <h2>How the Access System Works</h2>
+  <p>Students land on <strong>techcamp.live</strong> (index.html) and must enter their <strong>registered name</strong> and a <strong>personal access code</strong> you gave them. If both match, they're in. If not, they're blocked.</p>
+  <p>After 5 wrong attempts, they're locked out for 15 minutes. The certificate page also pre-fills their name from their login and won't let them change it — so they can only generate a certificate in their own name.</p>
+
+  <h2>Step 1 — Student Pays on WhatsApp</h2>
+  <p>Student texts you saying they want to register. You send your MoMo number. They send payment screenshot. You confirm receipt.</p>
+
+  <h2>Step 2 — Give Them a Unique Code</h2>
+  <p>Invent a code for them. The format is <strong>TC-XXXX</strong> where XXXX is any 4 characters you choose. Keep a record of who has which code.</p>
+
+  <table>
+    <tr><th>Student Name</th><th>Code</th><th>Paid?</th></tr>
+    <tr><td>Kofi Mensah</td><td>TC-KO31</td><td>✅</td></tr>
+    <tr><td>Ama Boateng</td><td>TC-AM97</td><td>✅</td></tr>
+    <tr><td>Yaw Darko</td><td>TC-YW82</td><td>✅</td></tr>
+  </table>
+
+  <div class="tip">💡 Tip: Use the first 2 letters of the student's first name + 2 random numbers. e.g. Kofi → TC-KO31. Easy to remember and feel personal to each student.</div>
+
+  <h2>Step 3 — Send Them This WhatsApp Message</h2>
+  <div class="wa-msg">
+    "Welcome to TechCamp! 🎓<br><br>
+    Your portal is live at: <strong>techcamp.live</strong><br><br>
+    Your login details:<br>
+    📝 Name: [Their Full Name — exactly as registered]<br>
+    🔑 Code: TC-XXXX<br><br>
+    Enter these on the portal to access all your lessons, projects and the certificate generator. See you in class! 🚀"
+  </div>
+
+  <div class="warn">⚠️ <strong>Important:</strong> Tell students the name must match EXACTLY as you register it. If you register "Kofi Mensah" and they type "kofi mensah" or "KOFI MENSAH" it still works — it's case-insensitive. But "Kofi" alone without the surname won't work.</div>
+
+  <h2>Step 4 — Add Them to the Student List</h2>
+  <p>Open <strong>index.html</strong> in any text editor (Notepad on Windows, TextEdit on Mac, or VS Code). Find this section:</p>
+
+  <div class="code-block"><pre><span class="kw">const</span> STUDENTS = {
+  <span class="cm">// add your students here — name in lowercase, code uppercase</span>
+  <span class="str">"kwame asante"</span>:    <span class="str">"TC-KW24"</span>,
+  <span class="str">"ama boateng"</span>:     <span class="str">"TC-AM97"</span>,
+  <span class="cm">// ← add new student on a new line here</span>
+  <span class="str">"new student name"</span>: <span class="str">"TC-XX99"</span>,
+};</pre></div>
+
+  <p>Add their name in <strong>lowercase</strong> and their code in <strong>UPPERCASE</strong> with a comma after each entry. Save the file.</p>
+
+  <h2>Step 5 — Push to GitHub</h2>
+  <div class="step"><div class="sn">1</div><div class="st">Go to your GitHub repo at <strong>github.com/YOUR-USERNAME/techcamp-bootcamp</strong></div></div>
+  <div class="step"><div class="sn">2</div><div class="st">Click on <strong>index.html</strong> in the file list</div></div>
+  <div class="step"><div class="sn">3</div><div class="st">Click the <strong>pencil icon ✏️</strong> to edit</div></div>
+  <div class="step"><div class="sn">4</div><div class="st">Find the STUDENTS section and add the new student</div></div>
+  <div class="step"><div class="sn">5</div><div class="st">Click <strong>Commit changes</strong> → <strong>Commit changes</strong> again</div></div>
+  <div class="step"><div class="sn">6</div><div class="st">Wait 1–2 minutes → techcamp.live updates automatically</div></div>
+
+  <div class="tip">💡 You can also use the GitHub mobile app to edit files directly from your phone — so you can add a student within 2 minutes of receiving payment, even if you're not at a computer.</div>
+
+  <h2>Removing a Student (e.g. Refund)</h2>
+  <p>Simply delete their line from the STUDENTS list in index.html and push to GitHub. Their code will stop working immediately. Their session will expire when they close the browser tab.</p>
+
+  <h2>Files Summary</h2>
+  <table>
+    <tr><th>File</th><th>Purpose</th></tr>
+    <tr><td>index.html</td><td>Gate page — student login. EDIT THIS to add students.</td></tr>
+    <tr><td>portal.html</td><td>Main student hub — links to all 3 weeks</td></tr>
+    <tr><td>week1.html</td><td>Ethical Hacking Fundamentals</td></tr>
+    <tr><td>week2.html</td><td>Arduino & C Programming</td></tr>
+    <tr><td>week3.html</td><td>Python Programming</td></tr>
+    <tr><td>python-cheatsheet.html</td><td>Python reference card</td></tr>
+    <tr><td>certificate.html</td><td>Certificate generator — pre-fills student name</td></tr>
+    <tr><td>bootcamp-poster.html</td><td>Advertising poster</td></tr>
+    <tr><td>*.jpg images</td><td>Component photos used in Week 2</td></tr>
+  </table>
+
+  <div class="warn" style="margin-top:24px;">⚠️ <strong>Keep this instructor-guide.html file private</strong> — don't share the URL with students. It explains how the whole system works. Consider deleting it from your GitHub repo after reading, or rename it to something obscure.</div>
+
+</div>
+</body>
+</html>

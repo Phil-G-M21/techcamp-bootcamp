@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 3 — Python Programming | TechCamp</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --green:#22c55e; --green-l:#4ade80; --green-p:#86efac; --dark:#020e2e; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--dark); font-family:'Exo 2',sans-serif; color:#fff; min-height:100vh; }
+
+  .grid-bg { position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:linear-gradient(rgba(34,197,94,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(34,197,94,0.04) 1px,transparent 1px);
+    background-size:40px 40px; }
+  .blob { position:fixed; border-radius:50%; filter:blur(90px); pointer-events:none; z-index:0; }
+  .b1 { width:350px;height:350px; background:rgba(34,197,94,0.15); top:-80px; right:-80px; }
+  .b2 { width:300px;height:300px; background:rgba(16,185,129,0.1); bottom:0; left:-60px; }
+
+  .wrap { position:relative; z-index:1; max-width:720px; margin:0 auto; padding:30px 18px 70px; }
+
+  .topnav { display:flex; align-items:center; justify-content:space-between; margin-bottom:32px; }
+  .topnav a { text-decoration:none; color:var(--green-p); font-size:12px; font-weight:700; letter-spacing:1px; }
+  .week-badge { background:rgba(34,197,94,0.15); border:1px solid rgba(34,197,94,0.4); color:var(--green-p); font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:6px 14px; border-radius:50px; }
+
+  .hero { text-align:center; margin-bottom:36px; }
+  .hero-icon { font-size:52px; margin-bottom:12px; filter:drop-shadow(0 0 20px rgba(34,197,94,0.5)); }
+  .hero-title { font-family:'Orbitron',monospace; font-weight:900; font-size:26px; color:#fff; text-shadow:0 0 30px rgba(34,197,94,0.4); margin-bottom:8px; }
+  .hero-sub { font-size:13px; font-weight:300; color:rgba(255,255,255,0.5); line-height:1.7; }
+  .hero-dates { display:inline-block; margin-top:12px; background:rgba(34,197,94,0.12); border:1px solid rgba(34,197,94,0.3); border-radius:50px; padding:6px 16px; font-size:11px; font-weight:700; color:var(--green-p); letter-spacing:2px; }
+
+  .progress-strip { display:flex; gap:5px; margin-bottom:36px; }
+  .p-day { flex:1; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:10px 4px; text-align:center; cursor:pointer; transition:all 0.2s; }
+  .p-day.active { background:rgba(34,197,94,0.2); border-color:rgba(34,197,94,0.5); }
+  .p-day:hover { background:rgba(255,255,255,0.1); }
+  .p-num { font-family:'Orbitron',monospace; font-size:13px; font-weight:700; color:#fff; }
+  .p-label { font-size:7px; color:rgba(255,255,255,0.4); letter-spacing:1px; margin-top:3px; text-transform:uppercase; }
+
+  .lesson { display:none; }
+  .lesson.active { display:block; }
+
+  /* SLIDE */
+  .slide { background:linear-gradient(135deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02)); border:1px solid rgba(34,197,94,0.15); border-radius:16px; padding:24px 20px; margin-bottom:18px; position:relative; overflow:hidden; }
+  .slide::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--green),#0ea5e9); }
+  .slide-tag { font-size:9px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--green-p); margin-bottom:8px; }
+  .slide-title { font-size:19px; font-weight:800; color:#fff; margin-bottom:12px; line-height:1.3; }
+  .slide-body { font-size:13px; font-weight:400; color:rgba(255,255,255,0.7); line-height:1.8; }
+  .slide-body p { margin-bottom:10px; }
+  .slide-body strong { color:#fff; }
+
+  /* PROJECT SLIDE — highlighted differently */
+  .project-slide { background:linear-gradient(135deg,rgba(34,197,94,0.1),rgba(14,165,233,0.05)); border:1px solid rgba(34,197,94,0.3); border-radius:16px; padding:24px 20px; margin-bottom:18px; position:relative; overflow:hidden; }
+  .project-slide::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#22c55e,#fbbf24); }
+  .project-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(34,197,94,0.2); border:1px solid rgba(34,197,94,0.4); border-radius:20px; padding:4px 12px; font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--green-p); margin-bottom:10px; }
+  .project-title { font-size:18px; font-weight:800; color:#fff; margin-bottom:8px; }
+  .project-desc { font-size:12.5px; color:rgba(255,255,255,0.6); line-height:1.7; margin-bottom:14px; }
+
+  /* GRIDS */
+  .vis-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
+  .vis-card { background:rgba(255,255,255,0.05); border:1px solid rgba(34,197,94,0.12); border-radius:10px; padding:13px; text-align:center; }
+  .vis-icon { font-size:26px; margin-bottom:6px; }
+  .vis-label { font-size:12px; font-weight:700; color:#fff; margin-bottom:3px; }
+  .vis-desc { font-size:10px; color:rgba(255,255,255,0.45); font-weight:300; line-height:1.4; }
+
+  /* CODE */
+  .code-block { background:#040d1a; border:1px solid rgba(34,197,94,0.2); border-radius:10px; padding:16px; margin:12px 0; overflow-x:auto; }
+  .code-block pre { font-family:'Fira Code',monospace; font-size:12px; color:#e2e8f0; line-height:1.8; white-space:pre; }
+  .kw{color:#4ade80;} .str{color:#fbbf24;} .cm{color:#4b5563;} .num{color:#f472b6;} .fn{color:#60a5fa;} .bi{color:#67e8f9;}
+
+  .code-lang { font-size:9px; font-weight:700; letter-spacing:2px; color:var(--green-p); margin-bottom:8px; text-transform:uppercase; }
+
+  /* OUTPUT */
+  .output-block { background:#040d1a; border:1px solid rgba(34,197,94,0.15); border-radius:8px; padding:14px; margin-top:8px; }
+  .output-label { font-size:8px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(134,239,172,0.4); margin-bottom:8px; }
+  .output-block pre { font-family:'Fira Code',monospace; font-size:12px; color:#86efac; line-height:1.75; }
+
+  /* STEPS */
+  .steps { display:flex; flex-direction:column; gap:10px; margin-top:12px; }
+  .step { display:flex; gap:12px; align-items:flex-start; }
+  .step-num { width:26px; height:26px; border-radius:50%; flex-shrink:0; background:rgba(34,197,94,0.2); border:1px solid rgba(34,197,94,0.4); display:flex; align-items:center; justify-content:center; font-family:'Orbitron',monospace; font-size:10px; font-weight:700; color:var(--green-p); margin-top:2px; }
+  .step-text { font-size:13px; color:rgba(255,255,255,0.7); line-height:1.6; }
+  .step-text strong { color:#fff; }
+
+  /* TERMS */
+  .terms-grid { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+  .term { background:rgba(255,255,255,0.04); border-left:3px solid var(--green); border-radius:0 8px 8px 0; padding:10px 14px; }
+  .term-word { font-size:13px; font-weight:700; color:var(--green-l); margin-bottom:2px; }
+  .term-def { font-size:11.5px; color:rgba(255,255,255,0.6); line-height:1.5; }
+
+  /* BOXES */
+  .tip-box { background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.25); border-radius:10px; padding:13px 16px; margin-top:13px; display:flex; gap:10px; align-items:flex-start; }
+  .tip-icon { font-size:17px; flex-shrink:0; }
+  .tip-text { font-size:12px; color:rgba(134,239,172,0.85); line-height:1.6; }
+
+  .warn-box { background:rgba(251,191,36,0.08); border:1px solid rgba(251,191,36,0.25); border-radius:10px; padding:13px 16px; margin-top:13px; display:flex; gap:10px; align-items:flex-start; }
+  .warn-icon { font-size:17px; flex-shrink:0; }
+  .warn-text { font-size:12px; color:rgba(253,230,138,0.85); line-height:1.6; }
+
+  /* CHALLENGE BOX */
+  .challenge { background:rgba(251,191,36,0.07); border:1px solid rgba(251,191,36,0.25); border-radius:10px; padding:14px 16px; margin-top:12px; }
+  .challenge-label { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#fbbf24; margin-bottom:8px; }
+  .challenge-text { font-size:12.5px; color:rgba(255,255,255,0.65); line-height:1.6; }
+
+  /* CODE EXPLAIN */
+  .code-explain { display:flex; flex-direction:column; gap:7px; margin-top:12px; }
+  .ce-row { display:flex; gap:10px; align-items:flex-start; padding:8px 12px; background:rgba(255,255,255,0.03); border-radius:8px; border-left:2px solid rgba(34,197,94,0.3); }
+  .ce-code { font-family:'Fira Code',monospace; font-size:11px; color:#4ade80; flex-shrink:0; min-width:140px; }
+  .ce-desc { font-size:11.5px; color:rgba(255,255,255,0.6); line-height:1.5; }
+
+  /* LINK CARD */
+  .link-card { background:rgba(255,255,255,0.05); border:1px solid rgba(34,197,94,0.2); border-radius:10px; padding:13px 16px; margin-bottom:9px; display:flex; align-items:center; gap:12px; text-decoration:none; }
+  .link-card:hover { background:rgba(255,255,255,0.09); }
+  .link-icon { font-size:20px; flex-shrink:0; }
+  .link-info { flex:1; }
+  .link-title { font-size:13px; font-weight:700; color:#fff; }
+  .link-url { font-size:10px; color:rgba(134,239,172,0.6); margin-top:2px; }
+  .link-arr { color:rgba(134,239,172,0.4); font-size:18px; }
+
+  /* REACH OUT */
+  .reach-box { background:rgba(14,165,233,0.07); border:1px solid rgba(14,165,233,0.2); border-radius:14px; padding:20px; margin-top:14px; }
+  .reach-title { font-size:15px; font-weight:800; color:#fff; margin-bottom:6px; }
+  .reach-body { font-size:12.5px; color:rgba(255,255,255,0.55); line-height:1.7; margin-bottom:14px; }
+  .reach-btns { display:flex; gap:8px; flex-wrap:wrap; }
+  .reach-btn { flex:1; min-width:80px; text-align:center; text-decoration:none; background:rgba(255,255,255,0.07); border:1px solid rgba(125,211,252,0.2); border-radius:10px; padding:10px 10px; font-size:12px; font-weight:700; color:#fff; }
+
+  /* CONSOLE */
+  .console-wrap { background:#040d1a; border:1px solid rgba(34,197,94,0.3); border-radius:16px; overflow:hidden; margin-bottom:18px; }
+  .console-topbar { display:flex; align-items:center; justify-content:space-between; background:rgba(34,197,94,0.1); padding:10px 16px; border-bottom:1px solid rgba(34,197,94,0.15); }
+  .console-title { font-family:'Orbitron',monospace; font-size:11px; font-weight:700; color:var(--green-p); letter-spacing:2px; }
+  .console-dots { display:flex; gap:6px; }
+  .console-dots span { width:10px; height:10px; border-radius:50%; }
+  .console-dots .r { background:#ef4444; }
+  .console-dots .y { background:#fbbf24; }
+  .console-dots .g { background:#22c55e; }
+  .console-snippets { display:flex; gap:6px; padding:10px 12px; flex-wrap:wrap; border-bottom:1px solid rgba(255,255,255,0.05); }
+  .snippet-btn { background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.2); border-radius:6px; padding:4px 10px; font-size:10px; font-weight:600; color:var(--green-p); cursor:pointer; font-family:'Exo 2',sans-serif; white-space:nowrap; }
+  .snippet-btn:hover { background:rgba(34,197,94,0.2); }
+  .console-editor { position:relative; }
+  #py-code {
+    width:100%; min-height:220px; background:#040d1a; border:none; outline:none;
+    color:#e2e8f0; font-family:'Fira Code',monospace; font-size:13px; line-height:1.75;
+    padding:16px; resize:vertical; display:block;
+  }
+  .console-run-bar { display:flex; gap:10px; padding:10px 12px; border-top:1px solid rgba(255,255,255,0.05); align-items:center; }
+  #run-btn { background:var(--green); border:none; border-radius:8px; padding:9px 20px; font-family:'Exo 2',sans-serif; font-size:13px; font-weight:700; color:#fff; cursor:pointer; display:flex; align-items:center; gap:6px; }
+  #run-btn:hover { background:var(--green-l); }
+  #run-btn:disabled { background:rgba(34,197,94,0.3); cursor:not-allowed; }
+  #clear-btn { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:9px 16px; font-family:'Exo 2',sans-serif; font-size:12px; font-weight:600; color:rgba(255,255,255,0.5); cursor:pointer; }
+  #clear-btn:hover { background:rgba(255,255,255,0.1); }
+  .py-status { font-size:10px; color:rgba(255,255,255,0.3); flex:1; }
+  .console-output-wrap { border-top:1px solid rgba(34,197,94,0.1); }
+  .output-hdr { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(134,239,172,0.4); padding:8px 16px 4px; }
+  #py-output { font-family:'Fira Code',monospace; font-size:12.5px; color:#86efac; padding:10px 16px 16px; min-height:60px; white-space:pre-wrap; line-height:1.75; }
+  #py-output.error { color:#fca5a5; }
+  .py-loader { display:inline-block; width:14px; height:14px; border:2px solid rgba(34,197,94,0.3); border-top-color:var(--green); border-radius:50%; animation:spin 0.8s linear infinite; vertical-align:middle; margin-left:6px; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  /* NAV */
+  .lesson-nav { display:flex; gap:10px; margin-top:26px; }
+  .nav-btn { flex:1; background:rgba(255,255,255,0.06); border:1px solid rgba(34,197,94,0.2); border-radius:10px; padding:13px; text-align:center; cursor:pointer; font-family:'Exo 2',sans-serif; font-size:13px; font-weight:700; color:#fff; transition:all 0.2s; text-decoration:none; display:flex; align-items:center; justify-content:center; }
+  .nav-btn:hover { background:rgba(255,255,255,0.1); }
+  .nav-btn.primary { background:rgba(34,197,94,0.2); border-color:rgba(34,197,94,0.4); }
+
+  footer { text-align:center; margin-top:40px; font-size:11px; color:rgba(255,255,255,0.2); line-height:1.8; }
+</style>
+</head>
+<body>
+<script>if(sessionStorage.getItem("tc_auth")!=="true"){window.location.replace("index.html");}</script>
+<div class="grid-bg"></div>
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+
+<div class="wrap">
+  <nav class="topnav">
+    <a href="index.html">← Back to Hub</a>
+    <div class="week-badge">🐍 Week 3</div>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-icon">🐍</div>
+    <div class="hero-title">Python Programming</div>
+    <p class="hero-sub">The world's most beginner-friendly language. We start from zero — by the end of this week you'll be writing real programs and building projects you can actually use.</p>
+    <div class="hero-dates">Apr 16 – Apr 22, 2026</div>
+  </div>
+
+  <div class="progress-strip">
+    <div class="p-day active" onclick="showDay(1)"><div class="p-num">1</div><div class="p-label">Basics</div></div>
+    <div class="p-day" onclick="showDay(2)"><div class="p-num">2</div><div class="p-label">Logic</div></div>
+    <div class="p-day" onclick="showDay(3)"><div class="p-num">3</div><div class="p-label">Functions</div></div>
+    <div class="p-day" onclick="showDay(4)"><div class="p-num">4</div><div class="p-label">Projects</div></div>
+    <div class="p-day" onclick="showDay(5)"><div class="p-num">5</div><div class="p-label">Final</div></div>
+    <div class="p-day" onclick="showDay(6)" style="background:rgba(34,197,94,0.1);border-color:rgba(34,197,94,0.3);"><div class="p-num" style="font-size:16px;">▶</div><div class="p-label">Console</div></div>
+  </div>
+
+  <!-- ===== DAY 1 — GETTING STARTED ===== -->
+  <div class="lesson active" id="day1">
+
+    <div class="slide">
+      <div class="slide-tag">Day 1 · Why Python</div>
+      <div class="slide-title">🐍 Why Learn Python?</div>
+      <div class="slide-body">
+        <p>Python is the <strong>#1 most popular programming language</strong> in the world. It's used in AI, cybersecurity, web development, data science, automation and robotics. Companies like Google, Netflix, NASA, Instagram and Spotify all use Python.</p>
+        <p>The best part for beginners? Python reads almost like <strong>plain English</strong>. No curly braces, no semicolons, no complicated syntax — just clear, readable code.</p>
+      </div>
+      <div class="vis-grid">
+        <div class="vis-card"><div class="vis-icon">🤖</div><div class="vis-label">AI & ML</div><div class="vis-desc">TensorFlow, PyTorch — all the big AI tools are Python.</div></div>
+        <div class="vis-card"><div class="vis-icon">🔐</div><div class="vis-label">Cybersecurity</div><div class="vis-desc">Most hacking tools and scripts are written in Python.</div></div>
+        <div class="vis-card"><div class="vis-icon">🌐</div><div class="vis-label">Web Dev</div><div class="vis-desc">Django & Flask build powerful websites with Python.</div></div>
+        <div class="vis-card"><div class="vis-icon">📊</div><div class="vis-label">Data Science</div><div class="vis-desc">Analyse and visualise data with pandas & matplotlib.</div></div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 1 · Setup</div>
+      <div class="slide-title">⚙️ Setting Up Python</div>
+      <div class="slide-body"><p>You need two things — Python itself, and a code editor to write in.</p></div>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-text">Go to <strong>python.org/downloads</strong> → click <strong>Download Python 3.x</strong> (latest version). Install it.</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-text">⚠️ During install on Windows — check <strong>"Add Python to PATH"</strong> before clicking Install Now. Very important!</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-text">Download <strong>VS Code</strong> from code.visualstudio.com — this is your code editor.</div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-text">Open VS Code → Extensions (left sidebar) → search <strong>"Python"</strong> → install the Microsoft Python extension.</div></div>
+        <div class="step"><div class="step-num">5</div><div class="step-text">Create a new file called <strong>hello.py</strong> and you're ready to code!</div></div>
+      </div>
+      <div class="tip-box"><div class="tip-icon">🌐</div><div class="tip-text"><strong>No installation?</strong> Use <strong>replit.com</strong> — a free browser-based Python IDE. Create an account, click "Create Repl" → Python → start coding instantly, no setup needed.</div></div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 1 · Your First Program</div>
+      <div class="slide-title">👋 Hello World — Your First Python Program</div>
+      <div class="slide-body"><p>Every programmer starts here. This is the simplest Python program possible — one line that prints text to the screen.</p></div>
+      <div class="code-lang">python — hello.py</div>
+      <div class="code-block"><pre><span class="fn">print</span>(<span class="str">"Hello, World!"</span>)
+<span class="fn">print</span>(<span class="str">"Welcome to TechCamp!"</span>)
+<span class="fn">print</span>(<span class="str">"I am learning Python."</span>)</pre></div>
+      <div class="output-block">
+        <div class="output-label">Output</div>
+        <pre>Hello, World!
+Welcome to TechCamp!
+I am learning Python.</pre>
+      </div>
+      <div class="code-explain">
+        <div class="ce-row"><div class="ce-code">print()</div><div class="ce-desc">A built-in function that displays whatever is inside the brackets to the screen.</div></div>
+        <div class="ce-row"><div class="ce-code">"Hello, World!"</div><div class="ce-desc">A string — text surrounded by quotes. Can use single ' or double " quotes.</div></div>
+      </div>
+      <div class="challenge">
+        <div class="challenge-label">🏋️ Try it Yourself</div>
+        <div class="challenge-text">Change the text inside the print() to say your own name and where you're from. Run it and see it print!</div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 1 · Variables</div>
+      <div class="slide-title">📦 Variables — Storing Information</div>
+      <div class="slide-body">
+        <p>A <strong>variable</strong> is a name that stores a value. In Python you don't need to declare the type — Python figures it out automatically. Think of variables like labelled boxes that hold data.</p>
+      </div>
+      <div class="code-lang">python — variables</div>
+      <div class="code-block"><pre><span class="cm"># Creating variables — just name = value</span>
+name        = <span class="str">"Kwame"</span>
+age         = <span class="num">21</span>
+temperature = <span class="num">36.5</span>
+is_student  = <span class="kw">True</span>
+
+<span class="cm"># Print them</span>
+<span class="fn">print</span>(name)          <span class="cm"># Kwame</span>
+<span class="fn">print</span>(age)           <span class="cm"># 21</span>
+<span class="fn">print</span>(is_student)    <span class="cm"># True</span>
+
+<span class="cm"># Combine text and variables with f-strings</span>
+<span class="fn">print</span>(<span class="str">f"My name is {name} and I am {age} years old."</span>)</pre></div>
+      <div class="output-block">
+        <div class="output-label">Output</div>
+        <pre>Kwame
+21
+True
+My name is Kwame and I am 21 years old.</pre>
+      </div>
+      <div class="terms-grid">
+        <div class="term"><div class="term-word">String (str)</div><div class="term-def">Text in quotes. e.g. "Hello" or 'World'</div></div>
+        <div class="term"><div class="term-word">Integer (int)</div><div class="term-def">Whole number. e.g. 21, 100, -5</div></div>
+        <div class="term"><div class="term-word">Float</div><div class="term-def">Decimal number. e.g. 36.5, 3.14</div></div>
+        <div class="term"><div class="term-word">Boolean (bool)</div><div class="term-def">Only True or False. Used for yes/no conditions.</div></div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 1 · Input & Math</div>
+      <div class="slide-title">⌨️ Getting Input + Doing Math</div>
+      <div class="slide-body"><p>Programs become interactive when they ask the user questions. Use <strong>input()</strong> to get keyboard input.</p></div>
+      <div class="code-lang">python — input and maths</div>
+      <div class="code-block"><pre><span class="cm"># Get input from the user</span>
+name = <span class="fn">input</span>(<span class="str">"What is your name? "</span>)
+age  = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"How old are you? "</span>))
+
+<span class="fn">print</span>(<span class="str">f"Hello {name}! Next year you will be {age + 1}."</span>)
+
+<span class="cm"># Basic arithmetic</span>
+a = <span class="num">10</span>
+b = <span class="num">3</span>
+<span class="fn">print</span>(a + b)   <span class="cm"># 13  → addition</span>
+<span class="fn">print</span>(a - b)   <span class="cm"># 7   → subtraction</span>
+<span class="fn">print</span>(a * b)   <span class="cm"># 30  → multiplication</span>
+<span class="fn">print</span>(a / b)   <span class="cm"># 3.33 → division</span>
+<span class="fn">print</span>(a // b)  <span class="cm"># 3   → floor division (no decimal)</span>
+<span class="fn">print</span>(a % b)   <span class="cm"># 1   → modulus (remainder)</span>
+<span class="fn">print</span>(a ** b)  <span class="cm"># 1000 → power (10 to the 3)</span></pre></div>
+      <div class="warn-box"><div class="warn-icon">⚠️</div><div class="warn-text"><strong>input() always returns text (a string).</strong> Wrap it with <strong>int()</strong> or <strong>float()</strong> if you need a number — otherwise you can't do math with it.</div></div>
+    </div>
+
+    <!-- DAY 1 PROJECT -->
+    <div class="project-slide">
+      <div class="project-badge">🏗️ Day 1 Project</div>
+      <div class="project-title">Personal Info Card Generator</div>
+      <div class="project-desc">Build a program that asks the user for their details and prints a formatted info card. Uses: variables, input(), f-strings and print().</div>
+      <div class="code-lang">python — info_card.py</div>
+      <div class="code-block"><pre><span class="cm"># ── Personal Info Card Generator ──</span>
+
+<span class="fn">print</span>(<span class="str">"=== TechCamp Info Card ==="</span>)
+<span class="fn">print</span>()
+
+name    = <span class="fn">input</span>(<span class="str">"Your name: "</span>)
+age     = <span class="fn">input</span>(<span class="str">"Your age: "</span>)
+city    = <span class="fn">input</span>(<span class="str">"Your city: "</span>)
+course  = <span class="fn">input</span>(<span class="str">"Your favourite topic (Hacking/Arduino/Python): "</span>)
+
+<span class="fn">print</span>()
+<span class="fn">print</span>(<span class="str">"┌─────────────────────────┐"</span>)
+<span class="fn">print</span>(<span class="str">f"│ Name   : {name:<span class="num">16</span>}│"</span>)
+<span class="fn">print</span>(<span class="str">f"│ Age    : {age:<span class="num">16</span>}│"</span>)
+<span class="fn">print</span>(<span class="str">f"│ City   : {city:<span class="num">16</span>}│"</span>)
+<span class="fn">print</span>(<span class="str">f"│ Loves  : {course:<span class="num">16</span>}│"</span>)
+<span class="fn">print</span>(<span class="str">"└─────────────────────────┘"</span>)
+<span class="fn">print</span>(<span class="str">"TechCamp Boot Camp · April 2026"</span>)</pre></div>
+      <div class="output-block">
+        <div class="output-label">Sample Output</div>
+        <pre>┌─────────────────────────┐
+│ Name   : Kwame           │
+│ Age    : 21              │
+│ City   : Kumasi          │
+│ Loves  : Python          │
+└─────────────────────────┘
+TechCamp Boot Camp · April 2026</pre>
+      </div>
+    </div>
+
+    <div class="lesson-nav">
+      <div class="nav-btn primary" onclick="showDay(2)">Next: Logic & Loops →</div>
+    </div>
+  </div>
+
+  <!-- ===== DAY 2 — CONDITIONS, LOOPS, LISTS ===== -->
+  <div class="lesson" id="day2">
+
+    <div class="slide">
+      <div class="slide-tag">Day 2 · Conditions</div>
+      <div class="slide-title">🔀 If / Elif / Else — Making Decisions</div>
+      <div class="slide-body"><p>Programs make decisions using <strong>if statements</strong>. Python uses <strong>indentation</strong> (4 spaces) to define code blocks — not curly braces like C.</p></div>
+      <div class="code-lang">python — conditions</div>
+      <div class="code-block"><pre>score = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Enter your score (0-100): "</span>))
+
+<span class="kw">if</span> score >= <span class="num">80</span>:
+    <span class="fn">print</span>(<span class="str">"🏆 Excellent! Grade A"</span>)
+<span class="kw">elif</span> score >= <span class="num">70</span>:
+    <span class="fn">print</span>(<span class="str">"✅ Good job! Grade B"</span>)
+<span class="kw">elif</span> score >= <span class="num">60</span>:
+    <span class="fn">print</span>(<span class="str">"👍 Pass. Grade C"</span>)
+<span class="kw">elif</span> score >= <span class="num">50</span>:
+    <span class="fn">print</span>(<span class="str">"⚠ Borderline. Grade D"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">"❌ Below pass mark. Study harder!"</span>)</pre></div>
+      <div class="terms-grid">
+        <div class="term"><div class="term-word">== &nbsp; Equal to</div><div class="term-def">score == 100 → is score exactly 100?</div></div>
+        <div class="term"><div class="term-word">!= &nbsp; Not equal</div><div class="term-def">name != "Admin" → is name NOT Admin?</div></div>
+        <div class="term"><div class="term-word">and</div><div class="term-def">Both must be true: age > 18 and is_student == True</div></div>
+        <div class="term"><div class="term-word">or</div><div class="term-def">At least one must be true: day == "Sat" or day == "Sun"</div></div>
+        <div class="term"><div class="term-word">not</div><div class="term-def">Reverses the result: not True → False</div></div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 2 · For Loop</div>
+      <div class="slide-title">🔁 For Loops — Repeat Automatically</div>
+      <div class="slide-body"><p>Loops let you repeat code without writing it over and over. The <strong>for loop</strong> repeats a specific number of times.</p></div>
+      <div class="code-lang">python — for loops</div>
+      <div class="code-block"><pre><span class="cm"># Count 1 to 5</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(<span class="num">1</span>, <span class="num">6</span>):
+    <span class="fn">print</span>(<span class="str">f"Count: {i}"</span>)
+
+<span class="cm"># range(1,6) means 1,2,3,4,5 — stops BEFORE 6</span>
+
+<span class="cm"># Loop through a list of names</span>
+students = [<span class="str">"Kwame"</span>, <span class="str">"Ama"</span>, <span class="str">"Kofi"</span>, <span class="str">"Abena"</span>]
+<span class="kw">for</span> student <span class="kw">in</span> students:
+    <span class="fn">print</span>(<span class="str">f"Welcome, {student}!"</span>)
+
+<span class="cm"># Multiplication table for 3</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(<span class="num">1</span>, <span class="num">11</span>):
+    <span class="fn">print</span>(<span class="str">f"3 x {i} = {3 * i}"</span>)</pre></div>
+      <div class="output-block">
+        <div class="output-label">Output (names loop)</div>
+        <pre>Welcome, Kwame!
+Welcome, Ama!
+Welcome, Kofi!
+Welcome, Abena!</pre>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 2 · While Loop</div>
+      <div class="slide-title">🔄 While Loops — Repeat Until Done</div>
+      <div class="slide-body"><p>A <strong>while loop</strong> keeps running as long as a condition is True. Useful when you don't know how many times to repeat.</p></div>
+      <div class="code-lang">python — while loop</div>
+      <div class="code-block"><pre><span class="cm"># Count up to 5</span>
+count = <span class="num">1</span>
+<span class="kw">while</span> count <= <span class="num">5</span>:
+    <span class="fn">print</span>(<span class="str">f"Count is {count}"</span>)
+    count += <span class="num">1</span>   <span class="cm"># count = count + 1</span>
+
+<span class="cm"># Keep asking until correct password</span>
+password = <span class="str">""</span>
+<span class="kw">while</span> password != <span class="str">"techcamp2026"</span>:
+    password = <span class="fn">input</span>(<span class="str">"Enter password: "</span>)
+    <span class="kw">if</span> password != <span class="str">"techcamp2026"</span>:
+        <span class="fn">print</span>(<span class="str">"Wrong! Try again."</span>)
+
+<span class="fn">print</span>(<span class="str">"Access granted! ✅"</span>)</pre></div>
+      <div class="warn-box"><div class="warn-icon">♾️</div><div class="warn-text">If your while condition never becomes False, you get an <strong>infinite loop</strong> — the program never stops. Always make sure something changes inside the loop to eventually break the condition. Press <strong>Ctrl+C</strong> to stop a running loop.</div></div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 2 · Lists</div>
+      <div class="slide-title">📋 Lists — Store Multiple Values</div>
+      <div class="slide-body"><p>A <strong>list</strong> stores many items in one variable. Items are separated by commas and surrounded by square brackets <strong>[ ]</strong>.</p></div>
+      <div class="code-lang">python — lists</div>
+      <div class="code-block"><pre>fruits = [<span class="str">"mango"</span>, <span class="str">"orange"</span>, <span class="str">"banana"</span>, <span class="str">"pineapple"</span>]
+
+<span class="cm"># Access by index — starts at 0!</span>
+<span class="fn">print</span>(fruits[<span class="num">0</span>])   <span class="cm"># mango</span>
+<span class="fn">print</span>(fruits[<span class="num">2</span>])   <span class="cm"># banana</span>
+<span class="fn">print</span>(fruits[-<span class="num">1</span>])  <span class="cm"># pineapple (last item)</span>
+
+<span class="cm"># Useful list methods</span>
+fruits.append(<span class="str">"watermelon"</span>)  <span class="cm"># add to end</span>
+fruits.remove(<span class="str">"orange"</span>)      <span class="cm"># remove item</span>
+fruits.sort()                 <span class="cm"># sort alphabetically</span>
+
+<span class="fn">print</span>(<span class="bi">len</span>(fruits))  <span class="cm"># number of items</span>
+
+<span class="cm"># Loop through all items</span>
+<span class="kw">for</span> fruit <span class="kw">in</span> fruits:
+    <span class="fn">print</span>(<span class="str">f"🍎 {fruit}"</span>)</pre></div>
+      <div class="tip-box"><div class="tip-icon">⚠️</div><div class="tip-text">Lists are <strong>zero-indexed</strong> — the first item is at index <strong>0</strong>, not 1. So a list of 4 items has indexes 0, 1, 2, 3. Index 4 would cause an error!</div></div>
+    </div>
+
+    <!-- DAY 2 PROJECT -->
+    <div class="project-slide">
+      <div class="project-badge">🏗️ Day 2 Project</div>
+      <div class="project-title">Number Guessing Game</div>
+      <div class="project-desc">A classic beginner project. The program picks a random number, you guess it. Uses: random, while loop, if/else, and input. Great for practising all of Day 1 and 2!</div>
+      <div class="code-lang">python — guess_game.py</div>
+      <div class="code-block"><pre><span class="kw">import</span> random
+
+<span class="fn">print</span>(<span class="str">"🎮 Welcome to the Number Guessing Game!"</span>)
+<span class="fn">print</span>(<span class="str">"I'm thinking of a number between 1 and 100."</span>)
+<span class="fn">print</span>()
+
+secret = random.randint(<span class="num">1</span>, <span class="num">100</span>)
+attempts = <span class="num">0</span>
+guessed = <span class="kw">False</span>
+
+<span class="kw">while</span> <span class="kw">not</span> guessed:
+    guess = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Your guess: "</span>))
+    attempts += <span class="num">1</span>
+
+    <span class="kw">if</span> guess < secret:
+        <span class="fn">print</span>(<span class="str">"📉 Too low! Try higher."</span>)
+    <span class="kw">elif</span> guess > secret:
+        <span class="fn">print</span>(<span class="str">"📈 Too high! Try lower."</span>)
+    <span class="kw">else</span>:
+        guessed = <span class="kw">True</span>
+        <span class="fn">print</span>(<span class="str">f"\n🎉 Correct! The number was {secret}."</span>)
+        <span class="fn">print</span>(<span class="str">f"You got it in {attempts} attempt(s)!"</span>)
+        <span class="kw">if</span> attempts <= <span class="num">5</span>:
+            <span class="fn">print</span>(<span class="str">"⭐ Amazing! You're a natural guesser."</span>)
+        <span class="kw">elif</span> attempts <= <span class="num">10</span>:
+            <span class="fn">print</span>(<span class="str">"👍 Good effort!"</span>)
+        <span class="kw">else</span>:
+            <span class="fn">print</span>(<span class="str">"💪 Keep practising your guessing!"</span>)</pre></div>
+      <div class="challenge">
+        <div class="challenge-label">🏋️ Challenge</div>
+        <div class="challenge-text">Add a feature: ask the player if they want to play again after each game. Use another while loop to repeat the whole game until they say "no".</div>
+      </div>
+    </div>
+
+    <div class="lesson-nav">
+      <div class="nav-btn" onclick="showDay(1)">← Day 1</div>
+      <div class="nav-btn primary" onclick="showDay(3)">Next: Functions →</div>
+    </div>
+  </div>
+
+  <!-- ===== DAY 3 — FUNCTIONS, DICTS, MODULES ===== -->
+  <div class="lesson" id="day3">
+
+    <div class="slide">
+      <div class="slide-tag">Day 3 · Functions</div>
+      <div class="slide-title">🧩 Functions — Write Once, Use Anywhere</div>
+      <div class="slide-body">
+        <p>A <strong>function</strong> is a reusable block of code with a name. Instead of writing the same code 10 times, write it once as a function and <strong>call it</strong> whenever you need it. Functions make code cleaner, shorter and easier to fix.</p>
+      </div>
+      <div class="code-lang">python — functions</div>
+      <div class="code-block"><pre><span class="cm"># Define a function with 'def'</span>
+<span class="kw">def</span> <span class="fn">greet</span>(name):
+    <span class="fn">print</span>(<span class="str">f"Hello, {name}! Welcome to TechCamp 🎓"</span>)
+
+<span class="cm"># Call the function</span>
+<span class="fn">greet</span>(<span class="str">"Kwame"</span>)
+<span class="fn">greet</span>(<span class="str">"Ama"</span>)
+<span class="fn">greet</span>(<span class="str">"Kofi"</span>)
+
+<span class="cm"># Function that RETURNS a value</span>
+<span class="kw">def</span> <span class="fn">add</span>(a, b):
+    <span class="kw">return</span> a + b
+
+result = <span class="fn">add</span>(<span class="num">10</span>, <span class="num">25</span>)
+<span class="fn">print</span>(<span class="str">f"10 + 25 = {result}"</span>)   <span class="cm"># 35</span>
+
+<span class="cm"># Function with default value</span>
+<span class="kw">def</span> <span class="fn">power</span>(base, exponent=<span class="num">2</span>):
+    <span class="kw">return</span> base ** exponent
+
+<span class="fn">print</span>(<span class="fn">power</span>(<span class="num">5</span>))      <span class="cm"># 25  (5 squared by default)</span>
+<span class="fn">print</span>(<span class="fn">power</span>(<span class="num">2</span>, <span class="num">10</span>))  <span class="cm"># 1024 (2 to the power of 10)</span></pre></div>
+      <div class="code-explain">
+        <div class="ce-row"><div class="ce-code">def greet(name):</div><div class="ce-desc">Defines a function called "greet" that takes one input called "name".</div></div>
+        <div class="ce-row"><div class="ce-code">return</div><div class="ce-desc">Sends a value back to wherever the function was called from.</div></div>
+        <div class="ce-row"><div class="ce-code">exponent=2</div><div class="ce-desc">Default parameter — if you don't pass exponent, it uses 2 automatically.</div></div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 3 · Dictionaries</div>
+      <div class="slide-title">📖 Dictionaries — Key-Value Storage</div>
+      <div class="slide-body"><p>A <strong>dictionary</strong> stores data as pairs: a <strong>key</strong> and a <strong>value</strong>. Like a contact book — name (key) → phone number (value).</p></div>
+      <div class="code-lang">python — dictionaries</div>
+      <div class="code-block"><pre><span class="cm"># Create a dictionary</span>
+student = {
+    <span class="str">"name"</span>   : <span class="str">"Kwame"</span>,
+    <span class="str">"age"</span>    : <span class="num">21</span>,
+    <span class="str">"city"</span>   : <span class="str">"Kumasi"</span>,
+    <span class="str">"course"</span> : <span class="str">"TechCamp"</span>,
+    <span class="str">"paid"</span>   : <span class="kw">True</span>
+}
+
+<span class="cm"># Access by key</span>
+<span class="fn">print</span>(student[<span class="str">"name"</span>])    <span class="cm"># Kwame</span>
+<span class="fn">print</span>(student[<span class="str">"age"</span>])     <span class="cm"># 21</span>
+
+<span class="cm"># Update a value</span>
+student[<span class="str">"age"</span>] = <span class="num">22</span>
+
+<span class="cm"># Add a new key</span>
+student[<span class="str">"score"</span>] = <span class="num">87</span>
+
+<span class="cm"># Loop through all keys and values</span>
+<span class="kw">for</span> key, value <span class="kw">in</span> student.items():
+    <span class="fn">print</span>(<span class="str">f"{key}: {value}"</span>)
+
+<span class="cm"># Check if a key exists</span>
+<span class="kw">if</span> <span class="str">"paid"</span> <span class="kw">in</span> student:
+    <span class="fn">print</span>(<span class="str">"Student has paid ✅"</span>)</pre></div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 3 · Modules</div>
+      <div class="slide-title">📦 Using Python Modules</div>
+      <div class="slide-body"><p>Python has thousands of ready-made <strong>modules</strong> (libraries). You <strong>import</strong> them to use their functions without writing everything from scratch.</p></div>
+      <div class="code-lang">python — built-in modules</div>
+      <div class="code-block"><pre><span class="cm"># math module</span>
+<span class="kw">import</span> math
+<span class="fn">print</span>(math.sqrt(<span class="num">144</span>))     <span class="cm"># 12.0</span>
+<span class="fn">print</span>(math.pi)             <span class="cm"># 3.14159...</span>
+<span class="fn">print</span>(math.ceil(<span class="num">4.3</span>))     <span class="cm"># 5  (round up)</span>
+<span class="fn">print</span>(math.floor(<span class="num">4.9</span>))    <span class="cm"># 4  (round down)</span>
+
+<span class="cm"># random module</span>
+<span class="kw">import</span> random
+<span class="fn">print</span>(random.randint(<span class="num">1</span>, <span class="num">6</span>))       <span class="cm"># random dice roll</span>
+<span class="fn">print</span>(random.choice([<span class="str">"rock"</span>, <span class="str">"paper"</span>, <span class="str">"scissors"</span>]))
+
+<span class="cm"># datetime module</span>
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+now = datetime.now()
+<span class="fn">print</span>(<span class="str">f"Today: {now.strftime('%d %B %Y')}"</span>)
+<span class="fn">print</span>(<span class="str">f"Time:  {now.strftime('%H:%M:%S')}"</span>)
+
+<span class="cm"># os module — interact with your computer</span>
+<span class="kw">import</span> os
+<span class="fn">print</span>(os.getcwd())  <span class="cm"># current working directory</span></pre></div>
+      <div class="tip-box"><div class="tip-icon">📦</div><div class="tip-text">Need a module that's not built-in? Install it with pip in your terminal:<br><code style="font-family:monospace;background:rgba(0,0,0,0.3);padding:2px 6px;border-radius:4px;">pip install requests</code> then <code style="font-family:monospace;background:rgba(0,0,0,0.3);padding:2px 6px;border-radius:4px;">import requests</code> in your code.</div></div>
+    </div>
+
+    <!-- DAY 3 PROJECT -->
+    <div class="project-slide">
+      <div class="project-badge">🏗️ Day 3 Project</div>
+      <div class="project-title">Simple Calculator</div>
+      <div class="project-desc">A menu-driven calculator using functions for each operation. Uses: functions, if/else, while loop, and input. Students will keep using it until they choose to quit.</div>
+      <div class="code-lang">python — calculator.py</div>
+      <div class="code-block"><pre><span class="cm"># ── Simple Calculator ──</span>
+
+<span class="kw">def</span> <span class="fn">add</span>(a, b):      <span class="kw">return</span> a + b
+<span class="kw">def</span> <span class="fn">subtract</span>(a, b): <span class="kw">return</span> a - b
+<span class="kw">def</span> <span class="fn">multiply</span>(a, b): <span class="kw">return</span> a * b
+<span class="kw">def</span> <span class="fn">divide</span>(a, b):
+    <span class="kw">if</span> b == <span class="num">0</span>:
+        <span class="kw">return</span> <span class="str">"Error: Cannot divide by zero!"</span>
+    <span class="kw">return</span> a / b
+
+<span class="fn">print</span>(<span class="str">"🧮 TechCamp Calculator"</span>)
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    <span class="fn">print</span>(<span class="str">"\n1. Add  2. Subtract  3. Multiply  4. Divide  5. Quit"</span>)
+    choice = <span class="fn">input</span>(<span class="str">"Choose: "</span>)
+
+    <span class="kw">if</span> choice == <span class="str">"5"</span>:
+        <span class="fn">print</span>(<span class="str">"Goodbye! 👋"</span>)
+        <span class="kw">break</span>
+
+    <span class="kw">if</span> choice <span class="kw">in</span> [<span class="str">"1"</span>,<span class="str">"2"</span>,<span class="str">"3"</span>,<span class="str">"4"</span>]:
+        a = <span class="fn">float</span>(<span class="fn">input</span>(<span class="str">"First number: "</span>))
+        b = <span class="fn">float</span>(<span class="fn">input</span>(<span class="str">"Second number: "</span>))
+
+        <span class="kw">if</span>   choice == <span class="str">"1"</span>: result = <span class="fn">add</span>(a, b)
+        <span class="kw">elif</span> choice == <span class="str">"2"</span>: result = <span class="fn">subtract</span>(a, b)
+        <span class="kw">elif</span> choice == <span class="str">"3"</span>: result = <span class="fn">multiply</span>(a, b)
+        <span class="kw">elif</span> choice == <span class="str">"4"</span>: result = <span class="fn">divide</span>(a, b)
+
+        <span class="fn">print</span>(<span class="str">f"Result: {result}"</span>)
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="str">"Invalid choice. Try again."</span>)</pre></div>
+    </div>
+
+    <div class="lesson-nav">
+      <div class="nav-btn" onclick="showDay(2)">← Day 2</div>
+      <div class="nav-btn primary" onclick="showDay(4)">Next: File Handling & Projects →</div>
+    </div>
+  </div>
+
+  <!-- ===== DAY 4 — FILES + BIGGER PROJECTS ===== -->
+  <div class="lesson" id="day4">
+
+    <div class="slide">
+      <div class="slide-tag">Day 4 · File Handling</div>
+      <div class="slide-title">📁 Reading & Writing Files</div>
+      <div class="slide-body"><p>Real programs save data so it's not lost when the program closes. Python makes file handling very easy with the built-in <strong>open()</strong> function.</p></div>
+      <div class="code-lang">python — file handling</div>
+      <div class="code-block"><pre><span class="cm"># WRITE — create or overwrite a file</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"students.txt"</span>, <span class="str">"w"</span>) <span class="kw">as</span> f:
+    f.write(<span class="str">"Kwame\n"</span>)
+    f.write(<span class="str">"Ama\n"</span>)
+    f.write(<span class="str">"Kofi\n"</span>)
+
+<span class="cm"># READ — open and read the whole file</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"students.txt"</span>, <span class="str">"r"</span>) <span class="kw">as</span> f:
+    content = f.read()
+    <span class="fn">print</span>(content)
+
+<span class="cm"># APPEND — add to end without deleting</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"students.txt"</span>, <span class="str">"a"</span>) <span class="kw">as</span> f:
+    f.write(<span class="str">"Abena\n"</span>)
+
+<span class="cm"># READ LINES — as a list</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"students.txt"</span>, <span class="str">"r"</span>) <span class="kw">as</span> f:
+    lines = f.readlines()
+    <span class="kw">for</span> i, name <span class="kw">in</span> <span class="bi">enumerate</span>(lines, <span class="num">1</span>):
+        <span class="fn">print</span>(<span class="str">f"{i}. {name.strip()}"</span>)</pre></div>
+      <div class="terms-grid">
+        <div class="term"><div class="term-word">"w" — Write</div><div class="term-def">Creates file if it doesn't exist. Overwrites if it does.</div></div>
+        <div class="term"><div class="term-word">"r" — Read</div><div class="term-def">Opens file for reading. Error if file doesn't exist.</div></div>
+        <div class="term"><div class="term-word">"a" — Append</div><div class="term-def">Adds to the end. Never deletes existing content.</div></div>
+        <div class="term"><div class="term-word">with...as</div><div class="term-def">Automatically closes the file when done. Always use this!</div></div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 4 · Error Handling</div>
+      <div class="slide-title">🛡️ Try / Except — Handling Errors Gracefully</div>
+      <div class="slide-body"><p>Programs crash when errors happen. <strong>try/except</strong> lets you catch errors and handle them without crashing — like a safety net for your code.</p></div>
+      <div class="code-lang">python — try/except</div>
+      <div class="code-block"><pre><span class="cm"># Without try/except — this CRASHES if user types text</span>
+<span class="cm"># age = int(input("Age: "))  ← ValueError!</span>
+
+<span class="cm"># With try/except — handles the error safely</span>
+<span class="kw">try</span>:
+    age = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Enter your age: "</span>))
+    <span class="fn">print</span>(<span class="str">f"You are {age} years old."</span>)
+<span class="kw">except</span> ValueError:
+    <span class="fn">print</span>(<span class="str">"❌ Please enter a number, not text!"</span>)
+
+<span class="cm"># File reading with error handling</span>
+<span class="kw">try</span>:
+    <span class="kw">with</span> <span class="fn">open</span>(<span class="str">"data.txt"</span>, <span class="str">"r"</span>) <span class="kw">as</span> f:
+        <span class="fn">print</span>(f.read())
+<span class="kw">except</span> FileNotFoundError:
+    <span class="fn">print</span>(<span class="str">"❌ File not found! Check the filename."</span>)
+<span class="kw">finally</span>:
+    <span class="fn">print</span>(<span class="str">"Done — this runs no matter what."</span>)</pre></div>
+      <div class="tip-box"><div class="tip-icon">💡</div><div class="tip-text"><strong>try</strong> = attempt the risky code. <strong>except</strong> = what to do if it fails. <strong>finally</strong> = always runs regardless. This makes your programs professional and unbreakable.</div></div>
+    </div>
+
+    <!-- DAY 4 PROJECT 1 -->
+    <div class="project-slide">
+      <div class="project-badge">🏗️ Day 4 Project 1</div>
+      <div class="project-title">Student Registration System</div>
+      <div class="project-desc">A real program that registers students, saves them to a file and can view them. Uses: functions, file handling, while loop, try/except — everything from the week!</div>
+      <div class="code-lang">python — registration.py</div>
+      <div class="code-block"><pre><span class="cm"># ── TechCamp Student Registration System ──</span>
+
+<span class="kw">def</span> <span class="fn">register</span>(name):
+    <span class="kw">with</span> <span class="fn">open</span>(<span class="str">"registered.txt"</span>, <span class="str">"a"</span>) <span class="kw">as</span> f:
+        f.write(name + <span class="str">"\n"</span>)
+    <span class="fn">print</span>(<span class="str">f"✅ {name} registered successfully!"</span>)
+
+<span class="kw">def</span> <span class="fn">view_all</span>():
+    <span class="fn">print</span>(<span class="str">"\n── Registered Students ──"</span>)
+    <span class="kw">try</span>:
+        <span class="kw">with</span> <span class="fn">open</span>(<span class="str">"registered.txt"</span>, <span class="str">"r"</span>) <span class="kw">as</span> f:
+            students = f.readlines()
+        <span class="kw">if</span> <span class="kw">not</span> students:
+            <span class="fn">print</span>(<span class="str">"No students registered yet."</span>)
+        <span class="kw">else</span>:
+            <span class="kw">for</span> i, s <span class="kw">in</span> <span class="bi">enumerate</span>(students, <span class="num">1</span>):
+                <span class="fn">print</span>(<span class="str">f"  {i}. {s.strip()}"</span>)
+    <span class="kw">except</span> FileNotFoundError:
+        <span class="fn">print</span>(<span class="str">"No students registered yet."</span>)
+
+<span class="kw">def</span> <span class="fn">count</span>():
+    <span class="kw">try</span>:
+        <span class="kw">with</span> <span class="fn">open</span>(<span class="str">"registered.txt"</span>, <span class="str">"r"</span>) <span class="kw">as</span> f:
+            <span class="kw">return</span> <span class="bi">len</span>(f.readlines())
+    <span class="kw">except</span>: <span class="kw">return</span> <span class="num">0</span>
+
+<span class="fn">print</span>(<span class="str">"🎓 TechCamp Registration System"</span>)
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    <span class="fn">print</span>(<span class="str">f"\nStudents: {<span class="fn">count</span>()}"</span>)
+    <span class="fn">print</span>(<span class="str">"1. Register  2. View All  3. Quit"</span>)
+    choice = <span class="fn">input</span>(<span class="str">"Choice: "</span>).strip()
+
+    <span class="kw">if</span> choice == <span class="str">"1"</span>:
+        name = <span class="fn">input</span>(<span class="str">"Student name: "</span>).strip()
+        <span class="kw">if</span> name: <span class="fn">register</span>(name)
+        <span class="kw">else</span>: <span class="fn">print</span>(<span class="str">"Name cannot be empty."</span>)
+    <span class="kw">elif</span> choice == <span class="str">"2"</span>:
+        <span class="fn">view_all</span>()
+    <span class="kw">elif</span> choice == <span class="str">"3"</span>:
+        <span class="fn">print</span>(<span class="str">"Goodbye! 👋"</span>); <span class="kw">break</span></pre></div>
+    </div>
+
+    <!-- DAY 4 PROJECT 2 -->
+    <div class="project-slide">
+      <div class="project-badge">🏗️ Day 4 Project 2</div>
+      <div class="project-title">Password Strength Checker</div>
+      <div class="project-desc">Combines our hacking knowledge with Python — a tool that checks how strong a password is and gives specific feedback. Great demo of functions, loops, and string methods.</div>
+      <div class="code-lang">python — password_check.py</div>
+      <div class="code-block"><pre><span class="kw">def</span> <span class="fn">check_password</span>(pw):
+    score = <span class="num">0</span>
+    tips  = []
+
+    <span class="kw">if</span> <span class="bi">len</span>(pw) >= <span class="num">8</span>:
+        score += <span class="num">1</span>
+    <span class="kw">else</span>:
+        tips.append(<span class="str">"❌ Use at least 8 characters"</span>)
+
+    <span class="kw">if</span> <span class="bi">any</span>(c.isupper() <span class="kw">for</span> c <span class="kw">in</span> pw):
+        score += <span class="num">1</span>
+    <span class="kw">else</span>:
+        tips.append(<span class="str">"❌ Add uppercase letters (A-Z)"</span>)
+
+    <span class="kw">if</span> <span class="bi">any</span>(c.islower() <span class="kw">for</span> c <span class="kw">in</span> pw):
+        score += <span class="num">1</span>
+    <span class="kw">else</span>:
+        tips.append(<span class="str">"❌ Add lowercase letters (a-z)"</span>)
+
+    <span class="kw">if</span> <span class="bi">any</span>(c.isdigit() <span class="kw">for</span> c <span class="kw">in</span> pw):
+        score += <span class="num">1</span>
+    <span class="kw">else</span>:
+        tips.append(<span class="str">"❌ Add numbers (0-9)"</span>)
+
+    <span class="kw">if</span> <span class="bi">any</span>(c <span class="kw">in</span> <span class="str">"!@#$%^&*_-"</span> <span class="kw">for</span> c <span class="kw">in</span> pw):
+        score += <span class="num">1</span>
+    <span class="kw">else</span>:
+        tips.append(<span class="str">"❌ Add symbols (!@#$%^&*)"</span>)
+
+    labels = [<span class="str">""</span>, <span class="str">"Very Weak"</span>, <span class="str">"Weak"</span>, <span class="str">"Fair"</span>, <span class="str">"Strong"</span>, <span class="str">"Very Strong"</span>]
+    emojis = [<span class="str">""</span>, <span class="str">"💀"</span>, <span class="str">"⚠"</span>, <span class="str">"🔶"</span>, <span class="str">"✅"</span>, <span class="str">"🔒"</span>]
+
+    <span class="fn">print</span>(<span class="str">f"\nStrength: {emojis[score]} {labels[score]} ({score}/5)"</span>)
+    <span class="kw">if</span> tips:
+        <span class="fn">print</span>(<span class="str">"Improve it:"</span>)
+        <span class="kw">for</span> t <span class="kw">in</span> tips: <span class="fn">print</span>(<span class="str">f"  {t}"</span>)
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="str">"Perfect password! 🎉"</span>)
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    pw = <span class="fn">input</span>(<span class="str">"\nEnter password to check (or 'quit'): "</span>)
+    <span class="kw">if</span> pw == <span class="str">"quit"</span>: <span class="kw">break</span>
+    <span class="fn">check_password</span>(pw)</pre></div>
+    </div>
+
+    <div class="lesson-nav">
+      <div class="nav-btn" onclick="showDay(3)">← Day 3</div>
+      <div class="nav-btn primary" onclick="showDay(5)">Next: Final Project →</div>
+    </div>
+  </div>
+
+  <!-- ===== DAY 5 — FINAL PROJECT + WRAP UP ===== -->
+  <div class="lesson" id="day5">
+
+    <div class="slide">
+      <div class="slide-tag">Day 5 · Final Project</div>
+      <div class="slide-title">🏆 Final Project — Python Quiz Game</div>
+      <div class="slide-body">
+        <p>Our grand finale! A full interactive quiz game about everything in this boot camp — ethical hacking, Arduino and Python. It tracks scores, gives feedback, and saves results to a file. This uses <strong>everything</strong> from the whole week.</p>
+      </div>
+      <div class="vis-grid">
+        <div class="vis-card"><div class="vis-icon">📋</div><div class="vis-label">What It Does</div><div class="vis-desc">Asks 6 questions, tracks score, shows final result, saves to file.</div></div>
+        <div class="vis-card"><div class="vis-icon">🧠</div><div class="vis-label">What It Uses</div><div class="vis-desc">Lists, dicts, functions, for loops, if/else, file writing, f-strings.</div></div>
+      </div>
+    </div>
+
+    <div class="project-slide">
+      <div class="project-badge">🏗️ Final Project</div>
+      <div class="project-title">TechCamp Quiz Game</div>
+      <div class="project-desc">A complete quiz game that covers all 3 topics of the boot camp. Students fill in the answers, get scored and their results are saved. This is a real, complete Python program.</div>
+      <div class="code-lang">python — quiz_game.py</div>
+      <div class="code-block"><pre><span class="cm"># ════════════════════════════════════════
+#  TechCamp Quiz Game — Final Project
+#  Python Boot Camp · Week 3
+#  Instructor: Gyamerah Afriyie Philimon
+# ════════════════════════════════════════</span>
+
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+<span class="kw">import</span> random
+
+questions = [
+    {<span class="str">"q"</span>: <span class="str">"What tool in Kali Linux scans for open ports?"</span>,
+     <span class="str">"a"</span>: <span class="str">"nmap"</span>, <span class="str">"topic"</span>: <span class="str">"Ethical Hacking"</span>},
+    {<span class="str">"q"</span>: <span class="str">"What does VCC stand for on a circuit?"</span>,
+     <span class="str">"a"</span>: <span class="str">"voltage common collector"</span>, <span class="str">"topic"</span>: <span class="str">"Arduino"</span>},
+    {<span class="str">"q"</span>: <span class="str">"What function prints text in Python?"</span>,
+     <span class="str">"a"</span>: <span class="str">"print"</span>, <span class="str">"topic"</span>: <span class="str">"Python"</span>},
+    {<span class="str">"q"</span>: <span class="str">"What Arduino function sets a pin HIGH or LOW?"</span>,
+     <span class="str">"a"</span>: <span class="str">"digitalwrite"</span>, <span class="str">"topic"</span>: <span class="str">"Arduino"</span>},
+    {<span class="str">"q"</span>: <span class="str">"What command in Kali shows your IP address?"</span>,
+     <span class="str">"a"</span>: <span class="str">"ifconfig"</span>, <span class="str">"topic"</span>: <span class="str">"Ethical Hacking"</span>},
+    {<span class="str">"q"</span>: <span class="str">"What keyword defines a function in Python?"</span>,
+     <span class="str">"a"</span>: <span class="str">"def"</span>, <span class="str">"topic"</span>: <span class="str">"Python"</span>},
+]
+
+<span class="kw">def</span> <span class="fn">run_quiz</span>(player_name):
+    score = <span class="num">0</span>
+    random.shuffle(questions)
+
+    <span class="fn">print</span>(<span class="str">f"\n🎮 Starting quiz for {player_name}!\n"</span>)
+
+    <span class="kw">for</span> i, q <span class="kw">in</span> <span class="bi">enumerate</span>(questions, <span class="num">1</span>):
+        <span class="fn">print</span>(<span class="str">f"Q{i} [{q['topic']}]: {q['q']}"</span>)
+        answer = <span class="fn">input</span>(<span class="str">"   Your answer: "</span>).strip().lower()
+
+        <span class="kw">if</span> answer == q[<span class="str">"a"</span>].lower():
+            <span class="fn">print</span>(<span class="str">"   ✅ Correct!\n"</span>)
+            score += <span class="num">1</span>
+        <span class="kw">else</span>:
+            <span class="fn">print</span>(<span class="str">f"   ❌ Wrong. Answer: {q['a']}\n"</span>)
+
+    percent = (score / <span class="bi">len</span>(questions)) * <span class="num">100</span>
+    <span class="fn">print</span>(<span class="str">f"── Final Score: {score}/{<span class="bi">len</span>(questions)} ({percent:.0f}%) ──"</span>)
+
+    <span class="kw">if</span>   percent == <span class="num">100</span>: <span class="fn">print</span>(<span class="str">"🏆 Perfect! You're a TechCamp legend!"</span>)
+    <span class="kw">elif</span> percent >= <span class="num">70</span>:  <span class="fn">print</span>(<span class="str">"✅ Great work! You've learned a lot."</span>)
+    <span class="kw">elif</span> percent >= <span class="num">50</span>:  <span class="fn">print</span>(<span class="str">"👍 Good effort. Keep studying!"</span>)
+    <span class="kw">else</span>:                <span class="fn">print</span>(<span class="str">"📚 Review the notes and try again!"</span>)
+
+    <span class="cm"># Save result to file</span>
+    <span class="kw">with</span> <span class="fn">open</span>(<span class="str">"quiz_results.txt"</span>, <span class="str">"a"</span>) <span class="kw">as</span> f:
+        time = datetime.now().strftime(<span class="str">"%d/%m/%Y %H:%M"</span>)
+        f.write(<span class="str">f"{time} | {player_name} | {score}/{<span class="bi">len</span>(questions)} | {percent:.0f}%\n"</span>)
+    <span class="fn">print</span>(<span class="str">"📁 Result saved to quiz_results.txt"</span>)
+
+<span class="cm"># ── Main program ──</span>
+<span class="fn">print</span>(<span class="str">"🎓 TechCamp Boot Camp Quiz"</span>)
+name = <span class="fn">input</span>(<span class="str">"Enter your name: "</span>).strip()
+<span class="fn">run_quiz</span>(name)
+
+again = <span class="fn">input</span>(<span class="str">"\nPlay again? (yes/no): "</span>)
+<span class="kw">if</span> again.lower() == <span class="str">"yes"</span>:
+    <span class="fn">run_quiz</span>(name)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">"Thanks for playing! Keep coding 🐍"</span>)</pre></div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 5 · Week Summary</div>
+      <div class="slide-title">✅ Full Boot Camp Summary</div>
+      <div class="slide-body"><p>Here's everything you built and learned across the entire boot camp:</p></div>
+      <div class="terms-grid">
+        <div class="term"><div class="term-word">🔐 Week 1 — Ethical Hacking</div><div class="term-def">VMware & Kali Linux setup · Terminal commands · Nmap scanning · Networking basics · Backdoors, payloads & msfvenom · Client-side attacks</div></div>
+        <div class="term"><div class="term-word">🤖 Week 2 — Arduino & C</div><div class="term-def">Microcontrollers · Breadboard · LED Blink · Ultrasonic distance sensor · I2C LCD display · DHT11 weather station final project</div></div>
+        <div class="term"><div class="term-word">🐍 Week 3 — Python</div><div class="term-def">Variables · Input/output · Conditions · Loops · Lists · Functions · Dicts · Modules · Files · 5 complete projects</div></div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-tag">Day 5 · What's Next</div>
+      <div class="slide-title">🚀 Keep Learning — Resources</div>
+      <div class="slide-body"><p>This boot camp is your foundation. Here's where to go next:</p></div>
+      <a class="link-card" href="https://www.freecodecamp.org/learn/scientific-computing-with-python/" target="_blank">
+        <div class="link-icon">🐍</div>
+        <div class="link-info"><div class="link-title">freeCodeCamp — Python Course</div><div class="link-url">Free. Full Python course with exercises and certification.</div></div>
+        <div class="link-arr">›</div>
+      </a>
+      <a class="link-card" href="https://www.youtube.com/@coreyms" target="_blank">
+        <div class="link-icon">▶️</div>
+        <div class="link-info"><div class="link-title">Corey Schafer — YouTube</div><div class="link-url">Best Python tutorials on YouTube. Covers beginner to advanced.</div></div>
+        <div class="link-arr">›</div>
+      </a>
+      <a class="link-card" href="https://tryhackme.com" target="_blank">
+        <div class="link-icon">🔐</div>
+        <div class="link-info"><div class="link-title">TryHackMe — Ethical Hacking Labs</div><div class="link-url">Free guided hacking exercises. Start with "Pre-Security" path.</div></div>
+        <div class="link-arr">›</div>
+      </a>
+      <a class="link-card" href="https://www.tiktok.com/@_phil.jr" target="_blank">
+        <div class="link-icon">🎵</div>
+        <div class="link-info"><div class="link-title">@_phil.jr on TikTok</div><div class="link-url">Short project demos and coding tips from your instructor.</div></div>
+        <div class="link-arr">›</div>
+      </a>
+      <a class="link-card" href="https://www.instagram.com/_phil.jr" target="_blank">
+        <div class="link-icon">📸</div>
+        <div class="link-info"><div class="link-title">@_phil.jr on Instagram</div><div class="link-url">Updates, projects and more.</div></div>
+        <div class="link-arr">›</div>
+      </a>
+
+      <div class="reach-box">
+        <div class="reach-title">💬 Want to Dive Even Deeper?</div>
+        <div class="reach-body">More boot camps are coming — advanced Python, web development with Flask, machine learning, and more. Stay connected and reach out anytime. The learning never stops!</div>
+        <div class="reach-btns">
+          <a class="reach-btn" href="https://wa.me/233554197193?text=Hi%2C%20I%20want%20to%20continue%20learning%20after%20TechCamp" target="_blank">📱 WhatsApp</a>
+          <a class="reach-btn" href="/cdn-cgi/l/email-protection#711b08100645444731161c10181d5f121e1c" target="_blank">✉️ Email</a>
+          <a class="reach-btn" href="https://www.linkedin.com/in/gyamerah-afriyie-philimon-32a11525b" target="_blank">in LinkedIn</a>
+          <a class="reach-btn" href="https://www.tiktok.com/@_phil.jr" target="_blank">🎵 TikTok</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="lesson-nav">
+      <div class="nav-btn" onclick="showDay(4)">← Day 4</div>
+      <a class="nav-btn primary" href="index.html">🏠 Back to Hub</a>
+    </div>
+  </div>
+
+  <!-- ===== DAY 6 — PYTHON CONSOLE ===== -->
+  <div class="lesson" id="day6">
+    <div class="slide">
+      <div class="slide-tag">Practice Console</div>
+      <div class="slide-title">▶ Interactive Python Console</div>
+      <div class="slide-body">
+        <p>Write and run real Python code right here in your browser — no installation needed! Powered by <strong>Pyodide</strong>, a full Python runtime. Click any snippet button to load an example, edit it, then hit <strong>Run</strong>.</p>
+        <p style="margin-top:8px;font-size:12px;color:rgba(255,255,255,0.45);">⚠️ First run takes ~5 seconds to load Python. After that it's instant. <strong>input()</strong> is replaced with a placeholder — use hardcoded values for practice.</p>
+      </div>
+    </div>
+
+    <div class="console-wrap">
+      <div class="console-topbar">
+        <div class="console-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="console-title">🐍 Python Console</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.3);">Pyodide Runtime</div>
+      </div>
+      <div class="console-snippets">
+        <button class="snippet-btn" onclick="loadSnippet('hello')">Hello World</button>
+        <button class="snippet-btn" onclick="loadSnippet('variables')">Variables</button>
+        <button class="snippet-btn" onclick="loadSnippet('loop')">For Loop</button>
+        <button class="snippet-btn" onclick="loadSnippet('list')">Lists</button>
+        <button class="snippet-btn" onclick="loadSnippet('function')">Functions</button>
+        <button class="snippet-btn" onclick="loadSnippet('dict')">Dictionary</button>
+        <button class="snippet-btn" onclick="loadSnippet('math')">Math Module</button>
+        <button class="snippet-btn" onclick="loadSnippet('guess')">Guessing Game</button>
+        <button class="snippet-btn" onclick="loadSnippet('calc')">Calculator</button>
+        <button class="snippet-btn" onclick="loadSnippet('password')">Password Check</button>
+      </div>
+      <div class="console-editor">
+        <textarea id="py-code" spellcheck="false" autocorrect="off" autocapitalize="off"># TechCamp Python Console 🐍
+# Write your code and click Run!
+
+name = "TechCamp Student"
+year = 2026
+
+print(f"Hello, {name}!")
+print(f"Welcome to Python Boot Camp {year}")
+
+for i in range(1, 6):
+    print(f"  Line {i}: Keep coding! 💪")</textarea>
+      </div>
+      <div class="console-run-bar">
+        <button id="run-btn" onclick="runPython()">▶ Run</button>
+        <button id="clear-btn" onclick="clearOutput()">Clear</button>
+        <span class="py-status" id="py-status">Loading Python runtime...</span>
+      </div>
+      <div class="console-output-wrap">
+        <div class="output-hdr">Output</div>
+        <div id="py-output">Output will appear here after you click Run ▶</div>
+      </div>
+    </div>
+
+    <div class="slide" style="margin-top:18px;">
+      <div class="slide-tag">Console Tips</div>
+      <div class="slide-title">💡 Tips & Limitations</div>
+      <div class="terms-grid">
+        <div class="term"><div class="term-word">✅ What Works</div><div class="term-def">print(), variables, loops, if/else, functions, lists, dicts, math, random, datetime, string methods — all fully supported.</div></div>
+        <div class="term"><div class="term-word">❌ input() Not Supported</div><div class="term-def">Browser can't pause for keyboard input. Replace input() with a hardcoded value for testing. e.g. name = "Kwame" instead of name = input("Name: ")</div></div>
+        <div class="term"><div class="term-word">⏱ First Run Delay</div><div class="term-def">Pyodide loads a full Python engine the first time (~5 seconds). After that all runs are instant.</div></div>
+        <div class="term"><div class="term-word">📦 External Packages</div><div class="term-def">Built-in libraries (math, random, datetime, os) work fine. Third-party packages like pynput, requests are not available in the browser console.</div></div>
+      </div>
+    </div>
+
+    <div class="lesson-nav">
+      <div class="nav-btn" onclick="showDay(5)">← Day 5</div>
+      <a class="nav-btn primary" href="index.html">🏠 Back to Hub</a>
+    </div>
+  </div>
+
+  <footer>TechCamp Boot Camp · Week 3 · Python Programming · April 2026<br>
+    <span style="opacity:0.5;">Instructor: Gyamerah Afriyie Philimon</span>
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+<script>
+  let pyodide = null;
+  let pyReady = false;
+
+  async function loadPy() {
+    try {
+      pyodide = await loadPyodide({ indexURL:"https://cdn.jsdelivr.net/pyodide/v0.25.0/full/" });
+      pyReady = true;
+      document.getElementById('py-status').textContent = 'Python ready ✅ — click Run!';
+    } catch(e) {
+      document.getElementById('py-status').textContent = 'Load failed — check internet';
+    }
+  }
+  loadPy();
+
+  async function runPython() {
+    const code = document.getElementById('py-code').value;
+    const out  = document.getElementById('py-output');
+    const btn  = document.getElementById('run-btn');
+    const status = document.getElementById('py-status');
+
+    if (!pyReady) { out.textContent='⏳ Still loading Python, wait a moment...'; out.className='error'; return; }
+
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Running...';
+    out.className = '';
+    status.textContent = 'Running...';
+
+    try {
+      // Redirect stdout
+      await pyodide.runPythonAsync(`import sys, io; _buf=io.StringIO(); sys.stdout=_buf`);
+      // Replace input() calls so they don't crash
+      const safe = code.replace(/input\s*\([^)]*\)/g, '"[input() not supported — hardcode a value instead]"');
+      await pyodide.runPythonAsync(safe);
+      const result = await pyodide.runPythonAsync(`sys.stdout=sys.__stdout__; _buf.getvalue()`);
+      out.textContent = result && result.trim() ? result : '(No output — add print() to see results)';
+      out.className = '';
+      status.textContent = '✅ Ran successfully';
+    } catch(err) {
+      try { await pyodide.runPythonAsync(`import sys; sys.stdout=sys.__stdout__`); } catch(e){}
+      let msg = (err.message||String(err)).split('\n').filter(l=>!l.includes('File "<exec"')).join('\n').trim();
+      out.textContent = '❌ Error:\n' + msg;
+      out.className = 'error';
+      status.textContent = '❌ Error';
+    }
+    btn.disabled = false;
+    btn.innerHTML = '▶ Run';
+  }
+
+  function clearOutput() {
+    document.getElementById('py-output').textContent = 'Cleared.';
+    document.getElementById('py-output').className = '';
+    document.getElementById('py-status').textContent = 'Click Run to execute your code';
+  }
+
+  const snippets = {
+    hello:`print("Hello, World!")
+print("Welcome to TechCamp 🎓")
+print("Python is awesome!")`,
+    variables:`name = "Kwame"
+age = 21
+city = "Kumasi"
+is_student = True
+gpa = 3.8
+print(f"Name   : {name}")
+print(f"Age    : {age}")
+print(f"City   : {city}")
+print(f"Student: {is_student}")
+print(f"GPA    : {gpa}")`,
+    loop:`for i in range(1, 11):
+    print(f"Count: {i}")
+print()
+print("--- 5 Times Table ---")
+for i in range(1, 11):
+    print(f"5 x {i:2} = {5*i:2}")`,
+    list:`fruits = ["mango","orange","banana","pineapple","watermelon"]
+print(f"Total: {len(fruits)}")
+print(f"First: {fruits[0]}")
+print(f"Last : {fruits[-1]}")
+fruits.sort()
+print()
+print("Sorted:")
+for i, f in enumerate(fruits, 1):
+    print(f"  {i}. {f}")`,
+    function:`def greet(name, course="TechCamp"):
+    return f"Hello {name}! Welcome to {course} 🎓"
+
+def grade(score):
+    if score>=80: return "A"
+    elif score>=70: return "B"
+    elif score>=60: return "C"
+    elif score>=50: return "D"
+    else: return "F"
+
+print(greet("Kwame"))
+print(greet("Ama","Python Bootcamp"))
+
+scores = [85, 72, 55, 91, 48]
+for s in scores:
+    print(f"Score {s} → Grade {grade(s)}")`,
+    dict:`student = {
+    "name": "Kofi",
+    "age": 20,
+    "city": "Accra",
+    "courses": ["Hacking","Arduino","Python"],
+    "score": 87
+}
+print("--- Student Profile ---")
+for k,v in student.items():
+    print(f"  {k}: {v}")
+student["score"] = 95
+print(f"\nUpdated score: {student['score']}")`,
+    math:`import math, random
+print("--- Math ---")
+print(f"Pi        : {math.pi:.4f}")
+print(f"sqrt(144) : {math.sqrt(144)}")
+print(f"2^10      : {math.pow(2,10):.0f}")
+print()
+print("--- Random ---")
+print(f"Dice roll : {random.randint(1,6)}")
+print(f"Choice    : {random.choice(['rock','paper','scissors'])}")
+nums = list(range(1,11)); random.shuffle(nums)
+print(f"Shuffled  : {nums}")`,
+    guess:`import random
+secret = random.randint(1,20)
+print(f"🎮 Guess the number! (secret={secret})")
+guesses = [10, 5, 15, secret]
+for i, g in enumerate(guesses, 1):
+    print(f"Guess #{i}: {g}")
+    if g < secret: print("  📉 Too low!")
+    elif g > secret: print("  📈 Too high!")
+    else: print(f"  🎉 Correct in {i} attempts!"); break`,
+    calc:`def add(a,b): return a+b
+def sub(a,b): return a-b
+def mul(a,b): return a*b
+def div(a,b): return "Error: /0!" if b==0 else round(a/b,4)
+ops=[(10,5,"+",add),(10,5,"-",sub),(10,5,"*",mul),(10,5,"/",div),(7,0,"/",div)]
+print("🧮 Calculator")
+print("-"*22)
+for a,b,op,fn in ops:
+    print(f"  {a} {op} {b} = {fn(a,b)}")`,
+    password:`def check(pw):
+    s=0; tips=[]
+    if len(pw)>=8: s+=1
+    else: tips.append("❌ Need 8+ chars")
+    if any(c.isupper() for c in pw): s+=1
+    else: tips.append("❌ Need uppercase")
+    if any(c.islower() for c in pw): s+=1
+    else: tips.append("❌ Need lowercase")
+    if any(c.isdigit() for c in pw): s+=1
+    else: tips.append("❌ Need numbers")
+    if any(c in "!@#$%^&*" for c in pw): s+=1
+    else: tips.append("❌ Need symbols")
+    lb=["","💀 Very Weak","⚠ Weak","🔶 Fair","✅ Strong","🔒 Very Strong"]
+    print(f"'{pw}' → {lb[s]} ({s}/5)")
+    for t in tips: print(f"   {t}")
+    print()
+for pw in ["abc","password","Password1","P@ssw0rd!","Tr0ub4d0r&"]:
+    check(pw)`
+  };
+
+  function loadSnippet(name) {
+    document.getElementById('py-code').value = snippets[name];
+    showDay(6);
+    document.getElementById('py-output').textContent = 'Snippet loaded — click ▶ Run!';
+    document.getElementById('py-output').className = '';
+  }
+
+  function showDay(n) {
+    document.querySelectorAll('.lesson').forEach(l=>l.classList.remove('active'));
+    document.querySelectorAll('.p-day').forEach(d=>d.classList.remove('active'));
+    document.getElementById('day'+n).classList.add('active');
+    document.querySelectorAll('.p-day')[n-1].classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+</script>
+</body>
+</html>

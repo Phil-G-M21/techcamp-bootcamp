@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TechCamp Boot Camp</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Exo 2', sans-serif;
+  }
+
+  .poster {
+    width: 100%;
+    max-width: 420px;
+    background: linear-gradient(170deg, #0ea5e9 0%, #0369a1 30%, #0c2a5e 65%, #020e2e 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .poster::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 28px 28px;
+    pointer-events: none;
+  }
+
+  .blob1 {
+    position: absolute; width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(56,189,248,0.28) 0%, transparent 70%);
+    top: -80px; right: -80px; border-radius: 50%; pointer-events: none;
+  }
+  .blob2 {
+    position: absolute; width: 220px; height: 220px;
+    background: radial-gradient(circle, rgba(14,165,233,0.18) 0%, transparent 70%);
+    bottom: 80px; left: -60px; border-radius: 50%; pointer-events: none;
+  }
+
+  .scan {
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(125,211,252,0.8), transparent);
+    animation: scan 5s linear infinite; z-index: 10; pointer-events: none;
+  }
+  @keyframes scan {
+    0% { top: 0; opacity: 1; } 90% { opacity: 0.4; } 100% { top: 100%; opacity: 0; }
+  }
+
+  .dot {
+    position: absolute; width: 4px; height: 4px; border-radius: 50%;
+    background: rgba(125,211,252,0.45); animation: rise linear infinite; pointer-events: none;
+  }
+  @keyframes rise {
+    0% { transform: translateY(0); opacity: 0.5; } 100% { transform: translateY(-900px); opacity: 0; }
+  }
+
+  svg.circuits {
+    position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.09; pointer-events: none;
+  }
+
+  .content {
+    position: relative; z-index: 5;
+    padding: 28px 22px 26px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+
+  .badges { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(125,211,252,0.4);
+    color: #7dd3fc; font-size: 9.5px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    padding: 6px 14px; border-radius: 50px;
+  }
+  .badge.green {
+    background: rgba(34,197,94,0.15);
+    border-color: rgba(34,197,94,0.4);
+    color: #86efac;
+  }
+
+  .hero { text-align: center; }
+  .hero-super {
+    font-size: 10px; font-weight: 300; letter-spacing: 4px;
+    text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 8px;
+  }
+  .hero-title {
+    font-family: 'Orbitron', monospace; font-weight: 900; font-size: 50px;
+    color: #fff; line-height: 1; text-shadow: 0 0 40px rgba(56,189,248,0.6);
+  }
+  .hero-title span { color: #38bdf8; }
+  .hero-sub {
+    font-family: 'Orbitron', monospace; font-weight: 700; font-size: 15px;
+    color: transparent; -webkit-text-stroke: 1.2px rgba(125,211,252,0.5);
+    letter-spacing: 7px; margin-top: 4px;
+  }
+  .hero-tagline {
+    font-size: 12px; font-weight: 300; color: rgba(255,255,255,0.55);
+    letter-spacing: 0.5px; margin-top: 10px;
+  }
+
+  .beginner-strip {
+    background: rgba(34,197,94,0.12);
+    border: 1px solid rgba(34,197,94,0.3);
+    border-radius: 10px; padding: 10px 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .beginner-strip .icon { font-size: 20px; flex-shrink: 0; }
+  .beginner-strip .text { font-size: 12.5px; font-weight: 600; color: #86efac; }
+  .beginner-strip .sub { font-size: 10px; color: rgba(134,239,172,0.65); font-weight: 300; margin-top: 1px; }
+
+  .line {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(125,211,252,0.6), transparent);
+  }
+
+  .section-label {
+    font-size: 9px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; color: #7dd3fc; text-align: center; margin-bottom: 10px;
+  }
+
+  .courses { display: flex; flex-direction: column; gap: 10px; }
+  .course {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(125,211,252,0.18);
+    border-radius: 12px; padding: 14px 16px;
+    display: flex; align-items: flex-start; gap: 14px;
+  }
+  .course-icon { font-size: 28px; filter: drop-shadow(0 0 6px rgba(125,211,252,0.5)); flex-shrink: 0; margin-top: 2px; }
+  .course-title { font-size: 14px; font-weight: 700; color: #fff; }
+  .course-desc { font-size: 10.5px; font-weight: 300; color: rgba(255,255,255,0.5); margin-top: 3px; line-height: 1.5; }
+
+  .details-row { display: flex; gap: 10px; }
+  .detail-box {
+    flex: 1;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(125,211,252,0.18);
+    border-radius: 10px; padding: 13px 10px; text-align: center;
+  }
+  .detail-label {
+    font-size: 8px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: #7dd3fc; margin-bottom: 5px;
+  }
+  .detail-value { font-family: 'Orbitron', monospace; font-weight: 900; font-size: 19px; color: #fff; }
+  .detail-value small { font-size: 11px; font-family: 'Exo 2', sans-serif; color: #7dd3fc; font-weight: 400; }
+  .detail-note { font-size: 9px; color: rgba(255,255,255,0.4); margin-top: 3px; }
+
+  .countdown-box {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(125,211,252,0.25);
+    border-radius: 12px; padding: 14px 16px;
+  }
+  .countdown-label {
+    font-size: 9px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; color: #7dd3fc; text-align: center; margin-bottom: 12px;
+  }
+  .countdown-units { display: flex; gap: 8px; justify-content: center; }
+  .c-unit {
+    flex: 1; text-align: center;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(125,211,252,0.2);
+    border-radius: 10px; padding: 10px 4px;
+  }
+  .c-num {
+    font-family: 'Orbitron', monospace; font-weight: 900; font-size: 26px;
+    color: #fff; line-height: 1; text-shadow: 0 0 20px rgba(125,211,252,0.5);
+  }
+  .c-label { font-size: 8px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(125,211,252,0.7); margin-top: 4px; }
+  .c-sep { display: flex; align-items: center; padding-bottom: 16px; font-family: 'Orbitron', monospace; font-size: 20px; color: rgba(125,211,252,0.5); font-weight: 900; }
+
+  .contact-box {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(125,211,252,0.2);
+    border-radius: 12px; padding: 14px 16px;
+  }
+  .contact-title {
+    font-size: 9px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; color: #7dd3fc; text-align: center; margin-bottom: 12px;
+  }
+  .contact-btns { display: flex; flex-direction: column; gap: 9px; }
+  .contact-btn {
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(125,211,252,0.15);
+    border-radius: 10px; padding: 11px 13px;
+    text-decoration: none; cursor: pointer;
+  }
+  .contact-btn.wa { border-color: rgba(37,211,102,0.35); }
+  .contact-btn.em { border-color: rgba(125,211,252,0.25); }
+  .btn-icon {
+    width: 34px; height: 34px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .btn-icon.wa { background: #25D366; }
+  .btn-icon.em { background: rgba(56,189,248,0.2); border: 1px solid rgba(125,211,252,0.3); }
+  .btn-text { flex: 1; }
+  .btn-main { font-size: 13.5px; font-weight: 700; color: #fff; }
+  .btn-sub { font-size: 10px; color: rgba(255,255,255,0.45); font-weight: 300; margin-top: 1px; }
+  .btn-arrow { font-size: 20px; color: rgba(125,211,252,0.6); font-weight: 300; }
+
+  .deadline {
+    background: linear-gradient(135deg, #ef4444, #b91c1c);
+    border-radius: 12px; padding: 14px 18px;
+    display: flex; align-items: center; justify-content: space-between;
+    animation: glow-red 2.5s ease-in-out infinite;
+  }
+  @keyframes glow-red {
+    0%, 100% { box-shadow: 0 6px 24px rgba(239,68,68,0.4); }
+    50% { box-shadow: 0 6px 36px rgba(239,68,68,0.7); }
+  }
+  .deadline-label { font-size: 9px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(255,255,255,0.7); margin-bottom: 3px; }
+  .deadline-date { font-family: 'Orbitron', monospace; font-weight: 900; font-size: 22px; color: #fff; }
+  .deadline-right { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.85); text-align: right; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<div class="poster">
+  <div class="scan"></div>
+  <div class="blob1"></div>
+  <div class="blob2"></div>
+
+  <svg class="circuits" viewBox="0 0 420 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M380 30 L380 100 L320 100 L320 170" stroke="white" stroke-width="1.5"/>
+    <circle cx="380" cy="30" r="4" fill="white"/>
+    <circle cx="320" cy="170" r="4" fill="white"/>
+    <path d="M400 550 L350 550 L350 630 L400 630" stroke="white" stroke-width="1.5"/>
+    <path d="M20 700 L80 700 L80 620 L150 620" stroke="white" stroke-width="1.5"/>
+    <circle cx="20" cy="700" r="4" fill="white"/>
+  </svg>
+
+  <div class="dot" style="left:12%;bottom:0;animation-duration:7s;"></div>
+  <div class="dot" style="left:35%;bottom:0;animation-duration:9s;animation-delay:2s;"></div>
+  <div class="dot" style="left:60%;bottom:0;animation-duration:6s;animation-delay:1s;"></div>
+  <div class="dot" style="left:82%;bottom:0;animation-duration:8s;animation-delay:3s;"></div>
+
+  <div class="content">
+
+    <div class="badges">
+      <div class="badge">🌐 &nbsp; Online / Virtual</div>
+      <div class="badge green">🟢 &nbsp; Beginner Friendly</div>
+    </div>
+
+    <div class="hero">
+      <div class="hero-super">Intensive · Hands-On · Simple</div>
+      <div class="hero-title">TECH<span>CAMP</span></div>
+      <div class="hero-sub">BOOTCAMP</div>
+      <div class="hero-tagline">Learn it. Build it. Own it.</div>
+    </div>
+
+    <div class="beginner-strip">
+      <div class="icon">🙌</div>
+      <div>
+        <div class="text">No Experience Needed</div>
+        <div class="sub">Open to absolute beginners — we start from scratch</div>
+      </div>
+    </div>
+
+    <div class="line"></div>
+
+    <div>
+      <div class="section-label">▸ 3 Topics We'll Cover</div>
+      <div class="courses">
+        <div class="course">
+          <div class="course-icon">🔐</div>
+          <div>
+            <div class="course-title">Ethical Hacking Fundamentals</div>
+            <div class="course-desc">Cybersecurity basics · How systems get hacked & how to defend them</div>
+          </div>
+        </div>
+        <div class="course">
+          <div class="course-icon">🤖</div>
+          <div>
+            <div class="course-title">Arduino & Raspberry Pi</div>
+            <div class="course-desc">Embedded systems · Robotics · C Programming — all in one hands-on track</div>
+          </div>
+        </div>
+        <div class="course">
+          <div class="course-icon">🐍</div>
+          <div>
+            <div class="course-title">Python Programming</div>
+            <div class="course-desc">Automation · Scripting · Real-world beginner projects</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="details-row">
+      <div class="detail-box">
+        <div class="detail-label">Course Fee</div>
+        <div class="detail-value"><small>GH₵</small>200</div>
+        <div class="detail-note">One-time</div>
+      </div>
+      <div class="detail-box">
+        <div class="detail-label">Duration</div>
+        <div class="detail-value">1<small> Mo</small></div>
+        <div class="detail-note">Full class</div>
+      </div>
+      <div class="detail-box">
+        <div class="detail-label">Starts</div>
+        <div class="detail-value" style="font-size:15px;">APR<small> 2</small></div>
+        <div class="detail-note">2026</div>
+      </div>
+    </div>
+
+    <div class="countdown-box">
+      <div class="countdown-label">⏳ &nbsp; Registration Closes In</div>
+      <div class="countdown-units">
+        <div class="c-unit"><div class="c-num" id="cd-days">04</div><div class="c-label">Days</div></div>
+        <div class="c-sep">:</div>
+        <div class="c-unit"><div class="c-num" id="cd-hours">00</div><div class="c-label">Hours</div></div>
+        <div class="c-sep">:</div>
+        <div class="c-unit"><div class="c-num" id="cd-mins">00</div><div class="c-label">Mins</div></div>
+        <div class="c-sep">:</div>
+        <div class="c-unit"><div class="c-num" id="cd-secs">00</div><div class="c-label">Secs</div></div>
+      </div>
+    </div>
+
+    <div class="contact-box">
+      <div class="contact-title">📲 &nbsp; Tap to Register / Enquire</div>
+      <div class="contact-btns">
+
+        <!-- WhatsApp button — built by JS to avoid scrapers -->
+        <a class="contact-btn wa" id="wa-btn" href="#">
+          <div class="btn-icon wa">📱</div>
+          <div class="btn-text">
+            <div class="btn-main">0554 197 193</div>
+            <div class="btn-sub">WhatsApp — Tap to chat</div>
+          </div>
+          <div class="btn-arrow">›</div>
+        </a>
+
+        <!-- Email button — built by JS to avoid scrapers -->
+        <a class="contact-btn em" id="em-btn" href="#">
+          <div class="btn-icon em">✉️</div>
+          <div class="btn-text">
+            <div class="btn-main" id="em-label">Email</div>
+            <div class="btn-sub">Email — Tap to send</div>
+          </div>
+          <div class="btn-arrow">›</div>
+        </a>
+
+      </div>
+    </div>
+
+    <div class="deadline">
+      <div>
+        <div class="deadline-label">⚡ Registration Deadline</div>
+        <div class="deadline-date">MARCH 31</div>
+      </div>
+      <div class="deadline-right">
+        Limited Slots<br>Don't Miss Out!
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ── Contact links built at runtime so email/number stay hidden from scrapers ──
+  (function () {
+    var waNum  = ['233', '554', '197', '193'].join('');
+    var waMsg  = encodeURIComponent('Hi, I want to register for the TechCamp Boot Camp');
+    document.getElementById('wa-btn').href = 'https://wa.me/' + waNum + '?text=' + waMsg;
+
+    var em = ['jyaw456', '@', 'gmail', '.com'].join('');
+    var sub = encodeURIComponent('TechCamp Boot Camp Registration');
+    document.getElementById('em-btn').href  = 'mailto:' + em + '?subject=' + sub;
+    document.getElementById('em-label').textContent = em;
+  })();
+
+  // ── Countdown to March 31 2026 23:59:59 ──
+  var deadline = new Date('2026-03-31T23:59:59').getTime();
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function tick() {
+    var now  = Date.now();
+    var diff = deadline - now;
+
+    if (diff <= 0) {
+      ['cd-days','cd-hours','cd-mins','cd-secs'].forEach(function(id) {
+        document.getElementById(id).textContent = '00';
+      });
+      return;
+    }
+
+    var days  = Math.floor(diff / 86400000);
+    var hours = Math.floor((diff % 86400000) / 3600000);
+    var mins  = Math.floor((diff % 3600000)  / 60000);
+    var secs  = Math.floor((diff % 60000)    / 1000);
+
+    document.getElementById('cd-days').textContent  = pad(days);
+    document.getElementById('cd-hours').textContent = pad(hours);
+    document.getElementById('cd-mins').textContent  = pad(mins);
+    document.getElementById('cd-secs').textContent  = pad(secs);
+
+    setTimeout(tick, 1000);
+  }
+
+  tick();
+</script>
+
+</body>
+</html>

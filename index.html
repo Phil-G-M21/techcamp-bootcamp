@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TechCamp — Student Access</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root { --sky:#0ea5e9; --sky-l:#38bdf8; --sky-p:#7dd3fc; --dark:#020e2e; }
+
+  body {
+    background:var(--dark); font-family:'Exo 2',sans-serif;
+    min-height:100vh; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; padding:20px;
+    position:relative; overflow:hidden;
+  }
+  .grid-bg { position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:linear-gradient(rgba(14,165,233,0.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(14,165,233,0.04) 1px,transparent 1px);
+    background-size:36px 36px; }
+  .blob { position:fixed; border-radius:50%; filter:blur(80px); pointer-events:none; z-index:0; }
+  .b1 { width:380px;height:380px; background:rgba(14,165,233,0.12); top:-100px; right:-100px; }
+  .b2 { width:300px;height:300px; background:rgba(56,189,248,0.08); bottom:-60px; left:-60px; }
+  .scan { position:fixed; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg,transparent,rgba(125,211,252,0.7),transparent);
+    animation:scan 5s linear infinite; z-index:1; pointer-events:none; }
+  @keyframes scan { 0%{top:0;opacity:1;} 90%{opacity:0.5;} 100%{top:100%;opacity:0;} }
+
+  .gate-card {
+    position:relative; z-index:5; width:100%; max-width:420px;
+    background:rgba(255,255,255,0.04); border:1px solid rgba(125,211,252,0.2);
+    border-radius:20px; padding:36px 28px;
+    box-shadow:0 30px 80px rgba(0,0,0,0.4);
+  }
+  .logo-wrap { text-align:center; margin-bottom:28px; }
+  .logo-icon { font-size:42px; filter:drop-shadow(0 0 20px rgba(56,189,248,0.5)); margin-bottom:10px; }
+  .logo-title { font-family:'Orbitron',monospace; font-weight:900; font-size:28px; color:#fff; text-shadow:0 0 30px rgba(56,189,248,0.4); }
+  .logo-title span { color:var(--sky-l); }
+  .logo-sub { font-family:'Orbitron',monospace; font-size:11px; color:transparent; -webkit-text-stroke:1px rgba(125,211,252,0.4); letter-spacing:5px; margin-top:3px; }
+  .logo-desc { font-size:12px; font-weight:300; color:rgba(255,255,255,0.45); margin-top:10px; line-height:1.6; }
+
+  .divider { height:1px; background:linear-gradient(90deg,transparent,rgba(125,211,252,0.4),transparent); margin:24px 0; }
+
+  .form-label { font-size:9px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:var(--sky-p); margin-bottom:6px; display:block; }
+  .form-group { margin-bottom:16px; }
+  .form-input {
+    width:100%; background:rgba(255,255,255,0.06); border:1px solid rgba(125,211,252,0.2);
+    border-radius:10px; padding:13px 16px; font-family:'Exo 2',sans-serif;
+    font-size:14px; color:#fff; outline:none; transition:border-color 0.2s;
+  }
+  .form-input:focus { border-color:rgba(125,211,252,0.5); background:rgba(255,255,255,0.08); }
+  .form-input::placeholder { color:rgba(255,255,255,0.25); }
+  .form-input.shake { animation:shake 0.4s ease; border-color:rgba(239,68,68,0.5); }
+  @keyframes shake {
+    0%,100%{transform:translateX(0);}
+    20%{transform:translateX(-8px);}
+    40%{transform:translateX(8px);}
+    60%{transform:translateX(-6px);}
+    80%{transform:translateX(6px);}
+  }
+
+  .access-btn {
+    width:100%; background:linear-gradient(135deg,#0ea5e9,#0369a1);
+    border:none; border-radius:10px; padding:14px;
+    font-family:'Exo 2',sans-serif; font-size:15px; font-weight:800;
+    color:#fff; cursor:pointer; margin-top:4px;
+    box-shadow:0 6px 24px rgba(14,165,233,0.3); transition:all 0.2s;
+  }
+  .access-btn:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 8px 30px rgba(14,165,233,0.4); }
+  .access-btn:disabled { opacity:0.5; cursor:not-allowed; }
+
+  .msg-box { border-radius:10px; padding:13px 16px; font-size:12.5px; line-height:1.6; margin-top:14px; display:none; }
+  .msg-box.error { background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); color:#fca5a5; }
+  .msg-box.success { background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.3); color:#86efac; }
+  .msg-box.warn { background:rgba(251,191,36,0.08); border:1px solid rgba(251,191,36,0.25); color:#fde68a; }
+  .msg-box.show { display:block; }
+
+  .register-box {
+    margin-top:22px; background:rgba(14,165,233,0.06);
+    border:1px solid rgba(14,165,233,0.2); border-radius:12px; padding:16px; text-align:center;
+  }
+  .register-box p { font-size:12px; color:rgba(255,255,255,0.45); line-height:1.6; margin-bottom:10px; }
+  .wa-btn {
+    display:inline-flex; align-items:center; gap:8px;
+    background:#25D366; border-radius:8px; padding:9px 18px;
+    text-decoration:none; font-size:13px; font-weight:700; color:#fff;
+  }
+  .gate-footer { margin-top:24px; text-align:center; font-size:10px; color:rgba(255,255,255,0.2); line-height:1.8; z-index:5; position:relative; }
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+<div class="scan"></div>
+
+<div class="gate-card">
+  <div class="logo-wrap">
+    <div class="logo-icon">🎓</div>
+    <div class="logo-title">TECH<span>CAMP</span></div>
+    <div class="logo-sub">STUDENT PORTAL</div>
+    <p class="logo-desc">Enter your registered name and the personal access code sent to you on WhatsApp after payment.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="form-group">
+    <label class="form-label">Your Full Name</label>
+    <input type="text" id="input-name" class="form-input" placeholder="e.g. Kofi Mensah" autocomplete="name" />
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Personal Access Code</label>
+    <input type="text" id="input-code" class="form-input" placeholder="e.g. TC-ABCD"
+      autocomplete="off" style="letter-spacing:2px;text-transform:uppercase;"
+      oninput="this.value=this.value.toUpperCase()" />
+  </div>
+
+  <button class="access-btn" onclick="checkAccess()" id="access-btn">🔓 Enter Portal</button>
+
+  <div class="msg-box" id="msg-box"></div>
+
+  <div class="register-box">
+    <p>Not registered yet? Text your instructor on WhatsApp to pay and receive your personal access code.</p>
+    <a class="wa-btn" href="https://wa.me/233554197193?text=Hi%20Philimon%2C%20I%20want%20to%20register%20for%20TechCamp%20Boot%20Camp%20and%20get%20access" target="_blank">
+      📱 Register via WhatsApp
+    </a>
+  </div>
+</div>
+
+<div class="gate-footer">
+  techcamp.live · April 2026 · Online Boot Camp<br>
+  <span style="opacity:0.6;">Instructor: Gyamerah Afriyie Philimon</span>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+//   ✏️  STUDENT ACCESS LIST — UPDATE THIS WHEN SOMEONE PAYS
+//
+//   HOW TO ADD A STUDENT:
+//   1. Student pays on WhatsApp
+//   2. You invent a code for them (e.g. TC-KW24)
+//   3. Add them to the list below: "full name": "TC-XXXX"
+//   4. WhatsApp them their code
+//   5. Save file and push to GitHub — done!
+//
+//   RULES:
+//   - Name must be ALL LOWERCASE in this list
+//   - Code must be UPPERCASE (TC- followed by 4 characters)
+//   - Comma after every entry except the last one
+// ════════════════════════════════════════════════════════════════
+
+const STUDENTS = {
+  //  "student full name":  "access code",
+  "kwame asante":           "TC-KW24",
+  "ama boateng":            "TC-AM97",
+  "kofi mensah":            "TC-KO31",
+  "abena osei":             "TC-AB55",
+  "yaw darko":              "TC-YW82",
+  "efua antwi":             "TC-EF19",
+  "kwabena adjei":          "TC-KB63",
+  "adwoa frimpong":         "TC-AD77",
+  // ── test entry — remove this before going live ──────────────
+  "demo student":           "TC-DEMO",
+  // ────────────────────────────────────────────────────────────
+};
+
+// ── SECURITY SETTINGS ────────────────────────────────────────
+const MAX_ATTEMPTS  = 5;   // wrong tries before lockout
+const LOCKOUT_MINS  = 15;  // minutes locked after too many fails
+// ─────────────────────────────────────────────────────────────
+
+let attempts    = parseInt(sessionStorage.getItem('tc_att') || '0');
+let lockedUntil = parseInt(sessionStorage.getItem('tc_lock') || '0');
+
+// Auto-redirect if already authenticated this session
+if (sessionStorage.getItem('tc_auth') === 'true') {
+  window.location.replace('portal.html');
+}
+
+// Show lockout on load
+if (Date.now() < lockedUntil) {
+  const m = Math.ceil((lockedUntil - Date.now()) / 60000);
+  showMsg(`🔒 Too many failed attempts. Try again in ${m} minute(s).`, 'error');
+  document.getElementById('access-btn').disabled = true;
+}
+
+function checkAccess() {
+  // Still locked?
+  if (Date.now() < lockedUntil) {
+    const m = Math.ceil((lockedUntil - Date.now()) / 60000);
+    showMsg(`🔒 Locked out. Try again in ${m} minute(s).`, 'error');
+    return;
+  }
+
+  const nameRaw  = document.getElementById('input-name').value.trim();
+  const codeRaw  = document.getElementById('input-code').value.trim().toUpperCase();
+
+  if (!nameRaw) { showMsg('Please enter your full name.', 'warn'); return; }
+  if (!codeRaw) { showMsg('Please enter your access code.', 'warn'); return; }
+
+  // Normalise name: lowercase, collapse spaces
+  const nameKey = nameRaw.toLowerCase().replace(/\s+/g, ' ');
+
+  // Check against student list
+  const validCode = STUDENTS[nameKey];
+  const isValid   = validCode && validCode === codeRaw;
+
+  if (isValid) {
+    // ✅ ACCESS GRANTED
+    attempts = 0;
+    sessionStorage.setItem('tc_att',     '0');
+    sessionStorage.setItem('tc_auth',    'true');
+    sessionStorage.setItem('tc_student', nameRaw);  // store name for certificate page
+
+    showMsg(`✅ Welcome back, ${nameRaw}! Taking you to your portal...`, 'success');
+    document.getElementById('access-btn').disabled = true;
+    setTimeout(() => window.location.replace('portal.html'), 1600);
+
+  } else {
+    // ❌ WRONG — increment counter
+    attempts++;
+    sessionStorage.setItem('tc_att', attempts);
+
+    if (attempts >= MAX_ATTEMPTS) {
+      // Lock them out
+      const until = Date.now() + LOCKOUT_MINS * 60 * 1000;
+      sessionStorage.setItem('tc_lock', until);
+      lockedUntil = until;
+      document.getElementById('access-btn').disabled = true;
+      showMsg(`🔒 ${MAX_ATTEMPTS} failed attempts. You are locked out for ${LOCKOUT_MINS} minutes. Contact your instructor if you need help.`, 'error');
+    } else {
+      const left = MAX_ATTEMPTS - attempts;
+      showMsg(
+        `❌ Name or access code not recognised.<br>
+         Double-check the name and code exactly as sent to you via WhatsApp.<br>
+         <strong>${left} attempt${left !== 1 ? 's' : ''} remaining</strong> before temporary lockout.`,
+        'error'
+      );
+      // Shake the inputs
+      ['input-name','input-code'].forEach(id => {
+        const el = document.getElementById(id);
+        el.classList.remove('shake');
+        void el.offsetWidth; // reset animation
+        el.classList.add('shake');
+        setTimeout(() => el.classList.remove('shake'), 500);
+      });
+    }
+  }
+}
+
+function showMsg(html, type) {
+  const b = document.getElementById('msg-box');
+  b.innerHTML = html;
+  b.className = `msg-box ${type} show`;
+}
+
+// Enter key support
+document.addEventListener('keydown', e => { if (e.key === 'Enter') checkAccess(); });
+</script>
+</body>
+</html>
