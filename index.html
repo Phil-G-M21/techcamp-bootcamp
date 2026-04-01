@@ -123,14 +123,14 @@
 
   <div class="register-box">
     <p>Not registered yet? Text your instructor on WhatsApp to pay and receive your personal access code.</p>
-    <a class="wa-btn" href="https://wa.me/233554197193?text=Hi%20Philimon%2C%20I%20want%20to%20register%20for%20TechCamp%20Boot%20Camp%20and%20get%20access" target="_blank">
+    <a class="wa-btn" href="https://wa.me/233554197193?text=Hi%20Philimon%2C%20I%20want%20to%20register%20for%20TechCamp%20and%20get%20access" target="_blank">
       📱 Register via WhatsApp
     </a>
   </div>
 </div>
 
 <div class="gate-footer">
-  techcamp.live · April 2026 · Online Boot Camp<br>
+  techcamp.live · Online Boot Camp<br>
   <span style="opacity:0.6;">Instructor: Gyamerah Afriyie Philimon</span>
 </div>
 
@@ -140,46 +140,45 @@
 //
 //   HOW TO ADD A STUDENT:
 //   1. Student pays on WhatsApp
-//   2. You invent a code for them (e.g. TC-KW24)
-//   3. Add them to the list below: "full name": "TC-XXXX"
-//   4. WhatsApp them their code
-//   5. Save file and push to GitHub — done!
+//   2. Invent a code (e.g. TC-KW24)
+//   3. Add: "full name in lowercase": "TC-XXXX",
+//   4. WhatsApp them their name + code
+//   5. Push to GitHub — live in 2 minutes!
 //
 //   RULES:
-//   - Name must be ALL LOWERCASE in this list
-//   - Code must be UPPERCASE (TC- followed by 4 characters)
-//   - Comma after every entry except the last one
+//   - Name = ALL LOWERCASE
+//   - Code = UPPERCASE (TC- + 4 chars)
+//   - Comma after every entry
 // ════════════════════════════════════════════════════════════════
 
 const STUDENTS = {
-  //  "student full name":  "access code",
-  "spinoza enchill":           "TC-KW24",
-  "sakia joseph":            "TC-SJ01",
-  "godbless akowuah boateng":            "TC-GA02",
-  "abena osei":             "TC-AB55",
-  "yaw darko":              "TC-YW82",
-  "efua antwi":             "TC-EF19",
-  "kwabena adjei":          "TC-KB63",
-  "adwoa frimpong":         "TC-AD77",
-  // ── test entry — remove this before going live ──────────────
-  
+  "spinoza enchill":            "TC-KW24",
+  "sakia joseph":               "TC-SJ01",
+  "godbless akowuah boateng":   "TC-GA02",
+  "abena osei":                 "TC-AB55",
+  "yaw darko":                  "TC-YW82",
+  "efua antwi":                 "TC-EF19",
+  "kwabena adjei":              "TC-KB63",
+  "adwoa frimpong":             "TC-AD77",
+  // ── add new students below this line ────────────────────────
+  // "new student name":        "TC-XXXX",
   // ────────────────────────────────────────────────────────────
 };
 
 // ── SECURITY SETTINGS ────────────────────────────────────────
-const MAX_ATTEMPTS  = 5;   // wrong tries before lockout
-const LOCKOUT_MINS  = 15;  // minutes locked after too many fails
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_MINS = 15;
 // ─────────────────────────────────────────────────────────────
 
 let attempts    = parseInt(sessionStorage.getItem('tc_att') || '0');
 let lockedUntil = parseInt(sessionStorage.getItem('tc_lock') || '0');
 
-// Auto-redirect if already authenticated this session
+// Already logged in? Go straight to portal
 if (sessionStorage.getItem('tc_auth') === 'true') {
   window.location.replace('portal.html');
 }
 
-// Show lockout on load
+// Show lockout state on page load
 if (Date.now() < lockedUntil) {
   const m = Math.ceil((lockedUntil - Date.now()) / 60000);
   showMsg(`🔒 Too many failed attempts. Try again in ${m} minute(s).`, 'error');
@@ -187,62 +186,58 @@ if (Date.now() < lockedUntil) {
 }
 
 function checkAccess() {
-  // Still locked?
   if (Date.now() < lockedUntil) {
     const m = Math.ceil((lockedUntil - Date.now()) / 60000);
     showMsg(`🔒 Locked out. Try again in ${m} minute(s).`, 'error');
     return;
   }
 
-  const nameRaw  = document.getElementById('input-name').value.trim();
-  const codeRaw  = document.getElementById('input-code').value.trim().toUpperCase();
+  const nameRaw = document.getElementById('input-name').value.trim();
+  const codeRaw = document.getElementById('input-code').value.trim().toUpperCase();
 
   if (!nameRaw) { showMsg('Please enter your full name.', 'warn'); return; }
   if (!codeRaw) { showMsg('Please enter your access code.', 'warn'); return; }
 
-  // Normalise name: lowercase, collapse spaces
-  const nameKey = nameRaw.toLowerCase().replace(/\s+/g, ' ');
-
-  // Check against student list
+  const nameKey  = nameRaw.toLowerCase().replace(/\s+/g, ' ');
   const validCode = STUDENTS[nameKey];
   const isValid   = validCode && validCode === codeRaw;
 
   if (isValid) {
-    // ✅ ACCESS GRANTED
     attempts = 0;
     sessionStorage.setItem('tc_att',     '0');
     sessionStorage.setItem('tc_auth',    'true');
-    sessionStorage.setItem('tc_student', nameRaw);  // store name for certificate page
 
-    showMsg(`✅ Welcome back, ${nameRaw}! Taking you to your portal...`, 'success');
+    // Always store name in Title Case regardless of how they typed it
+    var titleName = nameRaw.replace(/\w\S*/g, function(w) {
+      return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+    });
+    sessionStorage.setItem('tc_student', titleName);
+
+    showMsg('✅ Welcome, ' + titleName + '! Taking you to your portal...', 'success');
     document.getElementById('access-btn').disabled = true;
     setTimeout(() => window.location.replace('portal.html'), 1600);
 
   } else {
-    // ❌ WRONG — increment counter
     attempts++;
     sessionStorage.setItem('tc_att', attempts);
 
     if (attempts >= MAX_ATTEMPTS) {
-      // Lock them out
       const until = Date.now() + LOCKOUT_MINS * 60 * 1000;
       sessionStorage.setItem('tc_lock', until);
       lockedUntil = until;
       document.getElementById('access-btn').disabled = true;
-      showMsg(`🔒 ${MAX_ATTEMPTS} failed attempts. You are locked out for ${LOCKOUT_MINS} minutes. Contact your instructor if you need help.`, 'error');
+      showMsg(`🔒 Too many attempts. Locked for ${LOCKOUT_MINS} minutes. Contact your instructor if you need help.`, 'error');
     } else {
       const left = MAX_ATTEMPTS - attempts;
       showMsg(
-        `❌ Name or access code not recognised.<br>
-         Double-check the name and code exactly as sent to you via WhatsApp.<br>
-         <strong>${left} attempt${left !== 1 ? 's' : ''} remaining</strong> before temporary lockout.`,
+        `❌ Name or code not recognised. Double-check exactly as sent to you on WhatsApp.<br>
+         <strong>${left} attempt${left !== 1 ? 's' : ''} remaining</strong> before lockout.`,
         'error'
       );
-      // Shake the inputs
       ['input-name','input-code'].forEach(id => {
         const el = document.getElementById(id);
         el.classList.remove('shake');
-        void el.offsetWidth; // reset animation
+        void el.offsetWidth;
         el.classList.add('shake');
         setTimeout(() => el.classList.remove('shake'), 500);
       });
@@ -256,7 +251,6 @@ function showMsg(html, type) {
   b.className = `msg-box ${type} show`;
 }
 
-// Enter key support
 document.addEventListener('keydown', e => { if (e.key === 'Enter') checkAccess(); });
 </script>
 </body>

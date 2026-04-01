@@ -122,25 +122,36 @@
   /* MIDDLE */
   .cert-middle { text-align:center; flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0; }
 
-  .cert-label {
-    font-family:'Cinzel',serif; font-size:clamp(8px,1.1vw,12px);
-    font-weight:400; color:#888; letter-spacing:5px; text-transform:uppercase; margin-bottom:6px;
-  }
-  .cert-title {
-    font-family:'Cinzel',serif; font-size:clamp(20px,4vw,46px);
+  .cert-main-title {
+    font-family:'Cinzel',serif; font-size:clamp(22px,4.5vw,50px);
     font-weight:900; color:#b8860b;
     text-shadow:2px 2px 0 rgba(184,134,11,0.1);
-    letter-spacing:3px; line-height:1.1;
-    margin-bottom:4px;
+    letter-spacing:4px; line-height:1.1; margin-bottom:6px;
+    text-align:center;
+  }
+  .cert-label {
+    font-family:'Cormorant Garamond',serif; font-style:italic;
+    font-size:clamp(9px,1.3vw,14px);
+    font-weight:400; color:#777; letter-spacing:2px; margin-bottom:6px;
+    text-align:center;
+  }
+  .cert-title {
+    font-family:'Cormorant Garamond',serif; font-style:italic;
+    font-size:clamp(10px,1.4vw,15px);
+    font-weight:400; color:#666;
+    letter-spacing:1px; line-height:1.3; margin-bottom:4px;
+    text-align:center;
   }
   .cert-subtitle {
-    font-family:'Cinzel',serif; font-size:clamp(9px,1.4vw,15px);
+    font-family:'Cinzel',serif; font-size:clamp(10px,1.5vw,17px);
     font-weight:700; color:#8B4513; letter-spacing:2px; margin-bottom:16px;
+    text-align:center;
   }
 
   .cert-presented {
-    font-family:'Cormorant Garamond',serif; font-size:clamp(9px,1.3vw,14px);
-    color:#555; letter-spacing:1px; margin-bottom:8px;
+    font-family:'Cormorant Garamond',serif; font-style:italic;
+    font-size:clamp(9px,1.3vw,14px);
+    color:#666; letter-spacing:1px; margin-bottom:6px; text-align:center;
   }
   .cert-name {
     font-family:'Cinzel',serif; font-size:clamp(18px,3.5vw,38px);
@@ -239,8 +250,8 @@
     </select>
   </div>
   <div class="form-row">
-    <label>Completion Date</label>
-    <input type="date" id="cert-date" />
+    <label>Completion Date <span style="color:rgba(255,215,0,0.5);font-size:10px;">(auto-set to today)</span></label>
+    <input type="date" id="cert-date" title="Automatically set to today's date" />
   </div>
 
   <button class="gen-btn" onclick="generateCert()">✨ Generate Certificate</button>
@@ -268,7 +279,7 @@
       <!-- TOP -->
       <div class="cert-top">
         <div class="cert-org">TechCamp Boot Camp</div>
-        <div class="cert-org-sub">Online · April 2026 · Kumasi, Ghana</div>
+        <div class="cert-org-sub">Online Learning</div>
         <div class="cert-divider-top">
           <div class="div-line"></div>
           <div class="div-star">✦</div>
@@ -278,15 +289,21 @@
 
       <!-- MIDDLE -->
       <div class="cert-middle">
+
+        <div class="cert-main-title">Certificate of Completion</div>
         <div class="cert-label">This certifies that</div>
+
         <div class="cert-name" id="cert-name-display">Student Name</div>
 
-        <div class="cert-label" style="margin-top:10px;">has successfully completed</div>
-        <div class="cert-title">Certificate of Completion</div>
+        <div style="height:1px;width:60%;background:linear-gradient(90deg,transparent,rgba(184,134,11,0.4),transparent);margin:10px auto;"></div>
+
+        <div class="cert-presented">has successfully completed</div>
         <div class="cert-subtitle" id="cert-prog-display">Programme Name</div>
 
         <div class="cert-body">
-          Having demonstrated commitment, participation and practical skill throughout the duration of this intensive online boot camp covering cybersecurity, embedded systems and programming fundamentals.
+          Having demonstrated commitment, participation and practical skill
+          throughout this intensive online boot camp covering cybersecurity,
+          embedded systems and programming fundamentals.
         </div>
 
         <div class="cert-chips">
@@ -310,12 +327,12 @@
         <!-- SEAL -->
         <div class="cert-seal">
           <div class="seal-icon">🎓</div>
-          <div class="seal-text">TechCamp<br>2026</div>
+          <div class="seal-text">TechCamp</div>
         </div>
 
         <!-- Date -->
         <div class="cert-date-block">
-          <div class="cert-sig-script" style="font-size:clamp(10px,2vw,20px); color:#888;">April 2026</div>
+          <div class="cert-sig-script" style="font-size:clamp(10px,2vw,20px); color:#888;"></div>
           <div class="cert-sig-line"></div>
           <div class="cert-date-label">Date of Completion</div>
           <div class="cert-date-val" id="cert-date-display">—</div>
@@ -329,45 +346,53 @@
 </div>
 
 <script>
-  // Set today's date as default
-  document.getElementById('cert-date').value = new Date().toISOString().split('T')[0];
-
-  // ── Auth check — redirect to gate if not logged in ───────────
+  // ── Auth check ────────────────────────────────────────────────
   if (sessionStorage.getItem('tc_auth') !== 'true') {
     window.location.replace('index.html');
   }
 
-  // ── Pre-fill student name from session ────────────────────────
+  // ── Auto-set today's date — format nicely ─────────────────────
+  function getTodayFormatted() {
+    return new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+  }
+
+  // Lock date field to today
+  var dateField = document.getElementById('cert-date');
+  dateField.value = new Date().toISOString().split('T')[0];
+  dateField.readOnly = true;
+  dateField.style.opacity = '0.6';
+  dateField.title = 'Auto-set to today — the date you generate your certificate';
+
+  // ── Pre-fill student name from session & auto-show cert ───────
   const savedName = sessionStorage.getItem('tc_student');
   if (savedName) {
-    document.getElementById('stud-name').value = savedName;
-    document.getElementById('stud-name').readOnly = true;
-    document.getElementById('stud-name').style.opacity = '0.7';
-    document.getElementById('stud-name').title = 'Your registered name — cannot be changed';
+    var nameField = document.getElementById('stud-name');
+    nameField.value = savedName;
+    nameField.readOnly = true;
+    nameField.style.opacity = '0.7';
+    nameField.title = 'Your registered name — cannot be changed';
+
+    // Auto-generate certificate on load since we already know the name
+    setTimeout(() => generateCert(), 300);
   }
 
   function generateCert() {
     const name = document.getElementById('stud-name').value.trim();
     const prog = document.getElementById('programme').value;
-    const dateVal = document.getElementById('cert-date').value;
 
-    if (!name) {
-      alert('Please enter the student name.');
-      return;
-    }
+    if (!name) { alert('Please enter the student name.'); return; }
 
-    // Format date nicely
-    const d = new Date(dateVal + 'T12:00:00');
-    const formatted = d.toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+    // Always use today's date — auto set
+    const formatted = getTodayFormatted();
 
-    // Generate cert ID
-    const id = 'TC-2026-' + Math.random().toString(36).substr(2,6).toUpperCase();
+    // Generate unique cert ID
+    const id = 'TC-' + Math.random().toString(36).substr(2,6).toUpperCase();
 
-    // Update certificate
-    document.getElementById('cert-name-display').textContent = name;
-    document.getElementById('cert-prog-display').textContent = prog;
-    document.getElementById('cert-date-display').textContent = formatted;
-    document.getElementById('cert-id-display').textContent = 'ID: ' + id;
+    // Update certificate fields
+    document.getElementById('cert-name-display').textContent  = name;
+    document.getElementById('cert-prog-display').textContent  = prog;
+    document.getElementById('cert-date-display').textContent  = formatted;
+    document.getElementById('cert-id-display').textContent    = 'ID: ' + id;
 
     // Show certificate
     document.getElementById('cert-wrapper').classList.add('show');
@@ -375,7 +400,7 @@
     // Scroll to cert
     setTimeout(() => {
       document.getElementById('cert-wrapper').scrollIntoView({ behavior:'smooth', block:'start' });
-    }, 100);
+    }, 150);
   }
 </script>
 </body>
