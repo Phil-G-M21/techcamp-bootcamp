@@ -206,9 +206,14 @@ function checkAccess() {
     attempts = 0;
     sessionStorage.setItem('tc_att',     '0');
     sessionStorage.setItem('tc_auth',    'true');
-    sessionStorage.setItem('tc_student', nameRaw);
 
-    showMsg(`✅ Welcome, ${nameRaw}! Taking you to your portal...`, 'success');
+    // Always store name in Title Case regardless of how they typed it
+    var titleName = nameRaw.replace(/\w\S*/g, function(w) {
+      return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+    });
+    sessionStorage.setItem('tc_student', titleName);
+
+    showMsg('✅ Welcome, ' + titleName + '! Taking you to your portal...', 'success');
     document.getElementById('access-btn').disabled = true;
     setTimeout(() => window.location.replace('portal.html'), 1600);
 
