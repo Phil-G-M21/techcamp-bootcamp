@@ -321,7 +321,7 @@
           <div class="cert-sig-script">G. A. Philimon</div>
           <div class="cert-sig-line"></div>
           <div class="cert-sig-name">Gyamerah Afriyie Philimon</div>
-          <div class="cert-sig-title">Instructor · TechCamp Boot Camp</div>
+          <div class="cert-sig-title">TechCamp Instructor</div>
         </div>
 
         <!-- SEAL -->
@@ -332,10 +332,9 @@
 
         <!-- Date -->
         <div class="cert-date-block">
-          <div class="cert-sig-script" style="font-size:clamp(10px,2vw,20px); color:#888;"></div>
+          <div class="cert-date-val" id="cert-date-display">—</div>
           <div class="cert-sig-line"></div>
           <div class="cert-date-label">Date of Completion</div>
-          <div class="cert-date-val" id="cert-date-display">—</div>
           <div class="cert-id" id="cert-id-display"></div>
         </div>
 
@@ -351,29 +350,33 @@
     window.location.replace('index.html');
   }
 
-  // ── Auto-set today's date — format nicely ─────────────────────
+  // ── Today's date formatted ─────────────────────────────────────
   function getTodayFormatted() {
     return new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
   }
 
+  // ── Immediately stamp today's date on the certificate ─────────
+  document.getElementById('cert-date-display').textContent = getTodayFormatted();
+
   // Lock date field to today
   var dateField = document.getElementById('cert-date');
-  dateField.value = new Date().toISOString().split('T')[0];
-  dateField.readOnly = true;
-  dateField.style.opacity = '0.6';
-  dateField.title = 'Auto-set to today — the date you generate your certificate';
+  if(dateField) {
+    dateField.value = new Date().toISOString().split('T')[0];
+    dateField.readOnly = true;
+    dateField.style.opacity = '0.6';
+  }
 
   // ── Pre-fill student name from session & auto-show cert ───────
   const savedName = sessionStorage.getItem('tc_student');
   if (savedName) {
     var nameField = document.getElementById('stud-name');
-    nameField.value = savedName;
-    nameField.readOnly = true;
-    nameField.style.opacity = '0.7';
-    nameField.title = 'Your registered name — cannot be changed';
-
-    // Auto-generate certificate on load since we already know the name
-    setTimeout(() => generateCert(), 300);
+    if(nameField) {
+      nameField.value = savedName;
+      nameField.readOnly = true;
+      nameField.style.opacity = '0.7';
+    }
+    // Auto-generate full certificate
+    setTimeout(() => generateCert(), 200);
   }
 
   function generateCert() {
@@ -382,22 +385,15 @@
 
     if (!name) { alert('Please enter the student name.'); return; }
 
-    // Always use today's date — auto set
     const formatted = getTodayFormatted();
-
-    // Generate unique cert ID
     const id = 'TC-' + Math.random().toString(36).substr(2,6).toUpperCase();
 
-    // Update certificate fields
     document.getElementById('cert-name-display').textContent  = name;
     document.getElementById('cert-prog-display').textContent  = prog;
     document.getElementById('cert-date-display').textContent  = formatted;
     document.getElementById('cert-id-display').textContent    = 'ID: ' + id;
 
-    // Show certificate
     document.getElementById('cert-wrapper').classList.add('show');
-
-    // Scroll to cert
     setTimeout(() => {
       document.getElementById('cert-wrapper').scrollIntoView({ behavior:'smooth', block:'start' });
     }, 150);

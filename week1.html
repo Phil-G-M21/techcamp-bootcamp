@@ -6,283 +6,174 @@
 <title>Ethical Hacking — TechCamp</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root { --sky:#0ea5e9; --sky-l:#38bdf8; --sky-p:#7dd3fc; --dark:#020e2e; --red:#ef4444; --sidebar:380px; }
+  :root { --red:#ef4444; --red-l:#f87171; --red-p:#fca5a5; --dark:#020e2e; }
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:#0b1120; font-family:'Exo 2',sans-serif; color:#fff; min-height:100vh; overflow-x:hidden; }
+  body { background:var(--dark); font-family:'Exo 2',sans-serif; color:#fff; min-height:100vh; }
 
-  /* ── TOP BAR ─────────────────────────────────── */
-  .topbar { position:fixed; top:0; left:0; right:0; z-index:1000; height:56px; background:#1c1d1f; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:space-between; padding:0 16px; gap:12px; }
-  .topbar-left { display:flex; align-items:center; gap:12px; flex-shrink:0; min-width:0; }
-  .topbar-logo { font-family:'Orbitron',monospace; font-size:15px; font-weight:900; color:#fff; white-space:nowrap; }
-  .topbar-logo span { color:#a78bfa; }
-  .topbar-divider { width:1px; height:22px; background:rgba(255,255,255,0.15); flex-shrink:0; }
-  .topbar-course { font-size:12px; font-weight:600; color:rgba(255,255,255,0.75); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:260px; }
-  .topbar-back { display:flex; align-items:center; gap:5px; text-decoration:none; font-size:11px; font-weight:600; color:rgba(255,255,255,0.5); background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12); border-radius:5px; padding:5px 10px; white-space:nowrap; flex-shrink:0; }
-  .topbar-back:hover { color:#fff; }
-  .topbar-right { display:flex; align-items:center; gap:10px; flex-shrink:0; }
-  .progress-circle-wrap { display:flex; align-items:center; gap:9px; }
-  .progress-circle { position:relative; width:38px; height:38px; flex-shrink:0; }
-  .progress-circle svg { transform:rotate(-90deg); }
-  .progress-circle-bg { fill:none; stroke:rgba(255,255,255,0.12); stroke-width:3.5; }
-  .progress-circle-ring { fill:none; stroke:url(#pgGrad); stroke-width:3.5; stroke-linecap:round; transition:stroke-dashoffset 0.6s ease; }
-  .progress-circle-pct { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Orbitron',monospace; font-size:8px; font-weight:700; color:#fff; }
-  .progress-circle-label { display:flex; flex-direction:column; }
-  .pcl-main { font-size:11px; font-weight:700; color:#fff; }
-  .pcl-sub { font-size:9px; color:rgba(255,255,255,0.38); margin-top:1px; }
-  .tb-cert { display:inline-flex; align-items:center; gap:6px; background:#7c3aed; border:none; border-radius:5px; padding:7px 14px; font-family:'Exo 2',sans-serif; font-size:11px; font-weight:700; color:#fff; cursor:pointer; white-space:nowrap; text-decoration:none; }
-  .tb-cert:hover { background:#6d28d9; }
-  .tb-name { font-size:11px; font-weight:700; color:rgba(255,255,255,0.55); white-space:nowrap; }
-  .tb-signout { background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); border-radius:5px; padding:6px 11px; font-family:'Exo 2',sans-serif; font-size:11px; font-weight:700; color:#fca5a5; cursor:pointer; white-space:nowrap; }
-  .tb-signout:hover { background:rgba(239,68,68,0.25); }
-  .sidebar-toggle { display:none; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:5px; padding:7px 10px; font-size:14px; cursor:pointer; color:#fff; flex-shrink:0; }
+  .grid-bg { position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:linear-gradient(rgba(239,68,68,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(239,68,68,0.04) 1px,transparent 1px);
+    background-size:40px 40px; }
+  .blob { position:fixed; border-radius:50%; filter:blur(90px); pointer-events:none; z-index:0; }
+  .b1 { width:350px;height:350px; background:rgba(239,68,68,0.12); top:-80px; right:-80px; }
+  .b2 { width:300px;height:300px; background:rgba(248,113,113,0.08); bottom:0; left:-60px; }
 
-  /* ── MAIN LAYOUT ─────────────────────────────── */
-  .udemy-wrap { display:flex; padding-top:56px; min-height:100vh; }
-  .content-panel { flex:1; min-width:0; padding:36px 44px 60px; margin-right:var(--sidebar); background:#0b1120; }
+  .wrap { position:relative; z-index:1; max-width:720px; margin:0 auto; padding:28px 18px 70px; }
 
-  /* ── SIDEBAR ─────────────────────────────────── */
-  .sidebar { position:fixed; top:56px; right:0; bottom:0; width:var(--sidebar); background:#1c1d1f; border-left:1px solid rgba(255,255,255,0.08); overflow-y:auto; z-index:100; transition:transform 0.3s; display:flex; flex-direction:column; }
-  .sidebar::-webkit-scrollbar { width:5px; }
-  .sidebar::-webkit-scrollbar-track { background:#1c1d1f; }
-  .sidebar::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.2); border-radius:3px; }
-  .sidebar-hdr { padding:16px 20px 12px; border-bottom:1px solid rgba(255,255,255,0.08); position:sticky; top:0; background:#1c1d1f; z-index:2; flex-shrink:0; }
-  .sidebar-hdr-title { font-size:15px; font-weight:800; color:#fff; }
-  .sidebar-hdr-sub { font-size:10px; color:rgba(255,255,255,0.4); margin-top:3px; }
-  .sidebar-progress { padding:12px 20px; background:#2d2f31; border-bottom:1px solid rgba(255,255,255,0.06); flex-shrink:0; }
-  .sp-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
-  .sp-label { font-size:10px; font-weight:600; color:rgba(255,255,255,0.55); }
-  .sp-pct { font-size:10px; font-weight:700; color:#a78bfa; }
-  .sp-bar { height:4px; background:rgba(255,255,255,0.1); border-radius:2px; overflow:hidden; }
-  .sp-fill { height:100%; background:linear-gradient(90deg,#7c3aed,#38bdf8); border-radius:2px; width:0%; transition:width 0.5s; }
-  .curr-section { border-bottom:1px solid rgba(255,255,255,0.05); }
-  .curr-section-hdr { display:flex; align-items:flex-start; justify-content:space-between; padding:14px 20px; cursor:pointer; background:#2d2f31; transition:background 0.15s; user-select:none; }
-  .curr-section-hdr:hover { background:#333436; }
-  .curr-section-hdr.active { background:#2d2f31; border-left:3px solid #a78bfa; }
-  .curr-section-info { flex:1; padding-right:8px; }
-  .curr-section-title { font-size:12px; font-weight:700; color:#fff; line-height:1.4; margin-bottom:3px; }
-  .curr-section-meta { font-size:10px; color:rgba(255,255,255,0.38); }
-  .curr-chevron { font-size:10px; color:rgba(255,255,255,0.45); margin-top:3px; flex-shrink:0; transition:transform 0.2s; }
-  .curr-chevron.open { transform:rotate(180deg); }
-  .curr-lessons { display:none; background:#1c1d1f; }
-  .curr-lessons.open { display:block; }
-  .curr-item { display:flex; align-items:flex-start; gap:10px; padding:10px 20px 10px 24px; cursor:pointer; transition:background 0.12s; border-left:3px solid transparent; }
-  .curr-item:hover { background:rgba(255,255,255,0.04); }
-  .curr-item.active { background:rgba(167,139,250,0.09); border-left-color:#a78bfa; }
-  .curr-check { width:18px; height:18px; border-radius:50%; border:1.5px solid rgba(255,255,255,0.22); display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; font-size:9px; transition:all 0.2s; color:transparent; }
-  .curr-check.done { background:#22c55e; border-color:#22c55e; color:#fff; }
-  .curr-check.active { border-color:#a78bfa; color:#a78bfa; }
-  .curr-item-text { flex:1; }
-  .curr-item-title { font-size:11.5px; color:rgba(255,255,255,0.72); line-height:1.45; }
-  .curr-item.active .curr-item-title { color:#fff; font-weight:600; }
-  .curr-item-dur { font-size:9.5px; color:rgba(255,255,255,0.3); margin-top:3px; }
+  .topnav { display:flex; align-items:center; justify-content:space-between; margin-bottom:32px; }
+  .topnav a { text-decoration:none; color:var(--red-p); font-size:12px; font-weight:700; letter-spacing:1px; }
+  .week-badge { background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.4); color:var(--red-p); font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:6px 14px; border-radius:50px; }
 
-  @media(max-width:960px) {
-    :root { --sidebar:0px; }
-    .content-panel { margin-right:0; padding:22px 18px 60px; }
-    .sidebar { transform:translateX(100%); width:340px; }
-    .sidebar.open { transform:translateX(0); }
-    .sidebar-toggle { display:flex; }
-    .topbar-course { display:none; }
-  }
-  @media(max-width:560px) {
-    .tb-name { display:none; }
-    .progress-circle-label { display:none; }
-  }
+  .hero { text-align:center; margin-bottom:36px; }
+  .hero-icon { font-size:52px; margin-bottom:12px; filter:drop-shadow(0 0 20px rgba(239,68,68,0.5)); }
+  .hero-title { font-family:'Orbitron',monospace; font-weight:900; font-size:26px; color:#fff; text-shadow:0 0 30px rgba(239,68,68,0.4); margin-bottom:8px; }
+  .hero-sub { font-size:13px; font-weight:300; color:rgba(255,255,255,0.5); line-height:1.7; }
 
-    /* ── CONTENT AREA STYLES ─────────────────────── */
+  /* FLOATING SIGN OUT BAR */
+  #float-bar { position:fixed; top:12px; right:12px; z-index:9999; display:flex; align-items:center; gap:8px; }
+  #float-name { background:rgba(2,14,46,0.88); border:1px solid rgba(252,165,165,0.2); border-radius:10px; padding:7px 14px; font-size:11px; font-weight:700; color:rgba(255,255,255,0.6); white-space:nowrap; }
+  #float-signout { background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); border-radius:8px; padding:7px 12px; font-size:11px; font-weight:700; color:#fca5a5; cursor:pointer; white-space:nowrap; font-family:'Exo 2',sans-serif; }
+
+  /* PROGRESS STRIP */
+  .progress-strip { display:flex; gap:5px; margin-bottom:36px; }
+  .p-day { flex:1; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:10px 4px; text-align:center; cursor:pointer; transition:all 0.2s; }
+  .p-day.active { background:rgba(239,68,68,0.2); border-color:rgba(239,68,68,0.5); }
+  .p-day:hover { background:rgba(255,255,255,0.1); }
+  .p-num { font-family:'Orbitron',monospace; font-size:12px; font-weight:700; color:#fff; }
+  .p-label { font-size:7px; color:rgba(255,255,255,0.4); letter-spacing:1px; margin-top:3px; text-transform:uppercase; }
+
   .lesson { display:none; }
   .lesson.active { display:block; }
 
-  /* Week header inside content */
-  .week-header { margin-bottom:28px; padding-bottom:20px; border-bottom:1px solid rgba(255,255,255,0.07); }
-  .wh-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); border-radius:20px; padding:4px 12px; font-size:9px; font-weight:700; letter-spacing:2px; color:#fca5a5; text-transform:uppercase; margin-bottom:10px; }
-  .wh-title { font-family:'Orbitron',monospace; font-size:22px; font-weight:900; color:#fff; margin-bottom:6px; }
-  .wh-sub { font-size:13px; color:rgba(255,255,255,0.45); line-height:1.6; }
-
-  /* Lesson header */
-  .lesson-header { margin-bottom:24px; padding:20px; background:rgba(239,68,68,0.06); border:1px solid rgba(239,68,68,0.15); border-radius:14px; }
-  .lh-num { font-size:10px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:rgba(239,68,68,0.7); margin-bottom:6px; }
-  .lh-title { font-size:20px; font-weight:800; color:#fff; line-height:1.3; }
-  .lh-desc { font-size:12px; color:rgba(255,255,255,0.45); margin-top:6px; line-height:1.6; }
-
-  /* ── SLIDE (keep existing + tweak) ──────────────*/
-  .grid-bg { display:none; } /* hide on new layout */
-  .blob { display:none; }
-
-  .slide {
-    background:linear-gradient(135deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02));
-    border:1px solid rgba(125,211,252,0.12); border-radius:14px;
-    padding:26px 22px; margin-bottom:16px; position:relative; overflow:hidden;
-  }
-  .slide::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--red),var(--sky)); }
-  .slide-num { position:absolute; top:14px; right:16px; font-family:'Orbitron',monospace; font-size:10px; font-weight:700; color:rgba(255,255,255,0.1); letter-spacing:1px; }
-  .slide-tag { font-size:9px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--sky-p); margin-bottom:10px; }
+  /* SLIDE */
+  .slide { background:linear-gradient(135deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02)); border:1px solid rgba(239,68,68,0.15); border-radius:16px; padding:24px 20px; margin-bottom:18px; position:relative; overflow:hidden; }
+  .slide::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--red),#f97316); }
+  .slide-tag { font-size:9px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--red-p); margin-bottom:8px; }
   .slide-title { font-size:19px; font-weight:800; color:#fff; margin-bottom:12px; line-height:1.3; }
-  .slide-body { font-size:13px; color:rgba(255,255,255,0.7); line-height:1.8; }
+  .slide-body { font-size:13px; font-weight:400; color:rgba(255,255,255,0.7); line-height:1.8; }
   .slide-body p { margin-bottom:10px; }
-  .slide-body strong { color:#fff; font-weight:700; }
+  .slide-body strong { color:#fff; }
 
-  /* circuit / diagram box */
-  .circuit-box { background:#060d1f; border:1px solid rgba(14,165,233,0.2); border-radius:12px; padding:16px; margin:14px 0; }
-  .circuit-title { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(125,211,252,0.5); margin-bottom:12px; }
-  .circuit-diagram { font-family:'Fira Code',monospace; font-size:11.5px; line-height:2; color:#94a3b8; }
-  .circuit-diagram .pwr { color:#ef4444; }
-  .circuit-diagram .gnd { color:#64748b; }
-  .circuit-diagram .sig { color:#38bdf8; }
-  .circuit-diagram .comp { color:#f97316; }
-  .circuit-diagram .note { color:#64748b; }
-  .circuit-diagram .wire { color:#475569; }
-  .circuit-diagram .pin { color:#a78bfa; }
-  .circuit-diagram .num { color:#f472b6; }
-  .circuit-diagram .str { color:#86efac; }
-  .circuit-diagram .teal-p { color:#67e8f9; }
+  /* TERMS GRID */
+  .terms-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
+  @media(max-width:500px){ .terms-grid { grid-template-columns:1fr; } }
+  .term { background:rgba(255,255,255,0.04); border:1px solid rgba(239,68,68,0.12); border-radius:10px; padding:12px 14px; }
+  .term-word { font-size:11px; font-weight:800; color:var(--red-p); margin-bottom:4px; }
+  .term-def { font-size:11.5px; color:rgba(255,255,255,0.6); line-height:1.6; }
 
-  /* VISUAL CARDS */
+  /* VIS GRID */
   .vis-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
-  .vis-card { background:rgba(255,255,255,0.05); border:1px solid rgba(125,211,252,0.12); border-radius:10px; padding:14px; text-align:center; }
-  .vis-icon { font-size:28px; margin-bottom:6px; }
-  .vis-label { font-size:12px; font-weight:700; color:#fff; margin-bottom:3px; }
-  .vis-desc { font-size:10px; color:rgba(255,255,255,0.45); font-weight:300; line-height:1.4; }
+  @media(max-width:500px){ .vis-grid { grid-template-columns:1fr; } }
+  .vis-card { background:rgba(255,255,255,0.04); border:1px solid rgba(239,68,68,0.12); border-radius:10px; padding:14px; text-align:center; }
+  .vis-icon { font-size:28px; margin-bottom:8px; }
+  .vis-label { font-size:12px; font-weight:700; color:#fff; margin-bottom:4px; }
+  .vis-desc { font-size:11px; color:rgba(255,255,255,0.5); line-height:1.5; }
 
   /* CODE */
-  .code-block { background:#060d1f; border:1px solid rgba(125,211,252,0.18); border-radius:10px; padding:16px; margin:12px 0; overflow-x:auto; }
-  .code-block pre { font-family:'Fira Code',monospace; font-size:12px; color:#e2e8f0; line-height:1.75; white-space:pre; }
-  .code-block .kw { color:#38bdf8; }
-  .code-block .str { color:#86efac; }
-  .code-block .cm { color:#475569; }
-  .code-block .num { color:#f472b6; }
-  .code-block .fn { color:#60a5fa; }
-  .code-lang { font-size:9px; font-weight:700; letter-spacing:2px; color:var(--sky-p); margin-bottom:6px; text-transform:uppercase; }
+  .code-lang { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(252,165,165,0.5); margin-bottom:6px; }
+  .code-block { background:#040d1a; border:1px solid rgba(239,68,68,0.15); border-radius:10px; padding:16px; overflow-x:auto; margin-bottom:10px; }
+  .code-block pre { font-family:'Fira Code',monospace; font-size:12px; line-height:1.75; color:#e2e8f0; white-space:pre; }
+  .kw { color:#f87171; }
+  .str { color:#fbbf24; }
+  .cm { color:#4b5563; }
+  .num { color:#a78bfa; }
+  .fn { color:#60a5fa; }
+  .sig { color:#34d399; }
+  .pwr { color:#f87171; }
+  .gnd { color:#6b7280; }
+  .pin { color:#60a5fa; }
+  .wire { color:#6b7280; }
+  .comp { color:#a78bfa; }
+  .teal-p { color:#67e8f9; }
+  .note { color:#6b7280; }
+
+  /* CODE EXPLAIN */
+  .code-explain { display:flex; flex-direction:column; gap:8px; margin-top:10px; }
+  .ce-row { display:flex; gap:12px; align-items:flex-start; }
+  .ce-code { font-family:'Fira Code',monospace; font-size:11px; color:#f87171; background:rgba(239,68,68,0.08); border-radius:5px; padding:3px 8px; white-space:nowrap; flex-shrink:0; }
+  .ce-desc { font-size:12px; color:rgba(255,255,255,0.6); line-height:1.5; }
 
   /* STEPS */
-  .steps { display:flex; flex-direction:column; gap:10px; margin-top:12px; }
+  .steps { display:flex; flex-direction:column; gap:12px; margin-top:14px; }
   .step { display:flex; gap:12px; align-items:flex-start; }
-  .step-num { width:26px; height:26px; border-radius:50%; flex-shrink:0; background:rgba(239,68,68,0.18); border:1px solid rgba(239,68,68,0.4); display:flex; align-items:center; justify-content:center; font-family:'Orbitron',monospace; font-size:10px; font-weight:700; color:#fca5a5; }
-  .step-text { font-size:12.5px; color:rgba(255,255,255,0.7); line-height:1.6; padding-top:3px; }
+  .step-num { width:26px; height:26px; border-radius:50%; flex-shrink:0; background:rgba(239,68,68,0.18); border:1px solid rgba(239,68,68,0.4); display:flex; align-items:center; justify-content:center; font-family:'Orbitron',monospace; font-size:10px; font-weight:700; color:#fca5a5; margin-top:2px; }
+  .step-text { font-size:13px; color:rgba(255,255,255,0.7); line-height:1.7; }
   .step-text strong { color:#fff; }
 
-  /* TERMS */
-  .terms-grid { display:flex; flex-direction:column; gap:7px; margin-top:12px; }
-  .term { background:rgba(255,255,255,0.04); border-left:3px solid var(--sky); border-radius:0 8px 8px 0; padding:9px 12px; }
-  .term-word { font-size:12.5px; font-weight:700; color:var(--sky-l); margin-bottom:2px; }
-  .term-def { font-size:11px; color:rgba(255,255,255,0.6); line-height:1.5; }
+  /* CIRCUIT BOX */
+  .circuit-box { background:#040d1a; border:1px solid rgba(239,68,68,0.2); border-radius:12px; padding:16px 14px; margin:12px 0; }
+  .circuit-title { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(252,165,165,0.4); margin-bottom:10px; }
+  .circuit-diagram { font-family:'Fira Code',monospace; font-size:11.5px; line-height:2; color:#94a3b8; white-space:pre; overflow-x:auto; }
 
-  /* WARN / TIP */
-  .warn-box { background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.28); border-radius:10px; padding:12px 14px; margin-top:12px; display:flex; gap:10px; align-items:flex-start; }
-  .warn-icon { font-size:16px; flex-shrink:0; }
-  .warn-text { font-size:11.5px; color:rgba(255,165,165,0.85); line-height:1.6; }
-  .tip-box { background:rgba(14,165,233,0.07); border:1px solid rgba(14,165,233,0.22); border-radius:10px; padding:12px 14px; margin-top:12px; display:flex; gap:10px; align-items:flex-start; }
-  .tip-icon { font-size:16px; flex-shrink:0; }
-  .tip-text { font-size:11.5px; color:rgba(125,211,252,0.85); line-height:1.6; }
+  /* TIP / WARN */
+  .tip-box { display:flex; gap:10px; align-items:flex-start; background:rgba(239,68,68,0.07); border:1px solid rgba(239,68,68,0.2); border-radius:10px; padding:12px 14px; margin-top:12px; }
+  .tip-icon { font-size:18px; flex-shrink:0; }
+  .tip-text { font-size:12.5px; color:rgba(255,255,255,0.65); line-height:1.6; }
+  .tip-text strong { color:#fff; }
+  .warn-box { display:flex; gap:10px; align-items:flex-start; background:rgba(251,191,36,0.07); border:1px solid rgba(251,191,36,0.25); border-radius:10px; padding:12px 14px; margin-top:12px; }
+  .warn-icon { font-size:18px; flex-shrink:0; }
+  .warn-text { font-size:12.5px; color:rgba(253,230,138,0.85); line-height:1.6; }
+  .warn-text strong { color:#fff; }
 
-  /* LINK CARD */
-  .link-card { background:rgba(255,255,255,0.05); border:1px solid rgba(125,211,252,0.18); border-radius:10px; padding:12px 14px; margin-bottom:8px; display:flex; align-items:center; gap:10px; text-decoration:none; transition:background 0.15s; }
-  .link-card:hover { background:rgba(255,255,255,0.09); }
-  .link-icon { font-size:20px; flex-shrink:0; }
+  /* LINK CARDS */
+  .link-card { display:flex; align-items:center; gap:12px; background:rgba(255,255,255,0.04); border:1px solid rgba(239,68,68,0.12); border-radius:10px; padding:12px 14px; text-decoration:none; margin-bottom:8px; }
+  .link-card:hover { background:rgba(255,255,255,0.07); }
+  .link-icon { font-size:22px; flex-shrink:0; }
   .link-info { flex:1; }
-  .link-title { font-size:12.5px; font-weight:700; color:#fff; }
-  .link-url { font-size:10px; color:rgba(125,211,252,0.55); margin-top:2px; }
-  .link-arr { color:rgba(125,211,252,0.35); font-size:16px; }
+  .link-title { font-size:13px; font-weight:700; color:#fff; margin-bottom:2px; }
+  .link-url { font-size:10.5px; color:rgba(255,255,255,0.4); }
+  .link-arr { font-size:20px; color:rgba(252,165,165,0.4); }
 
-  /* DIAGRAM */
-  .diagram { background:#060d1f; border:1px solid rgba(125,211,252,0.15); border-radius:12px; padding:18px; margin:12px 0; text-align:center; }
-  .diag-row { display:flex; align-items:center; justify-content:center; gap:6px; margin:5px 0; flex-wrap:wrap; }
-  .diag-node { background:rgba(14,165,233,0.15); border:1px solid rgba(14,165,233,0.35); border-radius:8px; padding:7px 11px; font-size:10.5px; font-weight:700; color:#7dd3fc; white-space:nowrap; }
-  .diag-node.red { background:rgba(239,68,68,0.15); border-color:rgba(239,68,68,0.35); color:#fca5a5; }
-  .diag-node.green { background:rgba(34,197,94,0.15); border-color:rgba(34,197,94,0.35); color:#86efac; }
-  .diag-arrow { color:rgba(255,255,255,0.3); font-size:16px; }
-  .diag-label { font-size:9px; color:rgba(255,255,255,0.3); letter-spacing:2px; text-transform:uppercase; margin-bottom:10px; }
-
-  /* SCREENSHOT */
-  .screenshot-box { background:#060d1f; border:1px solid rgba(125,211,252,0.18); border-radius:10px; padding:14px; margin:12px 0; }
-  .ss-label { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(125,211,252,0.45); margin-bottom:8px; }
-  .ss-content { display:flex; flex-direction:column; gap:5px; }
-  .ss-row { display:flex; gap:10px; align-items:flex-start; flex-wrap:wrap; }
-  .ss-path { font-family:'Fira Code',monospace; font-size:11px; color:#38bdf8; flex-shrink:0; }
-  .ss-desc { font-size:11px; color:rgba(255,255,255,0.5); line-height:1.5; }
-
-  /* NAV BUTTONS */
-  .lesson-nav { display:flex; gap:10px; margin-top:28px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.06); }
-  .nav-btn { flex:1; background:rgba(255,255,255,0.06); border:1px solid rgba(125,211,252,0.2); border-radius:10px; padding:13px; text-align:center; cursor:pointer; font-family:'Exo 2',sans-serif; font-size:13px; font-weight:700; color:#fff; transition:all 0.2s; }
+  /* NAV */
+  .lesson-nav { display:flex; gap:10px; margin-top:24px; }
+  .nav-btn { flex:1; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:10px; padding:13px; text-align:center; font-size:13px; font-weight:700; color:rgba(255,255,255,0.7); cursor:pointer; transition:all 0.2s; }
   .nav-btn:hover { background:rgba(255,255,255,0.1); }
-  .nav-btn.primary { background:rgba(14,165,233,0.18); border-color:rgba(14,165,233,0.4); }
+  .nav-btn.primary { background:rgba(239,68,68,0.2); border-color:rgba(239,68,68,0.4); color:var(--red-p); }
+  .nav-btn.primary:hover { background:rgba(239,68,68,0.3); }
 
-  footer { text-align:center; margin-top:32px; font-size:11px; color:rgba(255,255,255,0.18); }
+  footer { text-align:center; margin-top:40px; font-size:11px; color:rgba(255,255,255,0.2); line-height:1.8; }
 
-  /* ── RESPONSIVE ──────────────────────────────── */
-  @media(max-width:900px) {
-    :root { --sidebar:0px; }
-    .content-panel { margin-right:0; padding:20px 16px 60px; }
-    .sidebar { transform:translateX(100%); width:300px; }
-    .sidebar.open { transform:translateX(0); }
-    .sidebar-toggle { display:flex; }
-    .topbar-progress { display:none; }
-  }
-  @media(max-width:600px) {
-    .topbar-title { display:none; }
-    .topbar-badge { display:none; }
-    .tb-name { display:none; }
-  }
+  /* WIDESCREEN */
+  .wh-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); border-radius:20px; padding:4px 12px; font-size:9px; font-weight:700; letter-spacing:2px; color:#fca5a5; text-transform:uppercase; margin-bottom:10px; }
 </style>
 </head>
 <body>
 <script>if(sessionStorage.getItem("tc_auth")!=="true"){window.location.replace("index.html");}</script>
 
-<!-- ── TOP BAR ───────────────────────────────────────────── -->
-<div class="topbar">
-  <div class="topbar-left">
-    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
-    <a class="topbar-back" href="portal.html">← Hub</a>
-    <div class="topbar-divider"></div>
-    <div class="topbar-logo">TECH<span>CAMP</span></div>
-    <div class="topbar-divider"></div>
-    <div class="topbar-course">🔐 Ethical Hacking Fundamentals</div>
-  </div>
-  <div class="topbar-right">
-    <!-- Circular progress -->
-    <div class="progress-circle-wrap">
-      <div class="progress-circle">
-        <svg width="38" height="38" viewBox="0 0 38 38">
-          <defs>
-            <linearGradient id="pgGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" style="stop-color:#7c3aed"/>
-              <stop offset="100%" style="stop-color:#38bdf8"/>
-            </linearGradient>
-          </defs>
-          <circle class="progress-circle-bg" cx="19" cy="19" r="16"/>
-          <circle class="progress-circle-ring" cx="19" cy="19" r="16"
-            stroke-dasharray="100.53" stroke-dashoffset="100.53" id="ring-fill"/>
-        </svg>
-        <div class="progress-circle-pct" id="ring-pct">0%</div>
-      </div>
-      <div class="progress-circle-label">
-        <div class="pcl-main" id="ring-day"> / 6</div>
-        <div class="pcl-sub">Your progress</div>
-      </div>
-    </div>
-    <a class="tb-cert" href="certificate.html">🎓 Certificate</a>
-    <div class="tb-name" id="tb-name">Student</div>
-    <button class="tb-signout" onclick="signOut()">🚪 Sign Out</button>
-  </div>
+<!-- FLOATING SIGN OUT -->
+<div id="float-bar">
+  <div id="float-name">Student</div>
+  <button id="float-signout" onclick="signOut()">🚪 Sign Out</button>
 </div>
 
-<!-- ── UDEMY LAYOUT ──────────────────────────────────────── -->
-<div class="udemy-wrap">
+<div class="grid-bg"></div>
+<div class="blob b1"></div>
+<div class="blob b2"></div>
 
-<!-- ── LEFT: CONTENT PANEL ───────────────────────────────── -->
-<div class="content-panel">
+<div class="wrap">
 
-  <div class="week-header">
-    <div class="wh-badge">⚡ Ethical Hacking</div>
-    <div class="wh-title">Ethical Hacking Fundamentals</div>
-    <div class="wh-sub">Learn how hackers think — and how to defend against them. Set up your hacking lab and explore real tools used by security professionals.</div>
+  <div class="topnav">
+    <a href="portal.html">← Back to Hub</a>
+    <div class="week-badge">🔐 Ethical Hacking</div>
   </div>
 
-  <!-- ===== DAY 1 ===== -->
-  <div class="lesson active" id="mod1">
+  <div class="hero">
+    <div class="hero-icon">🔐</div>
+    <div class="hero-title">Ethical Hacking Fundamentals</div>
+    <div class="hero-sub">Learn how hackers think — and how to defend against them. Set up your lab and explore real tools used by security professionals.</div>
+  </div>
+
+  <div class="progress-strip">
+    <div class="p-day active" onclick="showModule(1)"><div class="p-num">1</div><div class="p-label">Intro</div></div>
+    <div class="p-day" onclick="showModule(2)"><div class="p-num">2</div><div class="p-label">Setup</div></div>
+    <div class="p-day" onclick="showModule(3)"><div class="p-num">3</div><div class="p-label">Kali</div></div>
+    <div class="p-day" onclick="showModule(4)"><div class="p-num">4</div><div class="p-label">Nmap</div></div>
+    <div class="p-day" onclick="showModule(5)"><div class="p-num">5</div><div class="p-label">Attacks</div></div>
+    <div class="p-day" onclick="showModule(6)" style="background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.3);"><div class="p-num" style="font-size:12px;">🌐</div><div class="p-label">Web</div></div>
+  </div>
+
+<div class="lesson active" id="mod1">
 
     <div class="slide">
-      <div class="slide-num">01 / 04</div>
       <div class="slide-tag">Introduction</div>
       <div class="slide-title">What is Ethical Hacking?</div>
       <div class="slide-body">
@@ -314,7 +205,6 @@
     </div>
 
     <div class="slide">
-      <div class="slide-num">02 / 04</div>
       <div class="slide-tag">The Law</div>
       <div class="slide-title">⚖️ Ethics & The Law — Very Important</div>
       <div class="slide-body">
@@ -332,7 +222,6 @@
     </div>
 
     <div class="slide">
-      <div class="slide-num">03 / 04</div>
       <div class="slide-tag">The Hacking Process</div>
       <div class="slide-title">The 5 Phases of Ethical Hacking</div>
       <div class="slide-body"><p>Every professional penetration test follows these stages:</p></div>
@@ -346,7 +235,6 @@
     </div>
 
     <div class="slide">
-      <div class="slide-num">04 / 04</div>
       <div class="slide-tag">Key Terms</div>
       <div class="slide-title">📚 Vocabulary to Know</div>
       <div class="terms-grid">
@@ -364,7 +252,6 @@
     </div>
   </div>
 
-  <!-- ===== DAY 2 ===== -->
   <div class="lesson" id="mod2">
 
     <div class="slide">
@@ -449,7 +336,6 @@
     </div>
   </div>
 
-  <!-- ===== DAY 3 ===== -->
   <div class="lesson" id="mod3">
 
     <div class="slide">
@@ -540,7 +426,6 @@ sudo apt update && sudo apt upgrade</pre></div>
     </div>
   </div>
 
-  <!-- ===== DAY 4 ===== -->
   <div class="lesson" id="mod4">
 
     <div class="slide">
@@ -630,7 +515,6 @@ traceroute google.com</pre></div>
     </div>
   </div>
 
-  <!-- ===== DAY 5 — BACKDOORS, CLIENT-SIDE ATTACKS, MSFVENOM ===== -->
   <div class="lesson" id="mod5">
 
     <!-- SLIDE 1: Client-Side Attacks -->
@@ -1173,7 +1057,6 @@ cat key_log.txt
     </div>
   </div>
 
-  <!-- ===== DAY 6 — WEB HACKING & SQL INJECTION ===== -->
   <div class="lesson" id="mod6">
 
     <div class="slide">
@@ -1841,404 +1724,30 @@ zaproxy
 
   <footer>TechCamp Boot Camp · Ethical Hacking</footer>
 
-</div><!-- end content-panel -->
-
-<!-- ── RIGHT: SIDEBAR ──────────────────────────────────── -->
-<div class="sidebar" id="sidebar">
-  <div class="sidebar-hdr">
-    Course Content
-    <span>Ethical Hacking Fundamentals</span>
-  </div>
-
-  <!--  -->
-  <div class="curr-section">
-    <div class="curr-section-hdr active" onclick="toggleSection(this,1)">
-      <div class="curr-section-info">
-        <div class="curr-section-num"></div>
-        <div class="curr-section-title">Introduction to Ethical Hacking</div>
-        <div class="curr-section-meta">4 lessons · Hacker types · Laws · Career</div>
-      </div>
-      <div class="curr-chevron open" id="chev1">▾</div>
-    </div>
-    <div class="curr-lessons open" id="sec1">
-      <div class="curr-item active" onclick="showModule(1)">
-        <div class="curr-check active">▶</div>
-        <div class="curr-item-text"><div class="curr-item-title">What is Ethical Hacking?</div><div class="curr-item-dur">Black Hat vs White Hat vs Grey Hat</div></div>
-      </div>
-      <div class="curr-item" onclick="showModule(1)">
-        <div class="curr-check"></div>
-        <div class="curr-item-text"><div class="curr-item-title">Types of Hackers</div><div class="curr-item-dur">Skills, motivations, legal status</div></div>
-      </div>
-      <div class="curr-item" onclick="showModule(1)">
-        <div class="curr-check"></div>
-        <div class="curr-item-text"><div class="curr-item-title">Laws & Ethics</div><div class="curr-item-dur">Computer Fraud, written permission</div></div>
-      </div>
-      <div class="curr-item" onclick="showModule(1)">
-        <div class="curr-check"></div>
-        <div class="curr-item-text"><div class="curr-item-title">Penetration Testing Phases</div><div class="curr-item-dur">Recon → Scan → Exploit → Report</div></div>
-      </div>
-    </div>
-  </div>
-
-  <!--  -->
-  <div class="curr-section">
-    <div class="curr-section-hdr" onclick="toggleSection(this,2)">
-      <div class="curr-section-info">
-        <div class="curr-section-num"></div>
-        <div class="curr-section-title">Setting Up Your Hacking Lab</div>
-        <div class="curr-section-meta">5 lessons · VMware · Kali Linux install</div>
-      </div>
-      <div class="curr-chevron" id="chev2">▾</div>
-    </div>
-    <div class="curr-lessons" id="sec2">
-      <div class="curr-item" onclick="showModule(2)">
-        <div class="curr-check"></div>
-        <div class="curr-item-text"><div class="curr-item-title">Virtual Machines Explained</div><div class="curr-item-dur">What a VM is and why we use one</div></div>
-      </div>
-      <div class="curr-item" onclick="showModule(2)">
-        <div class="curr-check"></div>
-        <div class="curr-item-text"><div class="curr-item-title">Installing VMware Workstation</div><div class="curr-item-dur">Download, install, first boot</div></div>
-      </div>
-      <div class="curr-item" onclick="showModule(2)">
-        <div class="curr-check"></div>
-        <div class="curr-item-text"><div class="curr-item-title">Installing Kali Linux</div><div class="curr-item-dur">ISO, VM setup, first login</div></div>
-      </div>
-      <div class="curr-item" onclick="showModule(2)">
-        <div class="curr-check"></div>
-        <div class="curr-item-text"><div class="curr-item-title">Kali Linux Tour</div><div class="curr-item-dur">Desktop, tools, package manager</div></div>
-      </div>
-      <div class="curr-item" onclick="showModule(2)">
-        <div class="curr-check"></div>
-        <div class="curr-item-text"><div class="curr-item-title">Snapshots & Network Modes</div><div class="curr-item-dur">NAT, Bridged, Host-Only explained</div></div>
-      </div>
-    </div>
-  </div>
-
-  <!--  -->
-  <div class="curr-section">
-    <div class="curr-section-hdr" onclick="toggleSection(this,3)">
-      <div class="curr-section-info">
-        <div class="curr-section-num"></div>
-        <div class="curr-section-title">Linux Terminal & Networking</div>
-        <div class="curr-section-meta">5 lessons · Terminal · IP · Protocols</div>
-      </div>
-      <div class="curr-chevron" id="chev3">▾</div>
-    </div>
-    <div class="curr-lessons" id="sec3">
-      <div class="curr-item" onclick="showModule(3)">
-        <div class="curr-check"></div>
-        <div class="curr-item-text"><div class="curr-item-title">Linux Terminal Basics</div><div class="curr-item-dur">ls, cd, pwd, cat, mkdir, rm</div></div>
-      </div>
-      <div class="curr-item" onclick="showModule(3)">
-        <div class="curr-check"></div>
-        <div class="curr-item-text"><div class="curr-item-title">File Permissions & Users</div><div class="curr-item-dur">chmod, chown, sudo, su</div></div>
-      </div>
-      <div class="curr-item" onclick="showModule(3)">
-        <div class="curr-check"></div>
-        <div class="curr-item-text"><div class="curr-item-title">Networking Fundamentals</div><div class="curr-item-dur">IP, MAC, DNS, subnets, ports</div></div>
-      </div>
-      <div class="curr-item" onclick="showModule(3)">
-        <div class="curr-check"></div>
-        <div class="curr-item-text"><div class="curr-item-title">TCP/IP & Protocols</div><div class="curr-item-dur">TCP vs UDP, HTTP, HTTPS, FTP, SSH</div></div>
-      </div>
-      <div class="curr-item" onclick="showModule(3)">
-        <div class="curr-check"></div>
-        <div class="curr-item-text"><div class="curr-item-title">ifconfig & netstat</div><div class="curr-item-dur">Reading your network config</div></div>
-      </div>
-    </div>
-  </div>
-
-  <!--  -->
-  <div class="curr-section">
-    <div class="curr-section-hdr" onclick="toggleSection(this,4)">
-      <div class="curr-section-info">
-        <div class="curr-section-num"></div>
-        <div class="curr-section-title">Nmap & Reconnaissance</div>
-        <div class="curr-section-meta">5 lessons · Scanning · Fingerprinting</div>
-      </div>
-      <div class="curr-chevron" id="chev4">▾</div>
-    </div>
-    <div class="curr-lessons" id="sec4">
-      <div class="curr-item" onclick="showModule(4)">
-        <div class="curr-check"></div>
-        <div class="curr-item-text"><div class="curr-item-title">What is Nmap?</div><div class="curr-item-dur">The world's most used port scanner</div></div>
-      </div>
-      <div class="curr-item" onclick="showModule(4)">
-        <div class="curr-check"></div>
-        <div class="curr-item-text"><div class="curr-item-title">Basic Nmap Scans</div><div class="curr-item-dur">-sS, -sV, -O, -A, -p flags</div></div>
-      </div>
-      <div class="curr-item" onclick="showModule(4)">
-        <div class="curr-check"></div>
-        <div class="curr-item-text"><div class="curr-item-title">Reading Nmap Results</div><div class="curr-item-dur">Open/closed/filtered, service versions</div></div>
-      </div>
-      <div class="curr-item" onclick="showModule(4)">
-        <div class="curr-check"></div>
-        <div class="curr-item-text"><div class="curr-item-title">OSINT & Passive Recon</div><div class="curr-item-dur">Shodan, Google dorks, Whois</div></div>
-      </div>
-      <div class="curr-item" onclick="showModule(4)">
-        <div class="curr-check"></div>
-        <div class="curr-item-text"><div class="curr-item-title">Vulnerability Scanning</div><div class="curr-item-dur">Nmap scripts (NSE), service fingerprinting</div></div>
-      </div>
-    </div>
-  </div>
-
-  <!--  -->
-  <div class="curr-section">
-    <div class="curr-section-hdr" onclick="toggleSection(this,5)">
-      <div class="curr-section-info">
-        <div class="curr-section-num"></div>
-        <div class="curr-section-title">Backdoors, Payloads & Exploitation</div>
-        <div class="curr-section-meta">6 lessons + Bonus Projects</div>
-      </div>
-      <div class="curr-chevron" id="chev5">▾</div>
-    </div>
-    <div class="curr-lessons" id="sec5">
-      <div class="curr-item" onclick="showModule(5)">
-        <div class="curr-check"></div>
-        <div class="curr-item-text"><div class="curr-item-title">Client-Side Attacks</div><div class="curr-item-dur">How attackers target users not servers</div></div>
-      </div>
-      <div class="curr-item" onclick="showModule(5)">
-        <div class="curr-check"></div>
-        <div class="curr-item-text"><div class="curr-item-title">What is a Backdoor?</div><div class="curr-item-dur">Remote access tools explained</div></div>
-      </div>
-      <div class="curr-item" onclick="showModule(5)">
-        <div class="curr-check"></div>
-        <div class="curr-item-text"><div class="curr-item-title">msfvenom Payloads</div><div class="curr-item-dur">Generating .exe and .apk backdoors</div></div>
-      </div>
-      <div class="curr-item" onclick="showModule(5)">
-        <div class="curr-check"></div>
-        <div class="curr-item-text"><div class="curr-item-title">Metasploit — multi/handler</div><div class="curr-item-dur">Catching reverse shells</div></div>
-      </div>
-      <div class="curr-item" onclick="showModule(5)">
-        <div class="curr-check"></div>
-        <div class="curr-item-text"><div class="curr-item-title">🔍 Bonus: Python Port Scanner</div><div class="curr-item-dur">Build your own network scanner</div></div>
-      </div>
-      <div class="curr-item" onclick="showModule(5)">
-        <div class="curr-check"></div>
-        <div class="curr-item-text"><div class="curr-item-title">⌨️ Bonus: Python Keylogger</div><div class="curr-item-dur">How keyloggers work + build one</div></div>
-      </div>
-    </div>
-  </div>
-
-  <!--  -->
-  <div class="curr-section">
-    <div class="curr-section-hdr" onclick="toggleSection(this,6)" style="border-left:2px solid rgba(239,68,68,0.5);">
-      <div class="curr-section-info">
-        <div class="curr-section-num" style="color:rgba(239,68,68,0.7);">🌐 </div>
-        <div class="curr-section-title">Web Hacking & SQL Injection</div>
-        <div class="curr-section-meta">12 lessons · SQLi · XSS · ZAP · LFI</div>
-      </div>
-      <div class="curr-chevron" id="chev6">▾</div>
-    </div>
-    <div class="curr-lessons" id="sec6">
-      <div class="curr-item" onclick="showModule(6)"><div class="curr-check"></div><div class="curr-item-text"><div class="curr-item-title">How Websites Work</div><div class="curr-item-dur">Browser → DNS → Server → Database</div></div></div>
-      <div class="curr-item" onclick="showModule(6)"><div class="curr-check"></div><div class="curr-item-text"><div class="curr-item-title">Web Browsers Explained</div><div class="curr-item-dur">HTML, CSS, JS, cookies, DevTools</div></div></div>
-      <div class="curr-item" onclick="showModule(6)"><div class="curr-check"></div><div class="curr-item-text"><div class="curr-item-title">Web Servers (Apache, Nginx)</div><div class="curr-item-dur">What runs behind every website</div></div></div>
-      <div class="curr-item" onclick="showModule(6)"><div class="curr-check"></div><div class="curr-item-text"><div class="curr-item-title">Databases & SQL</div><div class="curr-item-dur">MySQL, PostgreSQL, SQLite</div></div></div>
-      <div class="curr-item" onclick="showModule(6)"><div class="curr-check"></div><div class="curr-item-text"><div class="curr-item-title">HTTP Requests & Responses</div><div class="curr-item-dur">GET, POST, headers, status codes</div></div></div>
-      <div class="curr-item" onclick="showModule(6)"><div class="curr-check"></div><div class="curr-item-text"><div class="curr-item-title">SQL Injection — What & Why</div><div class="curr-item-dur">Most dangerous web vulnerability</div></div></div>
-      <div class="curr-item" onclick="showModule(6)"><div class="curr-check"></div><div class="curr-item-text"><div class="curr-item-title">SQLi Step-by-Step Attack</div><div class="curr-item-dur">Login bypass with OR 1=1</div></div></div>
-      <div class="curr-item" onclick="showModule(6)"><div class="curr-check"></div><div class="curr-item-text"><div class="curr-item-title">SQLi Types & Payloads</div><div class="curr-item-dur">Classic, Blind, UNION, Time-Based</div></div></div>
-      <div class="curr-item" onclick="showModule(6)"><div class="curr-check"></div><div class="curr-item-text"><div class="curr-item-title">sqlmap — Automated SQLi</div><div class="curr-item-dur">Kali tool — dump databases</div></div></div>
-      <div class="curr-item" onclick="showModule(6)"><div class="curr-check"></div><div class="curr-item-text"><div class="curr-item-title">File Upload, Code Exec & LFI</div><div class="curr-item-dur">Weevely, shells, path traversal</div></div></div>
-      <div class="curr-item" onclick="showModule(6)"><div class="curr-check"></div><div class="curr-item-text"><div class="curr-item-title">XSS — Cross Site Scripting</div><div class="curr-item-dur">Stored, Reflected, DOM — BeEF</div></div></div>
-      <div class="curr-item" onclick="showModule(6)"><div class="curr-check"></div><div class="curr-item-text"><div class="curr-item-title">ZAP Scanner & Mitigation</div><div class="curr-item-dur">Auto-scan + how to fix everything</div></div></div>
-    </div>
-  </div>
-
-  <div style="padding:16px 18px;font-size:10px;color:rgba(255,255,255,0.25);line-height:1.8;border-top:1px solid rgba(255,255,255,0.05);margin-top:4px;">
-    TechCamp Boot Camp · Ethical Hacking<br>
-    Instructor: Gyamerah Afriyie Philimon<br>
-    techcamp.live
-  </div>
-</div><!-- end sidebar -->
-
-</div><!-- end udemy-wrap -->
+  <footer>TechCamp Boot Camp · Ethical Hacking Fundamentals</footer>
+</div>
 
 <script>
-// ── Init ─────────────────────────────────────────────
-(function(){
-  var n = sessionStorage.getItem('tc_student') || 'Student';
-  document.getElementById('tb-name').textContent = n;
-})();
+  // Student name
+  (function(){
+    var n = sessionStorage.getItem('tc_student') || 'Student';
+    document.getElementById('float-name').textContent = n;
+  })();
 
-// ── Sign out ─────────────────────────────────────────
-function signOut() {
-  if(confirm('Sign out of TechCamp portal?')) {
-    ['tc_auth','tc_student','tc_att','tc_lock'].forEach(function(k){ sessionStorage.removeItem(k); });
-    window.location.replace('index.html');
-  }
-}
-
-// ── Progress ring ─────────────────────────────────────
-var CIRCUMFERENCE = 2 * Math.PI * 16; // r=16 → ~100.53
-
-// ── Constants ─────────────────────────────────────────
-var TOTAL_SECTIONS = 6;
-var CIRCUMFERENCE  = 2 * Math.PI * 15; // r=15 on the SVG circle
-
-// ── Completion tracking (persists across page reloads) ─
-var STORAGE_KEY = 'tc_w1_progress_' + (sessionStorage.getItem('tc_student') || 'x').replace(/\s/g,'_');
-
-function getCompleted() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) { return []; }
-}
-function saveCompleted(arr) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); } catch(e) {}
-}
-function markComplete(n) {
-  var done = getCompleted();
-  if (done.indexOf(n) === -1) done.push(n);
-  saveCompleted(done);
-}
-
-// ── Progress circle + bar fill ────────────────────────
-function setProgress(activeSection) {
-  var done = getCompleted();
-  // Count unique completed sections
-  var completedCount = 0;
-  for (var i = 1; i <= TOTAL_SECTIONS; i++) {
-    if (done.indexOf(i) !== -1 || i < activeSection) completedCount++;
-  }
-  var pct = Math.round((completedCount / TOTAL_SECTIONS) * 100);
-
-  // Top-bar ring
-  var ring = document.getElementById('ring-fill');
-  if (ring) ring.style.strokeDashoffset = CIRCUMFERENCE - (pct / 100) * CIRCUMFERENCE;
-  var pctEl = document.getElementById('ring-pct');
-  if (pctEl) pctEl.textContent = pct + '%';
-
-  // "Topic X / 6" label
-  var dayEl = document.getElementById('ring-day');
-  if (dayEl) dayEl.textContent = 'Topic ' + activeSection + ' / ' + TOTAL_SECTIONS;
-
-  // Sidebar progress bar
-  var spFill = document.getElementById('sp-fill');
-  if (spFill) spFill.style.width = pct + '%';
-  var spPct = document.getElementById('sp-pct-text');
-  if (spPct) spPct.textContent = pct + '%';
-}
-
-// ── Mark sidebar items ────────────────────────────────
-function updateSidebarState(activeSection) {
-  var done = getCompleted();
-
-  for (var i = 1; i <= TOTAL_SECTIONS; i++) {
-    var sec  = document.getElementById('sec' + i);
-    var chev = document.getElementById('chev' + i);
-    var hdr  = sec ? sec.previousElementSibling : null;
-    var items = sec ? sec.querySelectorAll('.curr-item') : [];
-
-    if (i === activeSection) {
-      // Currently active section — open it, show ▶ on first item
-      if (sec)  sec.classList.add('open');
-      if (chev) chev.classList.add('open');
-      if (hdr)  hdr.classList.add('active');
-      items.forEach(function(item, idx) {
-        item.classList.toggle('active', idx === 0);
-        var chk = item.querySelector('.curr-check');
-        if (chk) {
-          chk.classList.toggle('active', idx === 0);
-          chk.textContent = idx === 0 ? '▶' : '';
-        }
-        var t = item.querySelector('.curr-item-title');
-        if (t) t.style.fontWeight = idx === 0 ? '700' : '';
-      });
-
-    } else if (done.indexOf(i) !== -1 || i < activeSection) {
-      // Completed section — tick ALL items ✅
-      if (sec)  sec.classList.add('open');
-      if (chev) chev.classList.add('open');
-      if (hdr)  { hdr.classList.remove('active'); hdr.classList.add('completed'); }
-      items.forEach(function(item) {
-        item.classList.remove('active');
-        var chk = item.querySelector('.curr-check');
-        if (chk) {
-          chk.classList.remove('active');
-          chk.classList.add('done');
-          chk.textContent = '✓';
-        }
-        var t = item.querySelector('.curr-item-title');
-        if (t) { t.style.color = ''; t.style.fontWeight = ''; }
-      });
-
-    } else {
-      // Future section — closed, no ticks
-      if (sec)  sec.classList.remove('open');
-      if (chev) chev.classList.remove('open');
-      if (hdr)  { hdr.classList.remove('active'); hdr.classList.remove('completed'); }
-      items.forEach(function(item) {
-        item.classList.remove('active');
-        var chk = item.querySelector('.curr-check');
-        if (chk) { chk.classList.remove('active','done'); chk.textContent = ''; }
-      });
+  function signOut() {
+    if(confirm('Sign out of TechCamp portal?')) {
+      ['tc_auth','tc_student','tc_att','tc_lock'].forEach(function(k){ sessionStorage.removeItem(k); });
+      window.location.replace('index.html');
     }
   }
-}
 
-// ── Main navigation function ──────────────────────────
-var currentDay = 1;
-
-function showModule(n) {
-  // Hide all lessons, show the target
-  document.querySelectorAll('.lesson').forEach(function(l){ l.classList.remove('active'); });
-  var el = document.getElementById('mod' + n);
-  if (el) el.classList.add('active');
-
-  // Mark BOTH the previous AND current section as visited/complete
-  markComplete(currentDay);
-  if (n > 1) markComplete(n - 1);
-  currentDay = n;
-
-  // Update UI
-  updateSidebarState(n);
-  setProgress(n);
-
-  // Scroll content panel to top
-  var panel = document.querySelector('.content-panel');
-  if (panel) panel.scrollTop = 0;
-  else window.scrollTo({ top: 0, behavior: 'smooth' });
-
-  // Close mobile sidebar after navigating
-  var sidebar = document.getElementById('sidebar');
-  if (sidebar && window.innerWidth < 900) sidebar.classList.remove('open');
-}
-
-// ── Sidebar section click toggle ─────────────────────
-function toggleSection(hdr, n) {
-  var sec  = document.getElementById('sec' + n);
-  var chev = document.getElementById('chev' + n);
-  if (sec)  sec.classList.toggle('open');
-  if (chev) chev.classList.toggle('open');
-}
-
-// ── Mobile sidebar ────────────────────────────────────
-function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
-}
-
-// ── Add completed tick style ─────────────────────────
-var style = document.createElement('style');
-style.textContent = `
-  .curr-check.done {
-    color: #22c55e !important;
-    font-size: 11px !important;
+  function showModule(n) {
+    document.querySelectorAll('.lesson').forEach(l => l.classList.remove('active'));
+    document.querySelectorAll('.p-day').forEach(d => d.classList.remove('active'));
+    document.getElementById('mod' + n).classList.add('active');
+    document.querySelectorAll('.p-day')[n - 1].classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
-  .curr-section-hdr.completed .curr-section-title {
-    color: rgba(255,255,255,0.5);
-  }
-  .curr-section-hdr.completed .curr-section-num::after {
-    content: '✓';
-    color: #22c55e;
-    font-size: 12px;
-  }
-`;
-document.head.appendChild(style);
-
-// ── Init on page load ─────────────────────────────────
-setProgress(1);
-updateSidebarState(1);
-
 </script>
 </body>
 </html>
