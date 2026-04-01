@@ -239,8 +239,8 @@
     </select>
   </div>
   <div class="form-row">
-    <label>Completion Date</label>
-    <input type="date" id="cert-date" />
+    <label>Completion Date <span style="color:rgba(255,215,0,0.5);font-size:10px;">(auto-set to today)</span></label>
+    <input type="date" id="cert-date" title="Automatically set to today's date" />
   </div>
 
   <button class="gen-btn" onclick="generateCert()">✨ Generate Certificate</button>
@@ -268,7 +268,7 @@
       <!-- TOP -->
       <div class="cert-top">
         <div class="cert-org">TechCamp Boot Camp</div>
-        <div class="cert-org-sub">Online · April 2026 · Kumasi, Ghana</div>
+        <div class="cert-org-sub">Online Learning</div>
         <div class="cert-divider-top">
           <div class="div-line"></div>
           <div class="div-star">✦</div>
@@ -310,12 +310,12 @@
         <!-- SEAL -->
         <div class="cert-seal">
           <div class="seal-icon">🎓</div>
-          <div class="seal-text">TechCamp<br>2026</div>
+          <div class="seal-text">TechCamp</div>
         </div>
 
         <!-- Date -->
         <div class="cert-date-block">
-          <div class="cert-sig-script" style="font-size:clamp(10px,2vw,20px); color:#888;">April 2026</div>
+          <div class="cert-sig-script" style="font-size:clamp(10px,2vw,20px); color:#888;"></div>
           <div class="cert-sig-line"></div>
           <div class="cert-date-label">Date of Completion</div>
           <div class="cert-date-val" id="cert-date-display">—</div>
@@ -329,8 +329,14 @@
 </div>
 
 <script>
-  // Set today's date as default
-  document.getElementById('cert-date').value = new Date().toISOString().split('T')[0];
+  // ── Auto-set today's date and lock it ────────────────────────
+  var today = new Date();
+  var todayISO = today.toISOString().split('T')[0];
+  var dateField = document.getElementById('cert-date');
+  dateField.value = todayISO;
+  dateField.readOnly = true;
+  dateField.style.opacity = '0.6';
+  dateField.title = 'Auto-set to today — the date you generate your certificate';
 
   // ── Auth check — redirect to gate if not logged in ───────────
   if (sessionStorage.getItem('tc_auth') !== 'true') {
@@ -361,7 +367,7 @@
     const formatted = d.toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
 
     // Generate cert ID
-    const id = 'TC-2026-' + Math.random().toString(36).substr(2,6).toUpperCase();
+    const id = 'TC-' + Math.random().toString(36).substr(2,6).toUpperCase();
 
     // Update certificate
     document.getElementById('cert-name-display').textContent = name;
