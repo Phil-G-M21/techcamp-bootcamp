@@ -2073,73 +2073,143 @@ function signOut() {
 // ── Progress ring ─────────────────────────────────────
 var CIRCUMFERENCE = 2 * Math.PI * 16; // r=16 → ~100.53
 
-function setProgress(day) {
-  var pct = Math.round((day / 6) * 100);
-  var offset = CIRCUMFERENCE - (pct / 100) * CIRCUMFERENCE;
-  var ring = document.getElementById('ring-fill');
-  if(ring) { ring.style.strokeDashoffset = offset; }
-  var pctEl = document.getElementById('ring-pct');
-  if(pctEl) pctEl.textContent = pct + '%';
-  var dayEl = document.getElementById('ring-day');
-  if(dayEl) dayEl.textContent = 'Day ' + day + ' / 6';
-  // Sidebar bar
-  var spFill = document.getElementById('sp-fill');
-  if(spFill) spFill.style.width = pct + '%';
-  var spPct = document.getElementById('sp-pct-text');
-  if(spPct) spPct.textContent = pct + '%';
+// ── Constants ─────────────────────────────────────────
+var TOTAL_SECTIONS = 6;
+var CIRCUMFERENCE  = 2 * Math.PI * 15; // r=15 on the SVG circle
+
+// ── Completion tracking (persists across page reloads) ─
+var STORAGE_KEY = 'tc_w1_progress_' + (sessionStorage.getItem('tc_student') || 'x').replace(/\s/g,'_');
+
+function getCompleted() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) { return []; }
+}
+function saveCompleted(arr) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); } catch(e) {}
+}
+function markComplete(n) {
+  var done = getCompleted();
+  if (done.indexOf(n) === -1) done.push(n);
+  saveCompleted(done);
 }
 
-// ── Show Day ─────────────────────────────────────────
+// ── Progress circle + bar fill ────────────────────────
+function setProgress(activeSection) {
+  var done = getCompleted();
+  // Count unique completed sections
+  var completedCount = 0;
+  for (var i = 1; i <= TOTAL_SECTIONS; i++) {
+    if (done.indexOf(i) !== -1 || i < activeSection) completedCount++;
+  }
+  var pct = Math.round((completedCount / TOTAL_SECTIONS) * 100);
+
+  // Top-bar ring
+  var ring = document.getElementById('ring-fill');
+  if (ring) ring.style.strokeDashoffset = CIRCUMFERENCE - (pct / 100) * CIRCUMFERENCE;
+  var pctEl = document.getElementById('ring-pct');
+  if (pctEl) pctEl.textContent = pct + '%';
+
+  // "Topic X / 6" label
+  var dayEl = document.getElementById('ring-day');
+  if (dayEl) dayEl.textContent = 'Topic ' + activeSection + ' / ' + TOTAL_SECTIONS;
+
+  // Sidebar progress bar
+  var spFill = document.getElementById('sp-fill');
+  if (spFill) spFill.style.width = pct + '%';
+  var spPct = document.getElementById('sp-pct-text');
+  if (spPct) spPct.textContent = pct + '%';
+}
+
+// ── Mark sidebar items ────────────────────────────────
+function updateSidebarState(activeSection) {
+  var done = getCompleted();
+
+  for (var i = 1; i <= TOTAL_SECTIONS; i++) {
+    var sec  = document.getElementById('sec' + i);
+    var chev = document.getElementById('chev' + i);
+    var hdr  = sec ? sec.previousElementSibling : null;
+    var items = sec ? sec.querySelectorAll('.curr-item') : [];
+
+    if (i === activeSection) {
+      // Currently active section — open it, show ▶ on first item
+      if (sec)  sec.classList.add('open');
+      if (chev) chev.classList.add('open');
+      if (hdr)  hdr.classList.add('active');
+      items.forEach(function(item, idx) {
+        item.classList.toggle('active', idx === 0);
+        var chk = item.querySelector('.curr-check');
+        if (chk) {
+          chk.classList.toggle('active', idx === 0);
+          chk.textContent = idx === 0 ? '▶' : '';
+        }
+        var t = item.querySelector('.curr-item-title');
+        if (t) t.style.fontWeight = idx === 0 ? '700' : '';
+      });
+
+    } else if (done.indexOf(i) !== -1 || i < activeSection) {
+      // Completed section — tick ALL items ✅
+      if (sec)  sec.classList.add('open');
+      if (chev) chev.classList.add('open');
+      if (hdr)  { hdr.classList.remove('active'); hdr.classList.add('completed'); }
+      items.forEach(function(item) {
+        item.classList.remove('active');
+        var chk = item.querySelector('.curr-check');
+        if (chk) {
+          chk.classList.remove('active');
+          chk.classList.add('done');
+          chk.textContent = '✓';
+        }
+        var t = item.querySelector('.curr-item-title');
+        if (t) { t.style.color = ''; t.style.fontWeight = ''; }
+      });
+
+    } else {
+      // Future section — closed, no ticks
+      if (sec)  sec.classList.remove('open');
+      if (chev) chev.classList.remove('open');
+      if (hdr)  { hdr.classList.remove('active'); hdr.classList.remove('completed'); }
+      items.forEach(function(item) {
+        item.classList.remove('active');
+        var chk = item.querySelector('.curr-check');
+        if (chk) { chk.classList.remove('active','done'); chk.textContent = ''; }
+      });
+    }
+  }
+}
+
+// ── Main navigation function ──────────────────────────
 var currentDay = 1;
 
 function showDay(n) {
+  // Hide all lessons, show the target
   document.querySelectorAll('.lesson').forEach(function(l){ l.classList.remove('active'); });
   var el = document.getElementById('day' + n);
-  if(el) el.classList.add('active');
+  if (el) el.classList.add('active');
+
+  // Mark BOTH the previous AND current section as visited/complete
+  markComplete(currentDay);
+  if (n > 1) markComplete(n - 1);
   currentDay = n;
 
-  // Update sidebar active states
-  document.querySelectorAll('.curr-item').forEach(function(item){
-    item.classList.remove('active');
-    var chk = item.querySelector('.curr-check');
-    if(chk) { chk.classList.remove('active'); chk.textContent = ''; }
-    var title = item.querySelector('.curr-item-title');
-    if(title) title.style.fontWeight = '';
-  });
-
-  var firstItem = document.querySelector('#sec' + n + ' .curr-item');
-  if(firstItem) {
-    firstItem.classList.add('active');
-    var chk = firstItem.querySelector('.curr-check');
-    if(chk) { chk.classList.add('active'); chk.textContent = '▶'; }
-  }
-
-  // Open right sidebar section, close others
-  for(var i=1;i<=6;i++){
-    var sec = document.getElementById('sec'+i);
-    var chev = document.getElementById('chev'+i);
-    var hdr = sec ? sec.previousElementSibling : null;
-    if(i === n) {
-      if(sec) sec.classList.add('open');
-      if(chev) chev.classList.add('open');
-      if(hdr) hdr.classList.add('active');
-    } else {
-      if(sec) sec.classList.remove('open');
-      if(chev) chev.classList.remove('open');
-      if(hdr) hdr.classList.remove('active');
-    }
-  }
-
+  // Update UI
+  updateSidebarState(n);
   setProgress(n);
-  window.scrollTo({top:0, behavior:'smooth'});
+
+  // Scroll content panel to top
+  var panel = document.querySelector('.content-panel');
+  if (panel) panel.scrollTop = 0;
+  else window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Close mobile sidebar after navigating
+  var sidebar = document.getElementById('sidebar');
+  if (sidebar && window.innerWidth < 900) sidebar.classList.remove('open');
 }
 
-// ── Sidebar section toggle ────────────────────────────
+// ── Sidebar section click toggle ─────────────────────
 function toggleSection(hdr, n) {
-  var sec = document.getElementById('sec' + n);
+  var sec  = document.getElementById('sec' + n);
   var chev = document.getElementById('chev' + n);
-  sec.classList.toggle('open');
-  chev.classList.toggle('open');
+  if (sec)  sec.classList.toggle('open');
+  if (chev) chev.classList.toggle('open');
 }
 
 // ── Mobile sidebar ────────────────────────────────────
@@ -2147,8 +2217,28 @@ function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
 }
 
-// ── Init ─────────────────────────────────────────────
+// ── Add completed tick style ─────────────────────────
+var style = document.createElement('style');
+style.textContent = `
+  .curr-check.done {
+    color: #22c55e !important;
+    font-size: 11px !important;
+  }
+  .curr-section-hdr.completed .curr-section-title {
+    color: rgba(255,255,255,0.5);
+  }
+  .curr-section-hdr.completed .curr-section-num::after {
+    content: '✓';
+    color: #22c55e;
+    font-size: 12px;
+  }
+`;
+document.head.appendChild(style);
+
+// ── Init on page load ─────────────────────────────────
 setProgress(1);
+updateSidebarState(1);
+
 </script>
 </body>
 </html>
