@@ -3,603 +3,490 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TechCamp — Student Portal</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<title>TechCamp Boot Camp — Student Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --sky: #0ea5e9; --sky-light: #38bdf8; --sky-pale: #7dd3fc;
-    --dark: #020e2e; --mid: #0c2a5e; --white: #fff;
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --paper:#eceae1; --card:#f7f6f0; --panel:#e4e2d7;
+    --ink:#1b1c1e; --ink-2:#43443f; --muted:#75766c;
+    --line:#d2d0c4; --line-2:#c1bfb1;
+    --pine:#1d4d43; --pine-d:#143a32;
+    --signal:#df530a; --signal-d:#bf460a;
+    --m1:#4a5b6e; --m2:#a15c25; --m3:#2f6b4c;
+    --ok:#1c6b4d; --warn:#8a5a12; --err:#a12b1e;
+    --mono:'JetBrains Mono',monospace;
+    --disp:'Space Grotesk',sans-serif;
+    --body:'IBM Plex Sans',sans-serif;
   }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body {
-    background: var(--dark);
-    font-family: 'Exo 2', sans-serif;
-    color: var(--white);
-    min-height: 100vh;
-  }
-  .grid-bg {
-    position: fixed; inset: 0; z-index: 0;
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    background:var(--paper); color:var(--ink); font-family:var(--body);
+    min-height:100vh; line-height:1.55;
     background-image:
-      linear-gradient(rgba(14,165,233,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(14,165,233,0.04) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
+      linear-gradient(rgba(27,28,30,0.026) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(27,28,30,0.026) 1px,transparent 1px);
+    background-size:26px 26px;
   }
-  .blob {
-    position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0;
-  }
-  .blob1 { width:400px;height:400px; background:rgba(14,165,233,0.15); top:-100px; right:-100px; }
-  .blob2 { width:300px;height:300px; background:rgba(56,189,248,0.1); bottom:0; left:-80px; }
+  ::selection{background:var(--pine);color:#fff;}
+  a{color:inherit;}
+  .wrap{max-width:720px;margin:0 auto;padding:26px 20px 64px;}
 
-  .wrap { position:relative; z-index:1; max-width:700px; margin:0 auto; padding:40px 20px 60px; }
+  /* eyebrow / section labels */
+  .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:9px;}
+  .eyebrow::before{content:"";width:20px;height:1px;background:var(--line-2);}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin:34px 0 16px;}
+  .sec-head .n{font-family:var(--mono);font-size:11px;color:var(--signal);}
+  .sec-head h2{font-family:var(--disp);font-size:15px;font-weight:600;letter-spacing:.2px;}
+
+  /* TOP BAR */
+  .top-bar{
+    display:flex;align-items:center;justify-content:space-between;
+    background:var(--card);border:1px solid var(--line-2);padding:11px 14px;margin-bottom:30px;
+  }
+  .tb-user{display:flex;align-items:center;gap:11px;}
+  .tb-avatar{
+    width:36px;height:36px;flex:none;display:grid;place-items:center;
+    background:var(--ink);color:var(--card);font-family:var(--disp);font-weight:700;font-size:13px;
+  }
+  .tb-name{font-size:13px;font-weight:600;}
+  .tb-sub{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-top:2px;}
+  .signout{
+    display:flex;align-items:center;gap:7px;background:none;border:1px solid var(--line-2);
+    padding:8px 13px;cursor:pointer;font-family:var(--mono);font-size:11px;font-weight:500;
+    color:var(--ink-2);transition:border-color .15s,color .15s;
+  }
+  .signout:hover{border-color:var(--err);color:var(--err);}
+  .signout svg{width:14px;height:14px;}
 
   /* HEADER */
-  header { text-align:center; margin-bottom:48px; }
-  .logo {
-    font-family:'Orbitron',monospace; font-weight:900; font-size:38px;
-    color:#fff; text-shadow:0 0 40px rgba(56,189,248,0.5);
-  }
-  .logo span { color: var(--sky-light); }
-  .logo-sub {
-    font-family:'Orbitron',monospace; font-size:13px; font-weight:700;
-    color:transparent; -webkit-text-stroke:1px rgba(125,211,252,0.4);
-    letter-spacing:6px; margin-top:4px;
-  }
-  .welcome-text {
-    margin-top:16px; font-size:14px; font-weight:300;
-    color:rgba(255,255,255,0.55); line-height:1.7;
-  }
+  header{border-bottom:1px solid var(--line-2);padding-bottom:26px;margin-bottom:8px;}
+  .brandrow{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
+  .monogram{width:50px;height:50px;flex:none;display:grid;place-items:center;background:var(--ink);color:var(--card);font-family:var(--disp);font-weight:700;font-size:19px;}
+  .monogram span{color:var(--signal);}
+  .brand-tt{font-family:var(--disp);font-weight:700;font-size:24px;letter-spacing:-.5px;line-height:1;}
+  .brand-tt em{font-style:normal;color:var(--pine);}
+  .brand-sub{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:6px;}
+  .welcome-text{font-size:14px;color:var(--ink-2);line-height:1.65;}
+  .welcome-text strong{color:var(--ink);font-weight:600;}
 
-  .divider {
-    height:1px; background:linear-gradient(90deg,transparent,rgba(125,211,252,0.5),transparent);
-    margin:32px 0;
+  /* MODULE CARDS */
+  .modules{display:flex;flex-direction:column;gap:12px;}
+  .mod{
+    display:block;text-decoration:none;color:inherit;position:relative;
+    background:var(--card);border:1px solid var(--line-2);padding:20px 22px 20px 26px;
+    transition:border-color .18s,transform .12s,box-shadow .18s;
   }
+  .mod::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;}
+  .mod.m1::before{background:var(--m1);}
+  .mod.m2::before{background:var(--m2);}
+  .mod.m3::before{background:var(--m3);}
+  .mod:hover{border-color:var(--ink);transform:translateY(-1px);box-shadow:0 10px 24px -18px rgba(27,28,30,.5);}
+  .mod-top{display:flex;align-items:center;gap:15px;margin-bottom:13px;}
+  .mod-num{font-family:var(--disp);font-weight:700;font-size:26px;color:var(--line-2);line-height:1;flex:none;}
+  .mod-ico{width:34px;height:34px;flex:none;display:grid;place-items:center;border:1px solid var(--line-2);}
+  .mod-ico svg{width:19px;height:19px;}
+  .mod.m1 .mod-ico{color:var(--m1);} .mod.m2 .mod-ico{color:var(--m2);} .mod.m3 .mod-ico{color:var(--m3);}
+  .mod-tag{font-family:var(--mono);font-size:9.5px;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+  .mod-title{font-family:var(--disp);font-size:17px;font-weight:600;letter-spacing:-.2px;}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;}
+  .chip{border:1px solid var(--line-2);background:var(--paper);padding:4px 10px;font-size:10.5px;font-family:var(--mono);color:var(--ink-2);letter-spacing:.2px;}
+  .mod-arrow{position:absolute;right:20px;top:22px;color:var(--line-2);transition:color .18s,transform .18s;}
+  .mod:hover .mod-arrow{color:var(--ink);transform:translateX(3px);}
+  .mod-arrow svg{width:20px;height:20px;}
 
-  /* SCHEDULE STRIP */
-  .schedule {
-    display:flex; gap:10px; margin-bottom:36px; flex-wrap:wrap; justify-content:center;
-  }
-  .sch-item {
-    background:rgba(255,255,255,0.06); border:1px solid rgba(125,211,252,0.2);
-    border-radius:10px; padding:10px 16px; text-align:center; flex:1; min-width:140px;
-  }
-  .sch-label { font-size:8px; font-weight:700; letter-spacing:2px; color:var(--sky-pale); text-transform:uppercase; margin-bottom:4px; }
-  .sch-val { font-family:'Orbitron',monospace; font-size:14px; font-weight:700; color:#fff; }
+  .panel{background:var(--card);border:1px solid var(--line-2);padding:22px 20px;margin-top:12px;}
 
-  /* WEEK CARDS */
-  .section-title {
-    font-size:9px; font-weight:700; letter-spacing:3px; text-transform:uppercase;
-    color:var(--sky-pale); text-align:center; margin-bottom:20px;
-  }
-  .weeks { display:flex; flex-direction:column; gap:16px; }
+  /* PROGRESS */
+  .gauges{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:6px;}
+  .gauge{display:flex;flex-direction:column;align-items:center;gap:9px;cursor:pointer;}
+  .gauge .dial{position:relative;width:74px;height:74px;}
+  .gauge .pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:14px;font-weight:600;}
+  .gauge .glabel{text-align:center;font-family:var(--disp);font-size:11px;font-weight:600;color:var(--ink-2);}
+  .gauge .glabel span{display:block;font-family:var(--mono);font-size:8.5px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:400;margin-top:2px;}
+  .cl-head{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:9px;display:flex;align-items:center;gap:8px;}
+  .cl-head::before{content:"";width:16px;height:2px;}
+  .cl-note{text-align:center;font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-top:10px;}
 
-  .week-card {
-    display:block; text-decoration:none;
-    background:rgba(255,255,255,0.05);
-    border:1px solid rgba(125,211,252,0.15);
-    border-radius:16px; padding:22px 22px;
-    transition:all 0.25s ease; position:relative; overflow:hidden;
+  /* RESOURCE CARDS */
+  .res-grid{display:flex;gap:12px;flex-wrap:wrap;}
+  .res{
+    flex:1;min-width:150px;text-decoration:none;color:inherit;display:flex;align-items:center;gap:14px;
+    background:var(--card);border:1px solid var(--line-2);padding:16px 18px;transition:border-color .15s,transform .12s;
   }
-  .week-card::before {
-    content:''; position:absolute; left:0; top:0; bottom:0; width:4px;
-    border-radius:4px 0 0 4px;
-  }
-  .week-card.w1::before { background: linear-gradient(180deg,#ef4444,#f97316); }
-  .week-card.w2::before { background: linear-gradient(180deg,#0ea5e9,#06b6d4); }
-  .week-card.w3::before { background: linear-gradient(180deg,#22c55e,#16a34a); }
-  .week-card:hover { background:rgba(255,255,255,0.09); border-color:rgba(125,211,252,0.35); transform:translateY(-2px); }
-
-  .week-top { display:flex; align-items:center; gap:14px; margin-bottom:12px; }
-  .week-num {
-    font-family:'Orbitron',monospace; font-weight:900; font-size:28px;
-    opacity:0.2; line-height:1; flex-shrink:0;
-  }
-  .week-icon { font-size:28px; flex-shrink:0; filter:drop-shadow(0 0 8px rgba(125,211,252,0.4)); }
-  .week-info {}
-  .week-tag { font-size:9px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:var(--sky-pale); margin-bottom:3px; }
-  .week-title { font-size:18px; font-weight:800; color:#fff; }
-
-  .week-topics { display:flex; flex-wrap:wrap; gap:6px; }
-  .topic-chip {
-    background:rgba(255,255,255,0.07); border:1px solid rgba(125,211,252,0.15);
-    border-radius:20px; padding:4px 10px; font-size:10px; font-weight:600; color:rgba(255,255,255,0.65);
-  }
-  .week-arrow {
-    position:absolute; right:20px; top:50%; transform:translateY(-50%);
-    font-size:22px; color:rgba(125,211,252,0.4);
-  }
+  .res:hover{border-color:var(--ink);transform:translateY(-1px);}
+  .res-ico{width:38px;height:38px;flex:none;display:grid;place-items:center;border:1px solid var(--line-2);color:var(--pine);}
+  .res-ico svg{width:20px;height:20px;}
+  .res .rt{font-family:var(--disp);font-size:13.5px;font-weight:600;margin-bottom:2px;}
+  .res .rd{font-size:10.5px;color:var(--muted);font-family:var(--mono);letter-spacing:.2px;}
 
   /* TIPS */
-  .tip-box {
-    margin-top:32px;
-    background:rgba(14,165,233,0.08); border:1px solid rgba(14,165,233,0.25);
-    border-radius:12px; padding:18px 20px;
-  }
-  .tip-title { font-size:9px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--sky-pale); margin-bottom:10px; }
-  .tip-list { list-style:none; display:flex; flex-direction:column; gap:7px; }
-  .tip-list li { font-size:12.5px; font-weight:400; color:rgba(255,255,255,0.65); line-height:1.5; padding-left:16px; position:relative; }
-  .tip-list li::before { content:'›'; position:absolute; left:0; color:var(--sky-pale); }
+  .tips{background:var(--panel);border:1px solid var(--line-2);padding:20px 22px;}
+  .tips ul{list-style:none;display:flex;flex-direction:column;gap:9px;margin-top:4px;}
+  .tips li{font-size:13px;color:var(--ink-2);line-height:1.55;padding-left:22px;position:relative;}
+  .tips li::before{content:"";position:absolute;left:0;top:9px;width:9px;height:9px;border:1.5px solid var(--pine);border-radius:0;}
 
-  footer { text-align:center; margin-top:40px; font-size:11px; color:rgba(255,255,255,0.25); line-height:1.8; }
+  /* INSTRUCTOR */
+  .inst{background:var(--card);border:1px solid var(--line-2);padding:22px;}
+  .inst-top{display:flex;gap:15px;align-items:center;}
+  .inst-av{width:52px;height:52px;flex:none;display:grid;place-items:center;background:var(--pine);color:#fff;font-family:var(--disp);font-weight:700;font-size:16px;}
+  .inst-name{font-family:var(--disp);font-size:15px;font-weight:600;}
+  .inst-role{font-size:11.5px;color:var(--pine);font-weight:600;margin-top:2px;}
+  .inst-certs{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:5px;letter-spacing:.3px;}
+  .inst-rule{height:1px;background:var(--line-2);margin:18px 0;}
+  .socials{display:flex;flex-direction:column;gap:9px;}
+  .social{display:flex;align-items:center;gap:13px;text-decoration:none;color:inherit;border:1px solid var(--line-2);padding:11px 14px;transition:border-color .15s;background:var(--paper);}
+  .social:hover{border-color:var(--ink);}
+  .social .si{width:34px;height:34px;flex:none;display:grid;place-items:center;background:var(--ink);color:var(--card);}
+  .social .si svg{width:17px;height:17px;}
+  .social .st{flex:1;}
+  .social .sl{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
+  .social .sh{font-size:13px;font-weight:600;margin-top:1px;}
+  .social .sa{color:var(--line-2);}
+  .social .sa svg{width:17px;height:17px;}
 
-  /* INSTRUCTOR CARD */
-  .instructor-card {
-    margin-top:28px;
-    background:rgba(255,255,255,0.05);
-    border:1px solid rgba(125,211,252,0.2);
-    border-radius:16px; padding:22px;
+  /* CALLOUT (community / future) */
+  .callout{background:var(--card);border:1px solid var(--line-2);padding:22px;}
+  .callout-head{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px;}
+  .callout-ico{width:40px;height:40px;flex:none;display:grid;place-items:center;border:1px solid var(--line-2);color:var(--pine);}
+  .callout-ico svg{width:21px;height:21px;}
+  .callout-title{font-family:var(--disp);font-size:15px;font-weight:600;margin-bottom:4px;}
+  .callout-sub{font-size:12.5px;color:var(--ink-2);line-height:1.55;}
+  .btn-fill{
+    display:flex;align-items:center;justify-content:center;gap:10px;text-decoration:none;
+    background:var(--pine);color:#fff;padding:13px;font-family:var(--disp);font-size:14px;font-weight:600;
+    transition:background .15s;
   }
-  .inst-top { display:flex; gap:16px; align-items:center; margin-bottom:18px; }
-  .inst-avatar {
-    width:54px; height:54px; border-radius:50%; flex-shrink:0;
-    background:linear-gradient(135deg,#0ea5e9,#0369a1);
-    display:flex; align-items:center; justify-content:center;
-    font-family:'Orbitron',monospace; font-weight:900; font-size:16px; color:#fff;
-    box-shadow:0 0 20px rgba(14,165,233,0.4);
-  }
-  .inst-name { font-size:15px; font-weight:800; color:#fff; margin-bottom:3px; }
-  .inst-title { font-size:11px; color:var(--sky-pale); font-weight:600; margin-bottom:5px; }
-  .inst-certs { font-size:10.5px; color:rgba(255,255,255,0.45); font-weight:300; }
+  .btn-fill:hover{background:var(--pine-d);}
+  .btn-fill svg{width:17px;height:17px;}
+  .callout-note{font-family:var(--mono);font-size:9.5px;color:var(--muted);text-align:center;margin-top:10px;}
 
-  .inst-socials { display:flex; flex-direction:column; gap:9px; }
-  .social-btn {
-    display:flex; align-items:center; gap:12px; text-decoration:none;
-    background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
-    border-radius:10px; padding:10px 14px; transition:background 0.2s;
-  }
-  .social-btn:hover { background:rgba(255,255,255,0.1); }
-  .social-btn.linkedin { border-color:rgba(10,102,194,0.4); }
-  .social-btn.tiktok   { border-color:rgba(255,255,255,0.15); }
-  .social-btn.insta    { border-color:rgba(225,48,108,0.3); }
-  .s-icon {
-    width:32px; height:32px; border-radius:8px; flex-shrink:0;
-    display:flex; align-items:center; justify-content:center;
-    font-size:14px; font-weight:900;
-  }
-  .linkedin .s-icon { background:#0a66c2; color:#fff; }
-  .tiktok .s-icon   { background:#111; color:#fff; font-size:16px; }
-  .insta .s-icon    { background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); color:#fff; font-size:16px; }
-  .s-text { flex:1; }
-  .s-label  { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.4); }
-  .s-handle { font-size:13px; font-weight:700; color:#fff; margin-top:1px; }
-  .s-arr { color:rgba(125,211,252,0.4); font-size:18px; }
+  .contact-list{display:flex;flex-direction:column;gap:9px;margin-top:16px;}
+  .contact{display:flex;align-items:center;gap:13px;text-decoration:none;color:inherit;border:1px solid var(--line-2);padding:12px 14px;background:var(--paper);transition:border-color .15s;}
+  .contact:hover{border-color:var(--ink);}
+  .contact .ci{width:36px;height:36px;flex:none;display:grid;place-items:center;background:var(--ink);color:var(--card);}
+  .contact .ci svg{width:18px;height:18px;}
+  .contact .cv{flex:1;}
+  .contact .cval{font-size:13.5px;font-weight:600;}
+  .contact .clab{font-family:var(--mono);font-size:9.5px;letter-spacing:.5px;color:var(--muted);margin-top:1px;}
+  .contact .ca{color:var(--line-2);} .contact .ca svg{width:17px;height:17px;}
 
-  /* COMMUNITY BOX */
-  .community-box {
-    margin-top:16px;
-    background:rgba(37,211,102,0.06);
-    border:1px solid rgba(37,211,102,0.25);
-    border-radius:16px; padding:20px 22px;
-  }
-  .comm-header { display:flex; gap:14px; align-items:flex-start; margin-bottom:16px; }
-  .comm-icon { font-size:28px; flex-shrink:0; }
-  .comm-title { font-size:14px; font-weight:800; color:#fff; margin-bottom:4px; }
-  .comm-sub { font-size:11.5px; color:rgba(255,255,255,0.5); font-weight:300; line-height:1.5; }
-  .wa-join-btn {
-    display:flex; align-items:center; justify-content:center; gap:10px;
-    background:#25D366; border-radius:10px; padding:13px;
-    text-decoration:none; font-size:14px; font-weight:700; color:#fff;
-    box-shadow:0 4px 18px rgba(37,211,102,0.35); margin-bottom:10px;
-  }
-  .comm-note { font-size:10px; color:rgba(255,255,255,0.3); text-align:center; }
+  footer{text-align:center;margin-top:44px;padding-top:22px;border-top:1px solid var(--line-2);font-family:var(--mono);font-size:10px;letter-spacing:.5px;color:var(--muted);line-height:1.9;}
 
-  /* FUTURE BOOTCAMPS */
-  .future-box {
-    margin-top:16px;
-    background:rgba(14,165,233,0.07);
-    border:1px solid rgba(14,165,233,0.22);
-    border-radius:16px; padding:20px 22px;
+  @media (max-width:520px){
+    .mod-arrow{display:none;}
+    .top-bar{padding:9px 11px;}
   }
-  .future-title { font-size:15px; font-weight:800; color:#fff; margin-bottom:8px; }
-  .future-body { font-size:12.5px; color:rgba(255,255,255,0.55); line-height:1.7; margin-bottom:16px; }
-  /* TOP NAV BAR */
-  .top-bar {
-    display:flex; align-items:center; justify-content:space-between;
-    background:rgba(255,255,255,0.04); border:1px solid rgba(125,211,252,0.12);
-    border-radius:12px; padding:10px 16px; margin-bottom:24px;
-  }
-  .top-bar-user { display:flex; align-items:center; gap:10px; }
-  .top-bar-avatar {
-    width:32px; height:32px; border-radius:50%;
-    background:linear-gradient(135deg,#0ea5e9,#0369a1);
-    display:flex; align-items:center; justify-content:center;
-    font-family:'Orbitron',monospace; font-size:11px; font-weight:900; color:#fff;
-    flex-shrink:0;
-  }
-  .top-bar-name { font-size:12px; font-weight:700; color:#fff; }
-  .top-bar-sub { font-size:9px; color:rgba(255,255,255,0.35); letter-spacing:1px; text-transform:uppercase; margin-top:1px; }
-  .signout-btn {
-    display:flex; align-items:center; gap:6px;
-    background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.25);
-    border-radius:8px; padding:7px 14px; cursor:pointer;
-    font-family:'Exo 2',sans-serif; font-size:11px; font-weight:700;
-    color:#fca5a5; transition:all 0.2s;
-  }
-  .signout-btn:hover { background:rgba(239,68,68,0.2); }
-
-    flex:1; min-width:90px; text-align:center; text-decoration:none;
-    background:rgba(255,255,255,0.07); border:1px solid rgba(125,211,252,0.2);
-    border-radius:10px; padding:10px 12px;
-    font-size:12px; font-weight:700; color:#fff;
-  }
-  .future-btn:hover { background:rgba(255,255,255,0.12); }
 </style>
 </head>
 <body>
 <script>if(sessionStorage.getItem("tc_auth")!=="true"){window.location.replace("index.html");}</script>
-<div class="grid-bg"></div>
-<div class="blob blob1"></div>
-<div class="blob blob2"></div>
 
 <div class="wrap">
 
-  <!-- TOP BAR — student name + sign out -->
+  <!-- TOP BAR -->
   <div class="top-bar">
-    <div class="top-bar-user">
-      <div class="top-bar-avatar" id="tb-avatar">?</div>
+    <div class="tb-user">
+      <div class="tb-avatar" id="tb-avatar">?</div>
       <div>
-        <div class="top-bar-name" id="tb-name">Student</div>
-        <div class="top-bar-sub">TechCamp</div>
+        <div class="tb-name" id="tb-name">Student</div>
+        <div class="tb-sub">TechCamp</div>
       </div>
     </div>
-    <button class="signout-btn" onclick="signOut()">🚪 Sign Out</button>
+    <button class="signout" onclick="signOut()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Sign out
+    </button>
   </div>
 
   <header>
-    <div class="logo">TECH<span>CAMP</span></div>
-    <div class="logo-sub">STUDENT PORTAL</div>
-    <p class="welcome-text">Welcome! This is your personal learning hub.<br>Work through each module at your own pace — everything is here whenever you need it.</p>
+    <div class="brandrow">
+      <div class="monogram">T<span>C</span></div>
+      <div>
+        <div class="brand-tt">Tech<em>Camp</em></div>
+        <div class="brand-sub">Student portal · Kumasi</div>
+      </div>
+    </div>
+    <p class="welcome-text">Welcome. This is your personal learning hub. Work through each module at your own pace — everything is here whenever you need it.</p>
   </header>
 
-  <div class="divider"></div>
+  <!-- MODULES -->
+  <div class="sec-head"><span class="n">§1</span><h2>Course modules</h2></div>
 
-  <div class="section-title">▸ Your Course Modules</div>
+  <div class="modules">
 
-  <div class="weeks">
-
-    <a class="week-card w1" href="week1.html">
-      <div class="week-top">
-        <div class="week-num">01</div>
-        <div class="week-icon">🔐</div>
-        <div class="week-info">
-          <div class="week-tag">Module 1</div>
-          <div class="week-title">Ethical Hacking Fundamentals</div>
+    <a class="mod m1" href="week1.html">
+      <div class="mod-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      <div class="mod-top">
+        <div class="mod-num">01</div>
+        <div class="mod-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <div>
+          <div class="mod-tag">Module 1</div>
+          <div class="mod-title">Ethical Hacking Fundamentals</div>
         </div>
       </div>
-      <div class="week-topics">
-        <span class="topic-chip">Kali Linux Setup</span>
-        <span class="topic-chip">Nmap & Recon</span>
-        <span class="topic-chip">Backdoors & Payloads</span>
-        <span class="topic-chip">Web Hacking & SQLi</span>
-        <span class="topic-chip">Port Scanner Project</span>
+      <div class="chips">
+        <span class="chip">Kali Linux setup</span>
+        <span class="chip">Nmap &amp; recon</span>
+        <span class="chip">Backdoors &amp; payloads</span>
+        <span class="chip">Web hacking &amp; SQLi</span>
+        <span class="chip">Port scanner project</span>
       </div>
-      <div class="week-arrow">›</div>
     </a>
 
-    <a class="week-card w2" href="week2.html">
-      <div class="week-top">
-        <div class="week-num">02</div>
-        <div class="week-icon">🤖</div>
-        <div class="week-info">
-          <div class="week-tag">Module 2</div>
-          <div class="week-title">Arduino & C Programming</div>
+    <a class="mod m2" href="week2.html">
+      <div class="mod-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      <div class="mod-top">
+        <div class="mod-num">02</div>
+        <div class="mod-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="8" height="8" rx="1"/><path d="M10 2v2M14 2v2M10 20v2M14 20v2M2 10h2M2 14h2M20 10h2M20 14h2"/></svg></div>
+        <div>
+          <div class="mod-tag">Module 2</div>
+          <div class="mod-title">Arduino &amp; C Programming</div>
         </div>
       </div>
-      <div class="week-topics">
-        <span class="topic-chip">Microcontrollers</span>
-        <span class="topic-chip">C Language</span>
-        <span class="topic-chip">Circuits & LEDs</span>
-        <span class="topic-chip">Sensors & Displays</span>
-        <span class="topic-chip">Electronics</span>
+      <div class="chips">
+        <span class="chip">Microcontrollers</span>
+        <span class="chip">C language</span>
+        <span class="chip">Circuits &amp; LEDs</span>
+        <span class="chip">Sensors &amp; displays</span>
+        <span class="chip">Electronics</span>
       </div>
-      <div class="week-arrow">›</div>
     </a>
 
-    <a class="week-card w3" href="week3.html">
-      <div class="week-top">
-        <div class="week-num">03</div>
-        <div class="week-icon">🐍</div>
-        <div class="week-info">
-          <div class="week-tag">Module 3</div>
-          <div class="week-title">Python Programming</div>
+    <a class="mod m3" href="week3.html">
+      <div class="mod-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      <div class="mod-top">
+        <div class="mod-num">03</div>
+        <div class="mod-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 8 4 12 8 16"/><polyline points="16 8 20 12 16 16"/><line x1="13" y1="6" x2="11" y2="18"/></svg></div>
+        <div>
+          <div class="mod-tag">Module 3</div>
+          <div class="mod-title">Python Programming</div>
         </div>
       </div>
-      <div class="week-topics">
-        <span class="topic-chip">Python Basics</span>
-        <span class="topic-chip">Functions & Loops</span>
-        <span class="topic-chip">Projects</span>
-        <span class="topic-chip">Password Checker</span>
-        <span class="topic-chip">Live Console</span>
+      <div class="chips">
+        <span class="chip">Python basics</span>
+        <span class="chip">Functions &amp; loops</span>
+        <span class="chip">Projects</span>
+        <span class="chip">Password checker</span>
+        <span class="chip">Live console</span>
       </div>
-      <div class="week-arrow">›</div>
     </a>
 
   </div>
 
-  <!-- PROGRESS TRACKER -->
-  <div style="margin-top:20px;background:rgba(255,255,255,0.04);border:1px solid rgba(125,211,252,0.12);border-radius:16px;padding:20px 18px;">
-    <div style="font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--sky-pale);margin-bottom:18px;text-align:center;">▸ Your Progress</div>
+  <!-- PROGRESS -->
+  <div class="sec-head"><span class="n">§2</span><h2>Your progress</h2></div>
+  <div class="panel">
+    <div class="gauges" id="progress-circles">
 
-    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:18px;" id="progress-circles">
-
-      <!-- Module 1 -->
-      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;" onclick="toggleWeek(1)">
-        <div style="position:relative;width:72px;height:72px;">
-          <svg width="72" height="72" viewBox="0 0 72 72">
-            <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(239,68,68,0.15)" stroke-width="6"/>
-            <circle id="ring1" cx="36" cy="36" r="30" fill="none" stroke="#ef4444" stroke-width="6"
-              stroke-dasharray="188.5" stroke-dashoffset="188.5"
-              stroke-linecap="round" transform="rotate(-90 36 36)"
-              style="transition:stroke-dashoffset 0.8s ease;"/>
+      <div class="gauge" onclick="toggleWeek(1)">
+        <div class="dial">
+          <svg width="74" height="74" viewBox="0 0 72 72">
+            <circle cx="36" cy="36" r="30" fill="none" stroke="#dad8cc" stroke-width="6"/>
+            <circle id="ring1" cx="36" cy="36" r="30" fill="none" stroke="var(--m1)" stroke-width="6"
+              stroke-dasharray="188.5" stroke-dashoffset="188.5" stroke-linecap="butt"
+              transform="rotate(-90 36 36)" style="transition:stroke-dashoffset .8s ease;"/>
           </svg>
-          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-            <span style="font-size:18px;">🔐</span>
-            <span id="pct1" style="font-family:'Orbitron',monospace;font-size:9px;font-weight:700;color:#ef4444;">0%</span>
-          </div>
+          <div class="pct" id="pct1" style="color:var(--m1);">0%</div>
         </div>
-        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.6);text-align:center;">Hacking<br><span style="font-size:8px;color:rgba(255,255,255,0.3);">Module 1</span></div>
+        <div class="glabel">Hacking<span>Module 1</span></div>
       </div>
 
-      <!-- Module 2 -->
-      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;" onclick="toggleWeek(2)">
-        <div style="position:relative;width:72px;height:72px;">
-          <svg width="72" height="72" viewBox="0 0 72 72">
-            <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(14,165,233,0.15)" stroke-width="6"/>
-            <circle id="ring2" cx="36" cy="36" r="30" fill="none" stroke="#0ea5e9" stroke-width="6"
-              stroke-dasharray="188.5" stroke-dashoffset="188.5"
-              stroke-linecap="round" transform="rotate(-90 36 36)"
-              style="transition:stroke-dashoffset 0.8s ease;"/>
+      <div class="gauge" onclick="toggleWeek(2)">
+        <div class="dial">
+          <svg width="74" height="74" viewBox="0 0 72 72">
+            <circle cx="36" cy="36" r="30" fill="none" stroke="#dad8cc" stroke-width="6"/>
+            <circle id="ring2" cx="36" cy="36" r="30" fill="none" stroke="var(--m2)" stroke-width="6"
+              stroke-dasharray="188.5" stroke-dashoffset="188.5" stroke-linecap="butt"
+              transform="rotate(-90 36 36)" style="transition:stroke-dashoffset .8s ease;"/>
           </svg>
-          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-            <span style="font-size:18px;">🤖</span>
-            <span id="pct2" style="font-family:'Orbitron',monospace;font-size:9px;font-weight:700;color:#0ea5e9;">0%</span>
-          </div>
+          <div class="pct" id="pct2" style="color:var(--m2);">0%</div>
         </div>
-        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.6);text-align:center;">Arduino<br><span style="font-size:8px;color:rgba(255,255,255,0.3);">Module 2</span></div>
+        <div class="glabel">Arduino<span>Module 2</span></div>
       </div>
 
-      <!-- Module 3 -->
-      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;" onclick="toggleWeek(3)">
-        <div style="position:relative;width:72px;height:72px;">
-          <svg width="72" height="72" viewBox="0 0 72 72">
-            <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(34,197,94,0.15)" stroke-width="6"/>
-            <circle id="ring3" cx="36" cy="36" r="30" fill="none" stroke="#22c55e" stroke-width="6"
-              stroke-dasharray="188.5" stroke-dashoffset="188.5"
-              stroke-linecap="round" transform="rotate(-90 36 36)"
-              style="transition:stroke-dashoffset 0.8s ease;"/>
+      <div class="gauge" onclick="toggleWeek(3)">
+        <div class="dial">
+          <svg width="74" height="74" viewBox="0 0 72 72">
+            <circle cx="36" cy="36" r="30" fill="none" stroke="#dad8cc" stroke-width="6"/>
+            <circle id="ring3" cx="36" cy="36" r="30" fill="none" stroke="var(--m3)" stroke-width="6"
+              stroke-dasharray="188.5" stroke-dashoffset="188.5" stroke-linecap="butt"
+              transform="rotate(-90 36 36)" style="transition:stroke-dashoffset .8s ease;"/>
           </svg>
-          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-            <span style="font-size:18px;">🐍</span>
-            <span id="pct3" style="font-family:'Orbitron',monospace;font-size:9px;font-weight:700;color:#22c55e;">0%</span>
-          </div>
+          <div class="pct" id="pct3" style="color:var(--m3);">0%</div>
         </div>
-        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.6);text-align:center;">Python<br><span style="font-size:8px;color:rgba(255,255,255,0.3);">Module 3</span></div>
+        <div class="glabel">Python<span>Module 3</span></div>
       </div>
 
-      <!-- Overall -->
-      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-        <div style="position:relative;width:72px;height:72px;">
-          <svg width="72" height="72" viewBox="0 0 72 72">
-            <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(255,215,0,0.15)" stroke-width="6"/>
-            <circle id="ring-overall" cx="36" cy="36" r="30" fill="none" stroke="#fbbf24" stroke-width="6"
-              stroke-dasharray="188.5" stroke-dashoffset="188.5"
-              stroke-linecap="round" transform="rotate(-90 36 36)"
-              style="transition:stroke-dashoffset 0.8s ease;"/>
+      <div class="gauge" style="cursor:default;">
+        <div class="dial">
+          <svg width="74" height="74" viewBox="0 0 72 72">
+            <circle cx="36" cy="36" r="30" fill="none" stroke="#dad8cc" stroke-width="6"/>
+            <circle id="ring-overall" cx="36" cy="36" r="30" fill="none" stroke="var(--signal)" stroke-width="6"
+              stroke-dasharray="188.5" stroke-dashoffset="188.5" stroke-linecap="butt"
+              transform="rotate(-90 36 36)" style="transition:stroke-dashoffset .8s ease;"/>
           </svg>
-          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-            <span style="font-size:18px;">🎓</span>
-            <span id="pct-overall" style="font-family:'Orbitron',monospace;font-size:9px;font-weight:700;color:#fbbf24;">0%</span>
-          </div>
+          <div class="pct" id="pct-overall" style="color:var(--signal);">0%</div>
         </div>
-        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.6);text-align:center;">Overall<br><span style="font-size:8px;color:rgba(255,255,255,0.3);">Course Total</span></div>
+        <div class="glabel">Overall<span>Course total</span></div>
       </div>
 
     </div>
 
-    <!-- Checklist per week (toggle) -->
-    <div id="checklist-1" style="display:none;margin-bottom:12px;">
-      <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:#ef4444;margin-bottom:8px;">🔐 WEEK 1 — ETHICAL HACKING</div>
+    <div id="checklist-1" style="display:none;margin-top:18px;">
+      <div class="cl-head" style="color:var(--m1);"><span style="display:inline-block;width:16px;height:2px;background:var(--m1);"></span>Week 1 — Ethical hacking</div>
       <div style="display:flex;flex-direction:column;gap:6px;" id="checks-1"></div>
     </div>
-    <div id="checklist-2" style="display:none;margin-bottom:12px;">
-      <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:#0ea5e9;margin-bottom:8px;">🤖 WEEK 2 — ARDUINO & C</div>
+    <div id="checklist-2" style="display:none;margin-top:18px;">
+      <div class="cl-head" style="color:var(--m2);"><span style="display:inline-block;width:16px;height:2px;background:var(--m2);"></span>Week 2 — Arduino &amp; C</div>
       <div style="display:flex;flex-direction:column;gap:6px;" id="checks-2"></div>
     </div>
-    <div id="checklist-3" style="display:none;margin-bottom:12px;">
-      <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:#22c55e;margin-bottom:8px;">🐍 WEEK 3 — PYTHON</div>
+    <div id="checklist-3" style="display:none;margin-top:18px;">
+      <div class="cl-head" style="color:var(--m3);"><span style="display:inline-block;width:16px;height:2px;background:var(--m3);"></span>Week 3 — Python</div>
       <div style="display:flex;flex-direction:column;gap:6px;" id="checks-3"></div>
     </div>
 
-    <div style="text-align:center;font-size:9px;color:rgba(255,255,255,0.25);margin-top:4px;">Tap a circle to check off topics · Progress saves automatically</div>
+    <div class="cl-note">Tap a dial to check off topics · progress saves automatically</div>
   </div>
 
-
-  <div style="margin-top:20px;">
-    <div class="section-title" style="font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--sky-pale);text-align:center;margin-bottom:14px;">▸ Extra Resources</div>
-    <div style="display:flex;gap:12px;flex-wrap:wrap;">
-
-      <a href="certificate.html" style="flex:1;min-width:140px;text-decoration:none;display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(255,215,0,0.08),rgba(255,215,0,0.03));border:1px solid rgba(255,215,0,0.25);border-radius:14px;padding:16px;transition:all 0.2s;">
-        <div style="font-size:28px;filter:drop-shadow(0 0 8px rgba(255,215,0,0.4));">🎓</div>
-        <div>
-          <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:3px;">Certificate</div>
-          <div style="font-size:10px;color:rgba(255,215,0,0.6);font-weight:300;">Generate your completion certificate</div>
-        </div>
-      </a>
-
-      <a href="python-cheatsheet.html" style="flex:1;min-width:140px;text-decoration:none;display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(34,197,94,0.08),rgba(34,197,94,0.03));border:1px solid rgba(34,197,94,0.25);border-radius:14px;padding:16px;transition:all 0.2s;">
-        <div style="font-size:28px;filter:drop-shadow(0 0 8px rgba(34,197,94,0.4));">🐍</div>
-        <div>
-          <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:3px;">Python Cheat Sheet</div>
-          <div style="font-size:10px;color:rgba(134,239,172,0.6);font-weight:300;">Quick reference · searchable · printable</div>
-        </div>
-      </a>
-
-    </div>
+  <!-- RESOURCES -->
+  <div class="sec-head"><span class="n">§3</span><h2>Extra resources</h2></div>
+  <div class="res-grid">
+    <a class="res" href="certificate.html">
+      <div class="res-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 13.5L7 22l5-3 5 3-1.5-8.5"/></svg></div>
+      <div>
+        <div class="rt">Certificate</div>
+        <div class="rd">Generate your completion certificate</div>
+      </div>
+    </a>
+    <a class="res" href="python-cheatsheet.html">
+      <div class="res-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13a2 2 0 0 1 2 2v14a1 1 0 0 1-1 1H6a2 2 0 0 1-2-2z"/><path d="M8 8h7M8 12h7M8 16h4"/></svg></div>
+      <div>
+        <div class="rt">Python cheat sheet</div>
+        <div class="rd">Quick reference · searchable · printable</div>
+      </div>
+    </a>
   </div>
 
-  <div class="tip-box">
-    <div class="tip-title">📌 &nbsp; Tips for Success</div>
-    <ul class="tip-list">
-      <li>Read each lesson before the live session so you follow along easily</li>
-      <li>Install all required software before the week starts — links are inside each lesson</li>
-      <li>Ask questions on the WhatsApp group — no question is too basic</li>
-      <li>Practice the code examples on your own machine after each session</li>
+  <!-- TIPS -->
+  <div class="sec-head"><span class="n">§4</span><h2>Tips for success</h2></div>
+  <div class="tips">
+    <ul>
+      <li>Read each lesson before the live session so you follow along easily.</li>
+      <li>Install all required software before the week starts — links are inside each lesson.</li>
+      <li>Ask questions on the WhatsApp group — no question is too basic.</li>
+      <li>Practice the code examples on your own machine after each session.</li>
     </ul>
   </div>
 
-  <!-- INSTRUCTOR CARD -->
-  <div class="instructor-card">
+  <!-- INSTRUCTOR -->
+  <div class="sec-head"><span class="n">§5</span><h2>Your instructor</h2></div>
+  <div class="inst">
     <div class="inst-top">
-      <div class="inst-avatar">GP</div>
-      <div class="inst-info">
-        <div class="inst-name">Gyamerah Afriyie Philimon</div>
-        <div class="inst-title">Self-Taught Robotics & I.T Student</div>
-        <div class="inst-certs">🎓 Certified · Udemy &nbsp;·&nbsp; Coursera &nbsp;·&nbsp; Harvard edX &nbsp;·&nbsp; & more</div>
-      </div>
-    </div>
-    <div class="divider"></div>
-    <div class="inst-socials">
-      <a class="social-btn linkedin" href="https://www.linkedin.com/in/gyamerah-afriyie-philimon-32a11525b" target="_blank">
-        <span class="s-icon">in</span>
-        <div class="s-text">
-          <div class="s-label">LinkedIn</div>
-          <div class="s-handle">Gyamerah Afriyie Philimon</div>
-        </div>
-        <span class="s-arr">›</span>
-      </a>
-      <a class="social-btn tiktok" href="https://www.tiktok.com/@_phil.jr" target="_blank">
-        <span class="s-icon">🎵</span>
-        <div class="s-text">
-          <div class="s-label">TikTok</div>
-          <div class="s-handle">@_phil.jr</div>
-        </div>
-        <span class="s-arr">›</span>
-      </a>
-      <a class="social-btn insta" href="https://www.instagram.com/_phil.jr" target="_blank">
-        <span class="s-icon">📸</span>
-        <div class="s-text">
-          <div class="s-label">Instagram</div>
-          <div class="s-handle">@_phil.jr</div>
-        </div>
-        <span class="s-arr">›</span>
-      </a>
-    </div>
-  </div>
-
-  <!-- COMMUNITY BOX -->
-  <div class="community-box">
-    <div class="comm-header">
-      <span class="comm-icon">💬</span>
+      <div class="inst-av">GP</div>
       <div>
-        <div class="comm-title">Join the Student WhatsApp Group</div>
-        <div class="comm-sub">Ask questions, get answers, share progress & connect with classmates</div>
+        <div class="inst-name">Gyamerah Afriyie Philimon</div>
+        <div class="inst-role">Self-taught robotics &amp; I.T. student</div>
+        <div class="inst-certs">Certified · Udemy · Coursera · Harvard edX · &amp; more</div>
       </div>
     </div>
-    <div class="divider"></div>
-    <a class="wa-join-btn" href="https://wa.me/233554197193?text=Hi%2C%20I%20am%20a%20registered%20TechCamp%20student%20and%20I%20want%20to%20join%20the%20WhatsApp%20group" target="_blank">
-      <span>📱</span> Tap to Join the WhatsApp Group
-    </a>
-    <div class="comm-note">Registered students only · Tap to send a join request to the instructor</div>
-  </div>
-
-  <!-- FUTURE BOOTCAMPS + CONTACT — merged into one clean section -->
-  <div class="future-box">
-    <div class="future-title">🚀 Want to Go Deeper?</div>
-    <div class="future-body">More boot camps are coming. If you want to dive deeper into any topic — advanced ethical hacking, embedded systems, full Python projects, or anything else — reach out directly.</div>
-
-    <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px;">
-
-      <!-- WhatsApp -->
-      <a href="https://wa.me/233554197193?text=Hi%2C%20I%20want%20to%20know%20about%20upcoming%20TechCamp%20boot%20camps" target="_blank"
-         style="display:flex;align-items:center;gap:12px;background:rgba(37,211,102,0.08);border:1px solid rgba(37,211,102,0.25);border-radius:10px;padding:12px 14px;text-decoration:none;transition:background 0.2s;">
-        <div style="width:36px;height:36px;border-radius:9px;background:#25D366;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.125.557 4.118 1.528 5.845L0 24l6.335-1.652A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.899 0-3.68-.487-5.23-1.342l-.374-.222-3.884 1.013 1.04-3.793-.243-.389A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-        </div>
-        <div style="flex:1;">
-          <div style="font-size:13.5px;font-weight:700;color:#fff;">0554 197 193</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:1px;">WhatsApp — Tap to chat</div>
-        </div>
-        <div style="color:rgba(134,239,172,0.4);font-size:18px;">›</div>
+    <div class="inst-rule"></div>
+    <div class="socials">
+      <a class="social" href="https://www.linkedin.com/in/gyamerah-afriyie-philimon-32a11525b" target="_blank" rel="noopener">
+        <span class="si"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></span>
+        <div class="st"><div class="sl">LinkedIn</div><div class="sh">Gyamerah Afriyie Philimon</div></div>
+        <span class="sa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
       </a>
-
-      <!-- Email -->
-      <a id="portal-email-btn" href="#" target="_blank"
-         style="display:flex;align-items:center;gap:12px;background:rgba(56,189,248,0.08);border:1px solid rgba(125,211,252,0.2);border-radius:10px;padding:12px 14px;text-decoration:none;transition:background 0.2s;">
-        <div style="width:36px;height:36px;border-radius:9px;background:rgba(56,189,248,0.2);border:1px solid rgba(125,211,252,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#67e8f9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        </div>
-        <div style="flex:1;">
-          <div id="email-display" style="font-size:13.5px;font-weight:700;color:#fff;"></div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:1px;">Email — Tap to send</div>
-        </div>
-        <div style="color:rgba(125,211,252,0.4);font-size:18px;">›</div>
+      <a class="social" href="https://www.tiktok.com/@_phil.jr" target="_blank" rel="noopener">
+        <span class="si"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.75a4.85 4.85 0 01-1.01-.06z"/></svg></span>
+        <div class="st"><div class="sl">TikTok</div><div class="sh">@_phil.jr</div></div>
+        <span class="sa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
       </a>
-
-      <!-- LinkedIn -->
-      <a href="https://www.linkedin.com/in/gyamerah-afriyie-philimon-32a11525b" target="_blank"
-         style="display:flex;align-items:center;gap:12px;background:rgba(10,102,194,0.1);border:1px solid rgba(10,102,194,0.3);border-radius:10px;padding:12px 14px;text-decoration:none;transition:background 0.2s;">
-        <div style="width:36px;height:36px;border-radius:9px;background:#0a66c2;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
-        </div>
-        <div style="flex:1;">
-          <div style="font-size:13.5px;font-weight:700;color:#fff;">Gyamerah Afriyie Philimon</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:1px;">LinkedIn — View profile</div>
-        </div>
-        <div style="color:rgba(147,197,253,0.4);font-size:18px;">›</div>
+      <a class="social" href="https://www.instagram.com/_phil.jr" target="_blank" rel="noopener">
+        <span class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></span>
+        <div class="st"><div class="sl">Instagram</div><div class="sh">@_phil.jr</div></div>
+        <span class="sa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
       </a>
-
-      <!-- TikTok -->
-      <a href="https://www.tiktok.com/@_phil.jr" target="_blank"
-         style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;text-decoration:none;transition:background 0.2s;">
-        <div style="width:36px;height:36px;border-radius:9px;background:#010101;border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.75a4.85 4.85 0 01-1.01-.06z"/></svg>
-        </div>
-        <div style="flex:1;">
-          <div style="font-size:13.5px;font-weight:700;color:#fff;">@_phil.jr</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:1px;">TikTok — Follow for more</div>
-        </div>
-        <div style="color:rgba(255,255,255,0.3);font-size:18px;">›</div>
-      </a>
-
-      <!-- Instagram -->
-      <a href="https://www.instagram.com/_phil.jr" target="_blank"
-         style="display:flex;align-items:center;gap:12px;background:rgba(225,48,108,0.08);border:1px solid rgba(225,48,108,0.2);border-radius:10px;padding:12px 14px;text-decoration:none;transition:background 0.2s;">
-        <div style="width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-        </div>
-        <div style="flex:1;">
-          <div style="font-size:13.5px;font-weight:700;color:#fff;">@_phil.jr</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:1px;">Instagram — Follow for updates</div>
-        </div>
-        <div style="color:rgba(249,168,212,0.4);font-size:18px;">›</div>
-      </a>
-
     </div>
   </div>
 
-  <footer>TechCamp Boot Camp · Online Learning<br>
-    <span style="opacity:0.5;">Instructor: Gyamerah Afriyie Philimon</span>
+  <!-- COMMUNITY -->
+  <div class="sec-head"><span class="n">§6</span><h2>Student community</h2></div>
+  <div class="callout">
+    <div class="callout-head">
+      <div class="callout-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+      <div>
+        <div class="callout-title">Join the student WhatsApp group</div>
+        <div class="callout-sub">Ask questions, get answers, share progress and connect with classmates.</div>
+      </div>
+    </div>
+    <a class="btn-fill" href="https://wa.me/233554197193?text=Hi%2C%20I%20am%20a%20registered%20TechCamp%20student%20and%20I%20want%20to%20join%20the%20WhatsApp%20group" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      Join the WhatsApp group
+    </a>
+    <div class="callout-note">Registered students only · sends a join request to the instructor</div>
+  </div>
+
+  <!-- FUTURE + CONTACT -->
+  <div class="sec-head"><span class="n">§7</span><h2>Want to go deeper?</h2></div>
+  <div class="callout">
+    <div class="callout-sub" style="margin-bottom:4px;">More boot camps are coming. If you want to dive deeper into any topic — advanced ethical hacking, embedded systems, full Python projects, or anything else — reach out directly.</div>
+
+    <div class="contact-list">
+      <a href="https://wa.me/233554197193?text=Hi%2C%20I%20want%20to%20know%20about%20upcoming%20TechCamp%20boot%20camps" target="_blank" rel="noopener" class="contact">
+        <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>
+        <div class="cv"><div class="cval">0554 197 193</div><div class="clab">WhatsApp — tap to chat</div></div>
+        <span class="ca"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+      </a>
+
+      <a id="portal-email-btn" href="#" target="_blank" rel="noopener" class="contact">
+        <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="1"/><polyline points="3 7 12 13 21 7"/></svg></span>
+        <div class="cv"><div id="email-display" class="cval"></div><div class="clab">Email — tap to send</div></div>
+        <span class="ca"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+      </a>
+
+      <a href="https://www.linkedin.com/in/gyamerah-afriyie-philimon-32a11525b" target="_blank" rel="noopener" class="contact">
+        <span class="ci"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></span>
+        <div class="cv"><div class="cval">Gyamerah Afriyie Philimon</div><div class="clab">LinkedIn — view profile</div></div>
+        <span class="ca"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+      </a>
+
+      <a href="https://www.tiktok.com/@_phil.jr" target="_blank" rel="noopener" class="contact">
+        <span class="ci"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.75a4.85 4.85 0 01-1.01-.06z"/></svg></span>
+        <div class="cv"><div class="cval">@_phil.jr</div><div class="clab">TikTok — follow for more</div></div>
+        <span class="ca"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+      </a>
+
+      <a href="https://www.instagram.com/_phil.jr" target="_blank" rel="noopener" class="contact">
+        <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></span>
+        <div class="cv"><div class="cval">@_phil.jr</div><div class="clab">Instagram — follow for updates</div></div>
+        <span class="ca"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+      </a>
+    </div>
+  </div>
+
+  <footer>
+    TechCamp Boot Camp · Online Learning<br>
+    Instructor — Gyamerah Afriyie Philimon
   </footer>
 
 </div>
 
 <script>
 (function() {
-  // ── Email — assembled at runtime, Cloudflare cannot touch this ──
+  // Email — assembled at runtime
   var parts = ['jyaw456', String.fromCharCode(64), 'gmail', '.com'];
   var em   = parts.join('');
   var sub  = encodeURIComponent('TechCamp Boot Camp Enquiry');
   var href = 'mailto:' + em + '?subject=' + sub;
-
-  // Set email link button
   var btn = document.getElementById('portal-email-btn');
   if (btn) btn.href = href;
-
-  // Set email display text
   var disp = document.getElementById('email-display');
   if (disp) disp.textContent = em;
 
-  // ── Student name in top bar ──
+  // Student name in top bar
   var name = sessionStorage.getItem('tc_student') || 'Student';
   document.getElementById('tb-name').textContent = name;
 
@@ -609,14 +496,14 @@
     : parts2[0][0].toUpperCase();
   document.getElementById('tb-avatar').textContent = initials;
 
-  // ── Personalised welcome text ──
+  // Personalised welcome text
   var welcome = document.querySelector('.welcome-text');
   if (welcome) {
-    welcome.innerHTML = 'Welcome, <strong style="color:#fff;">' + name + '</strong>! This is your personal learning hub.<br>Work through each module at your own pace — everything is here whenever you need it.';
+    welcome.innerHTML = 'Welcome, <strong>' + name + '</strong>. This is your personal learning hub. Work through each module at your own pace — everything is here whenever you need it.';
   }
 })();
 
-// ── Sign out ──
+// Sign out
 function signOut() {
   if(confirm('Sign out of TechCamp portal?')) {
     ['tc_auth','tc_student','tc_att','tc_lock'].forEach(function(k){sessionStorage.removeItem(k);});
@@ -624,13 +511,13 @@ function signOut() {
   }
 }
 
-// ── Progress Tracker ────────────────────────────────────────
+// Progress Tracker
 var TOPICS = {
   1:['What is Ethical Hacking','VMware Setup & Kali Install','Kali Terminal Basics','Networking — IP, Ports, MAC','Nmap Scanning & Recon','Client-Side Attacks','Backdoors & msfvenom','Python Port Scanner','Keylogger Project','Web Hacking & SQLi'],
   2:['What is a Microcontroller','Arduino Family Overview','C Language Basics','pinMode & digitalWrite','digitalRead & analogRead','analogWrite & PWM','LED Blink Project','Ultrasonic HC-SR04','I2C LCD Display','DHT11 Weather Station','Electronics Deep Dive','C Console Practice'],
   3:['Variables & Data Types','Input & Output (print)','If / Else Conditions','For & While Loops','Functions','Lists & Dictionaries','File Handling','Calculator Project','Quiz Game Project','Password Checker Project','Python Console Practice']
 };
-var COLORS={1:'#ef4444',2:'#0ea5e9',3:'#22c55e'};
+var COLORS={1:'#4a5b6e',2:'#a15c25',3:'#2f6b4c'};
 var PROG_KEY='tc_progress_'+(sessionStorage.getItem('tc_student')||'x').replace(/\s/g,'_');
 
 function loadP(){try{return JSON.parse(localStorage.getItem(PROG_KEY)||'{}')}catch(e){return {}}}
@@ -662,26 +549,23 @@ function buildChecklist(w){
   TOPICS[w].forEach(function(topic){
     var key=w+'_'+topic,checked=!!p[key];
     var row=document.createElement('label');
-    row.style.cssText='display:flex;align-items:center;gap:10px;cursor:pointer;padding:7px 10px;background:'+(checked?'rgba('+hexRgb(col)+',0.08)':'rgba(255,255,255,0.04)')+';border-radius:8px;border:1px solid '+(checked?'rgba('+hexRgb(col)+',0.25)':'rgba(255,255,255,0.06)')+';';
+    row.style.cssText='display:flex;align-items:center;gap:11px;cursor:pointer;padding:9px 12px;background:'+(checked?'rgba('+hexRgb(col)+',0.08)':'#f2f0e8')+';border:1px solid '+(checked?'rgba('+hexRgb(col)+',0.4)':'#d2d0c4')+';';
     var cb=document.createElement('input');
     cb.type='checkbox';cb.checked=checked;
     cb.style.cssText='width:16px;height:16px;accent-color:'+col+';cursor:pointer;flex-shrink:0;';
-    var tick=document.createElement('span');
-    tick.style.cssText='font-size:11px;color:'+col+';width:14px;flex-shrink:0;';
-    tick.textContent=checked?'✓':'';
     var lbl=document.createElement('span');
     lbl.textContent=topic;
-    lbl.style.cssText='font-size:12px;color:rgba(255,255,255,'+(checked?'0.9':'0.55')+');flex:1;';
+    lbl.style.cssText="font-family:'IBM Plex Sans',sans-serif;font-size:13px;color:"+(checked?'#1b1c1e':'#75766c')+";flex:1;font-weight:"+(checked?'500':'400')+";";
     cb.addEventListener('change',function(){
       var p2=loadP();
       if(cb.checked)p2[key]=true;else delete p2[key];
       saveP(p2);recalc();
-      row.style.background=cb.checked?'rgba('+hexRgb(col)+',0.08)':'rgba(255,255,255,0.04)';
-      row.style.borderColor=cb.checked?'rgba('+hexRgb(col)+',0.25)':'rgba(255,255,255,0.06)';
-      tick.textContent=cb.checked?'✓':'';
-      lbl.style.color='rgba(255,255,255,'+(cb.checked?'0.9':'0.55')+')';
+      row.style.background=cb.checked?'rgba('+hexRgb(col)+',0.08)':'#f2f0e8';
+      row.style.borderColor=cb.checked?'rgba('+hexRgb(col)+',0.4)':'#d2d0c4';
+      lbl.style.color=cb.checked?'#1b1c1e':'#75766c';
+      lbl.style.fontWeight=cb.checked?'500':'400';
     });
-    row.appendChild(cb);row.appendChild(tick);row.appendChild(lbl);
+    row.appendChild(cb);row.appendChild(lbl);
     c.appendChild(row);
   });
 }

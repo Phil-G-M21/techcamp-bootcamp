@@ -4,171 +4,181 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Arduino & C Programming — TechCamp</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root { --teal:#06b6d4; --teal-l:#22d3ee; --teal-p:#67e8f9; --dark:#020e2e; --sky:#0ea5e9; }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:var(--dark); font-family:'Exo 2',sans-serif; color:#fff; min-height:100vh; }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --paper:#eceae1; --card:#f7f6f0; --panel:#e4e2d7;
+    --ink:#1b1c1e; --ink-2:#43443f; --muted:#75766c;
+    --line:#d2d0c4; --line-2:#c1bfb1;
+    --accent:#a15c25; --accent-soft:#f0e6da; --accent-line:#dcc3a4;
+    --pine:#1d4d43; --signal:#df530a;
+    --term:#15171b; --term-line:#2b2e33; --term-ink:#dcdccf;
+    --mono:'JetBrains Mono',monospace; --disp:'Space Grotesk',sans-serif; --body:'IBM Plex Sans',sans-serif;
+  }
+  html{-webkit-text-size-adjust:100%;}
+  body{background:var(--paper);color:var(--ink);font-family:var(--body);min-height:100vh;line-height:1.6;
+    background-image:linear-gradient(rgba(27,28,30,0.024) 1px,transparent 1px),linear-gradient(90deg,rgba(27,28,30,0.024) 1px,transparent 1px);background-size:26px 26px;}
+  ::selection{background:var(--accent);color:#fff;}
+  .wrap{max-width:740px;margin:0 auto;padding:24px 18px 72px;position:relative;z-index:1;}
 
-  .grid-bg { position:fixed; inset:0; z-index:0; pointer-events:none;
-    background-image:linear-gradient(rgba(6,182,212,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(6,182,212,0.04) 1px,transparent 1px);
-    background-size:40px 40px; }
-  .blob { position:fixed; border-radius:50%; filter:blur(90px); pointer-events:none; z-index:0; }
-  .b1 { width:350px;height:350px; background:rgba(6,182,212,0.15); top:-80px; right:-80px; }
-  .b2 { width:300px;height:300px; background:rgba(14,165,233,0.1); bottom:0; left:-60px; }
+  .topnav{display:flex;align-items:center;justify-content:space-between;margin-bottom:30px;gap:12px;}
+  .topnav a{text-decoration:none;color:var(--ink-2);font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.5px;display:inline-flex;align-items:center;gap:7px;}
+  .topnav a:hover{color:var(--accent);}
+  .topnav a svg{width:15px;height:15px;}
+  .week-badge{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:1.6px;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent-line);padding:6px 13px;background:var(--accent-soft);white-space:nowrap;}
 
-  .wrap { position:relative; z-index:1; max-width:720px; margin:0 auto; padding:30px 18px 70px; }
+  .hero{border-bottom:1px solid var(--line-2);padding-bottom:26px;margin-bottom:28px;}
+  .hero-icon{width:54px;height:54px;display:grid;place-items:center;border:1px solid var(--line-2);color:var(--accent);margin-bottom:16px;background:var(--card);}
+  .hero-icon svg{width:28px;height:28px;}
+  .hero-title{font-family:var(--disp);font-weight:700;font-size:27px;letter-spacing:-.6px;line-height:1.12;margin-bottom:10px;}
+  .hero-sub{font-size:14px;color:var(--ink-2);line-height:1.65;max-width:62ch;}
 
-  .topnav { display:flex; align-items:center; justify-content:space-between; margin-bottom:32px; }
-  .topnav a { text-decoration:none; color:var(--teal-p); font-size:12px; font-weight:700; letter-spacing:1px; }
-  .week-badge { background:rgba(6,182,212,0.15); border:1px solid rgba(6,182,212,0.4); color:var(--teal-p); font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:6px 14px; border-radius:50px; }
+  #float-bar{position:fixed;top:12px;right:12px;z-index:9999;display:flex;align-items:center;gap:8px;}
+  #float-name{background:var(--card);border:1px solid var(--line-2);padding:7px 13px;font-family:var(--mono);font-size:11px;font-weight:500;color:var(--ink-2);white-space:nowrap;}
+  #float-signout{background:var(--card);border:1px solid var(--line-2);padding:7px 12px;font-family:var(--mono);font-size:11px;font-weight:500;color:var(--ink-2);cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;}
+  #float-signout:hover{border-color:#a12b1e;color:#a12b1e;}
+  #float-signout svg{width:13px;height:13px;}
 
-  .hero { text-align:center; margin-bottom:36px; }
-  .hero-icon { font-size:52px; margin-bottom:12px; filter:drop-shadow(0 0 20px rgba(6,182,212,0.5)); }
-  .hero-title { font-family:'Orbitron',monospace; font-weight:900; font-size:26px; color:#fff; text-shadow:0 0 30px rgba(6,182,212,0.4); margin-bottom:8px; }
-  .hero-sub { font-size:13px; font-weight:300; color:rgba(255,255,255,0.5); line-height:1.7; }
-  .hero-dates { display:inline-block; margin-top:12px; background:rgba(6,182,212,0.12); border:1px solid rgba(6,182,212,0.3); border-radius:50px; padding:6px 16px; font-size:11px; font-weight:700; color:var(--teal-p); letter-spacing:2px; }
+  .progress-strip{display:flex;gap:0;margin-bottom:32px;border:1px solid var(--line-2);background:var(--card);flex-wrap:wrap;}
+  .p-day{flex:1;min-width:64px;padding:11px 6px;text-align:center;cursor:pointer;transition:background .15s;border-right:1px solid var(--line-2);}
+  .p-day:last-child{border-right:none;}
+  .p-day.active{background:var(--accent);}
+  .p-day.active .p-num{color:#fff;}
+  .p-day.active .p-label{color:rgba(255,255,255,.82);}
+  .p-day:hover:not(.active){background:var(--panel);}
+  .p-num{font-family:var(--disp);font-size:14px;font-weight:700;color:var(--ink);}
+  .p-label{font-family:var(--mono);font-size:7.5px;color:var(--muted);letter-spacing:1px;margin-top:3px;text-transform:uppercase;}
 
-  .progress-strip { display:flex; gap:5px; margin-bottom:36px; }
-  .p-day { flex:1; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:10px 4px; text-align:center; cursor:pointer; transition:all 0.2s; }
-  .p-day.active { background:rgba(6,182,212,0.2); border-color:rgba(6,182,212,0.5); }
-  .p-day:hover { background:rgba(255,255,255,0.1); }
-  .p-num { font-family:'Orbitron',monospace; font-size:13px; font-weight:700; color:#fff; }
-  .p-label { font-size:7px; color:rgba(255,255,255,0.4); letter-spacing:1px; margin-top:3px; text-transform:uppercase; }
+  .lesson{display:none;} .lesson.active{display:block;}
 
-  .lesson { display:none; }
-  .lesson.active { display:block; }
+  .slide{background:var(--card);border:1px solid var(--line-2);border-left:4px solid var(--accent);padding:22px;margin-bottom:16px;}
+  .slide-tag{font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+  .slide-title{font-family:var(--disp);font-size:19px;font-weight:600;letter-spacing:-.3px;margin-bottom:12px;line-height:1.28;}
+  .slide-body{font-size:13.5px;color:var(--ink-2);line-height:1.75;}
+  .slide-body p{margin-bottom:11px;} .slide-body p:last-child{margin-bottom:0;}
+  .slide-body strong{color:var(--ink);font-weight:600;}
+  .slide-body ul,.slide-body ol{margin:0 0 11px 20px;} .slide-body li{margin-bottom:5px;}
+  .slide-body a{color:var(--accent);text-decoration:underline;text-underline-offset:2px;}
 
-  /* SLIDE */
-  .slide { background:linear-gradient(135deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02)); border:1px solid rgba(6,182,212,0.15); border-radius:16px; padding:24px 20px; margin-bottom:18px; position:relative; overflow:hidden; }
-  .slide::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--teal),var(--sky)); }
-  .slide-tag { font-size:9px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--teal-p); margin-bottom:8px; }
-  .slide-title { font-size:19px; font-weight:800; color:#fff; margin-bottom:12px; line-height:1.3; }
-  .slide-body { font-size:13px; font-weight:400; color:rgba(255,255,255,0.7); line-height:1.8; }
-  .slide-body p { margin-bottom:10px; }
-  .slide-body strong { color:#fff; }
+  .terms-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+  @media(max-width:520px){.terms-grid{grid-template-columns:1fr;}}
+  .term{background:var(--paper);border:1px solid var(--line-2);padding:13px 15px;}
+  .term-word{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--accent);margin-bottom:5px;letter-spacing:.3px;}
+  .term-def{font-size:12px;color:var(--ink-2);line-height:1.6;}
 
-  /* COMPONENT IMAGE */
-  .comp-img { width:100%; border-radius:12px; margin:14px 0; border:1px solid rgba(6,182,212,0.2); display:block; object-fit:cover; max-height:260px; }
-  .img-caption { font-size:10px; color:rgba(255,255,255,0.35); text-align:center; margin-top:-8px; margin-bottom:14px; letter-spacing:1px; }
+  .vis-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+  @media(max-width:520px){.vis-grid{grid-template-columns:1fr;}}
+  .vis-card{background:var(--paper);border:1px solid var(--line-2);padding:16px 14px;text-align:center;}
+  .vis-icon{width:40px;height:40px;margin:0 auto 10px;display:grid;place-items:center;border:1px solid var(--line-2);color:var(--accent);background:var(--card);}
+  .vis-icon svg{width:21px;height:21px;}
+  .vis-label{font-family:var(--disp);font-size:13px;font-weight:600;margin-bottom:4px;}
+  .vis-desc{font-size:11.5px;color:var(--muted);line-height:1.55;}
 
-  .img-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:14px 0; }
-  .img-row img { width:100%; border-radius:10px; border:1px solid rgba(6,182,212,0.2); object-fit:cover; height:160px; }
-  .img-row .cap { font-size:9px; color:rgba(255,255,255,0.35); text-align:center; margin-top:4px; }
+  .code-lang{font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+  .code-block{background:var(--term);border:1px solid var(--term-line);padding:16px;overflow-x:auto;margin-bottom:10px;border-radius:2px;}
+  .code-block pre{font-family:var(--mono);font-size:12px;line-height:1.75;color:var(--term-ink);white-space:pre;}
+  .kw{color:#d98a4a;} .str{color:#9cbf7a;} .cm{color:#6e726b;} .num{color:#cbb26b;}
+  .fn{color:#7fb2c9;} .sig{color:#9cbf7a;} .pwr{color:#d98a8a;} .gnd{color:#8a8d86;}
+  .pin{color:#7fb2c9;} .wire{color:#8a8d86;} .comp{color:#b79bd0;} .teal-p{color:#7fc9bf;} .note{color:#8a8d86;}
+  .bi{color:#7fb2c9;} pre .g{color:#9cbf7a;} pre .r{color:#d98a8a;} pre .y{color:#cbb26b;}
 
-  /* GRIDS */
-  .vis-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
-  .vis-card { background:rgba(255,255,255,0.05); border:1px solid rgba(6,182,212,0.12); border-radius:10px; padding:13px; text-align:center; }
-  .vis-icon { font-size:26px; margin-bottom:6px; }
-  .vis-label { font-size:12px; font-weight:700; color:#fff; margin-bottom:3px; }
-  .vis-desc { font-size:10px; color:rgba(255,255,255,0.45); font-weight:300; line-height:1.4; }
+  .code-explain{display:flex;flex-direction:column;gap:8px;margin-top:10px;}
+  .ce-row{display:flex;gap:12px;align-items:flex-start;}
+  .ce-code{font-family:var(--mono);font-size:11px;color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-line);padding:3px 8px;white-space:nowrap;flex-shrink:0;}
+  .ce-desc{font-size:12.5px;color:var(--ink-2);line-height:1.55;}
 
-  /* TABLE */
-  .family-table { width:100%; border-collapse:collapse; margin-top:14px; font-size:11.5px; }
-  .family-table th { background:rgba(6,182,212,0.15); color:var(--teal-p); font-weight:700; letter-spacing:1px; text-transform:uppercase; font-size:9px; padding:10px 12px; text-align:left; }
-  .family-table td { padding:10px 12px; border-bottom:1px solid rgba(255,255,255,0.05); color:rgba(255,255,255,0.7); vertical-align:top; line-height:1.5; }
-  .family-table tr:hover td { background:rgba(255,255,255,0.03); }
-  .family-table td strong { color:#fff; }
+  .steps{display:flex;flex-direction:column;gap:12px;margin-top:14px;}
+  .step{display:flex;gap:13px;align-items:flex-start;}
+  .step-num{width:26px;height:26px;flex-shrink:0;background:var(--accent);color:#fff;display:grid;place-items:center;font-family:var(--disp);font-size:12px;font-weight:600;margin-top:1px;}
+  .step-text{font-size:13.5px;color:var(--ink-2);line-height:1.7;}
+  .step-text strong{color:var(--ink);font-weight:600;}
 
-  /* CODE */
-  .code-block { background:#040d1a; border:1px solid rgba(6,182,212,0.2); border-radius:10px; padding:16px; margin:12px 0; overflow-x:auto; }
-  .code-block pre { font-family:'Fira Code',monospace; font-size:12px; color:#e2e8f0; line-height:1.75; white-space:pre; }
-  .kw{color:#67e8f9;} .str{color:#86efac;} .cm{color:#4b5563;} .num{color:#fbbf24;} .fn{color:#a78bfa;}
-  .code-lang { font-size:9px; font-weight:700; letter-spacing:2px; color:var(--teal-p); margin-bottom:8px; text-transform:uppercase; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px; }
-  .sim-link { font-size:10px; color:var(--teal-p); text-decoration:none; background:rgba(6,182,212,0.1); border:1px solid rgba(6,182,212,0.3); padding:4px 12px; border-radius:20px; white-space:nowrap; }
-  .sim-link:hover { background:rgba(6,182,212,0.2); }
+  .circuit-box{background:var(--term);border:1px solid var(--term-line);padding:16px 14px;margin:12px 0;border-radius:2px;}
+  .circuit-title{font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+  .circuit-diagram{font-family:var(--mono);font-size:11.5px;line-height:2;color:#9aa0a6;white-space:pre;overflow-x:auto;}
 
-  /* CIRCUIT */
-  .circuit-box { background:#040d1a; border:1px solid rgba(6,182,212,0.2); border-radius:12px; padding:18px 14px; margin:14px 0; }
-  .circuit-title { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(103,232,249,0.5); margin-bottom:14px; }
-  .circuit-diagram { font-family:'Fira Code',monospace; font-size:11px; line-height:2; color:#94a3b8; overflow-x:auto; }
-  .circuit-diagram .pin{color:#67e8f9;font-weight:700;} .circuit-diagram .comp{color:#fbbf24;} .circuit-diagram .wire{color:#475569;} .circuit-diagram .gnd{color:#94a3b8;} .circuit-diagram .pwr{color:#f87171;} .circuit-diagram .sig{color:#86efac;} .circuit-diagram .note{color:#64748b;font-style:italic;}
+  .tip-box{display:flex;gap:12px;align-items:flex-start;background:var(--accent-soft);border:1px solid var(--accent-line);border-left:3px solid var(--accent);padding:13px 15px;margin-top:12px;}
+  .tip-icon{color:var(--accent);flex-shrink:0;margin-top:1px;} .tip-icon svg{width:18px;height:18px;}
+  .tip-text{font-size:12.5px;color:var(--ink-2);line-height:1.6;} .tip-text strong{color:var(--ink);}
+  .warn-box{display:flex;gap:12px;align-items:flex-start;background:#f3ecdb;border:1px solid #d9c99a;border-left:3px solid #b58a1e;padding:13px 15px;margin-top:12px;}
+  .warn-icon{color:#8a5a12;flex-shrink:0;margin-top:1px;} .warn-icon svg{width:18px;height:18px;}
+  .warn-text{font-size:12.5px;color:#6b5320;line-height:1.6;} .warn-text strong{color:#3a2c0c;}
 
-  /* PIN TABLE */
-  .pin-table { width:100%; border-collapse:collapse; margin-top:12px; font-size:11.5px; }
-  .pin-table th { background:rgba(6,182,212,0.1); color:var(--teal-p); font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:8px 10px; text-align:left; }
-  .pin-table td { padding:8px 10px; border-bottom:1px solid rgba(255,255,255,0.05); color:rgba(255,255,255,0.7); }
-  .pin-table .from { color:#67e8f9; font-family:'Fira Code',monospace; font-size:11px; }
-  .pin-table .to   { color:#86efac; font-family:'Fira Code',monospace; font-size:11px; }
+  .link-card{display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid var(--line-2);padding:12px 14px;text-decoration:none;margin-bottom:8px;color:inherit;transition:border-color .15s;}
+  .link-card:hover{border-color:var(--ink);}
+  .link-icon{width:34px;height:34px;flex-shrink:0;display:grid;place-items:center;border:1px solid var(--line-2);color:var(--accent);}
+  .link-icon svg{width:18px;height:18px;}
+  .link-info{flex:1;} .link-title{font-family:var(--disp);font-size:13.5px;font-weight:600;margin-bottom:2px;}
+  .link-url{font-family:var(--mono);font-size:10.5px;color:var(--muted);}
+  .link-arr{color:var(--line-2);} .link-arr svg{width:18px;height:18px;}
 
-  /* STEPS */
-  .steps { display:flex; flex-direction:column; gap:10px; margin-top:12px; }
-  .step { display:flex; gap:12px; align-items:flex-start; }
-  .step-num { width:26px; height:26px; border-radius:50%; flex-shrink:0; background:rgba(6,182,212,0.2); border:1px solid rgba(6,182,212,0.4); display:flex; align-items:center; justify-content:center; font-family:'Orbitron',monospace; font-size:10px; font-weight:700; color:var(--teal-p); margin-top:2px; }
-  .step-text { font-size:13px; color:rgba(255,255,255,0.7); line-height:1.6; }
-  .step-text strong { color:#fff; }
+  table,.family-table,.pin-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:12.5px;background:var(--card);border:1px solid var(--line-2);}
+  th{background:var(--panel);font-family:var(--mono);font-size:9.5px;letter-spacing:.8px;text-transform:uppercase;color:var(--ink-2);text-align:left;padding:9px 11px;border-bottom:1px solid var(--line-2);font-weight:600;}
+  td{padding:9px 11px;border-bottom:1px solid var(--line);color:var(--ink-2);vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
 
-  /* TERMS */
-  .terms-grid { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
-  .term { background:rgba(255,255,255,0.04); border-left:3px solid var(--teal); border-radius:0 8px 8px 0; padding:10px 14px; }
-  .term-word { font-size:13px; font-weight:700; color:var(--teal-l); margin-bottom:2px; }
-  .term-def { font-size:11.5px; color:rgba(255,255,255,0.6); line-height:1.5; }
+  .img-row{display:flex;gap:12px;flex-wrap:wrap;margin:14px 0;}
+  .comp-img,.img-row img,.kit-imgs img{max-width:100%;border:1px solid var(--line-2);background:var(--card);}
+  .img-caption{font-family:var(--mono);font-size:10px;color:var(--muted);text-align:center;margin-top:6px;}
 
-  /* BOXES */
-  .tip-box { background:rgba(6,182,212,0.08); border:1px solid rgba(6,182,212,0.25); border-radius:10px; padding:13px 16px; margin-top:13px; display:flex; gap:10px; align-items:flex-start; }
-  .tip-icon { font-size:17px; flex-shrink:0; }
-  .tip-text { font-size:12px; color:rgba(103,232,249,0.85); line-height:1.6; }
+  .kit-box,.reach-box,.wokwi-banner{background:var(--card);border:1px solid var(--line-2);border-left:4px solid var(--accent);padding:20px;margin:16px 0;}
+  .kit-title,.reach-title,.wokwi-title{font-family:var(--disp);font-size:16px;font-weight:600;margin-bottom:8px;}
+  .kit-body,.reach-body,.wokwi-text,.wokwi-sub{font-size:13px;color:var(--ink-2);line-height:1.65;margin-bottom:12px;}
+  .kit-imgs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+  .kit-btns,.reach-btns{display:flex;gap:10px;flex-wrap:wrap;}
+  .kit-btn,.reach-btn,.sim-link{display:inline-flex;align-items:center;gap:8px;text-decoration:none;background:var(--accent);color:#fff;padding:10px 16px;font-family:var(--disp);font-size:13px;font-weight:600;transition:filter .15s;}
+  .kit-btn:hover,.reach-btn:hover,.sim-link:hover{filter:brightness(.92);}
+  .wokwi-banner{display:flex;gap:14px;align-items:center;text-decoration:none;color:inherit;}
+  .wokwi-icon{width:40px;height:40px;flex-shrink:0;display:grid;place-items:center;border:1px solid var(--line-2);color:var(--accent);}
+  .wokwi-icon svg{width:21px;height:21px;} .wokwi-arr{margin-left:auto;color:var(--line-2);}
 
-  .warn-box { background:rgba(251,191,36,0.08); border:1px solid rgba(251,191,36,0.25); border-radius:10px; padding:13px 16px; margin-top:13px; display:flex; gap:10px; align-items:flex-start; }
-  .warn-icon { font-size:17px; flex-shrink:0; }
-  .warn-text { font-size:12px; color:rgba(253,230,138,0.85); line-height:1.6; }
+  .challenge{background:var(--accent-soft);border:1px solid var(--accent-line);border-left:3px solid var(--accent);padding:15px 17px;margin:14px 0;}
+  .challenge-label{font-family:var(--mono);font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:7px;}
+  .challenge-text{font-size:13px;color:var(--ink-2);line-height:1.6;}
+  .project-slide{background:var(--card);border:1px solid var(--line-2);border-top:4px solid var(--accent);padding:22px;margin-bottom:16px;}
+  .project-badge{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent-line);padding:4px 10px;margin-bottom:10px;}
+  .project-title{font-family:var(--disp);font-size:19px;font-weight:600;margin-bottom:8px;}
+  .project-desc{font-size:13.5px;color:var(--ink-2);line-height:1.7;}
 
-  /* WOKWI BANNER */
-  .wokwi-banner { background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.3); border-radius:12px; padding:16px 18px; margin:14px 0; display:flex; align-items:center; gap:14px; text-decoration:none; }
-  .wokwi-banner:hover { background:rgba(34,197,94,0.14); }
-  .wokwi-icon { font-size:28px; flex-shrink:0; }
-  .wokwi-text { flex:1; }
-  .wokwi-title { font-size:13px; font-weight:700; color:#fff; margin-bottom:3px; }
-  .wokwi-sub { font-size:10.5px; color:rgba(134,239,172,0.7); }
-  .wokwi-arr { color:rgba(134,239,172,0.5); font-size:20px; }
+  .console-wrap{background:var(--term);border:1px solid var(--term-line);overflow:hidden;margin-bottom:18px;border-radius:3px;}
+  .console-topbar{display:flex;align-items:center;justify-content:space-between;background:#1c1f24;padding:10px 14px;border-bottom:1px solid var(--term-line);}
+  .console-title{font-family:var(--mono);font-size:10.5px;font-weight:500;color:#b7bcc2;letter-spacing:1.5px;}
+  .console-dots{display:flex;gap:6px;}
+  .console-dots span{width:10px;height:10px;border-radius:50%;display:block;}
+  .console-dots .r{background:#d9534f;} .console-dots .y{background:#d9a441;} .console-dots .g{background:#4f9d69;}
+  .console-snippets{display:flex;gap:6px;padding:10px 12px;flex-wrap:wrap;border-bottom:1px solid var(--term-line);}
+  .snippet-btn{background:#22262c;border:1px solid #33373d;padding:4px 11px;font-family:var(--mono);font-size:10.5px;color:#c3c8ce;cursor:pointer;white-space:nowrap;}
+  .snippet-btn:hover{background:#2b3037;color:#fff;}
+  .console-editor{position:relative;}
+  #py-code,#c-code{width:100%;min-height:220px;background:var(--term);border:none;outline:none;color:#dcdccf;font-family:var(--mono);font-size:13px;line-height:1.75;padding:16px;resize:vertical;display:block;}
+  .console-run-bar{display:flex;gap:10px;padding:10px 12px;border-top:1px solid var(--term-line);align-items:center;}
+  #run-btn,#c-run-btn{background:var(--accent);border:none;padding:9px 22px;font-family:var(--disp);font-size:13px;font-weight:600;color:#fff;cursor:pointer;display:flex;align-items:center;gap:7px;}
+  #run-btn:hover,#c-run-btn:hover{filter:brightness(.92);}
+  #run-btn:disabled,#c-run-btn:disabled{opacity:.5;cursor:not-allowed;}
+  #clear-btn{background:#22262c;border:1px solid #33373d;padding:9px 16px;font-family:var(--mono);font-size:12px;color:#b7bcc2;cursor:pointer;}
+  #clear-btn:hover{background:#2b3037;color:#fff;}
+  .py-status{font-family:var(--mono);font-size:10.5px;color:#8a8f96;margin-left:auto;}
+  .console-output-wrap{border-top:1px solid var(--term-line);}
+  #py-output,#c-output{font-family:var(--mono);font-size:12.5px;line-height:1.7;color:#dcdccf;padding:14px 16px;white-space:pre-wrap;min-height:60px;background:#101216;}
+  .output-block{margin-top:12px;} .output-hdr,.output-label{font-family:var(--mono);font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
 
-  /* LINK CARD */
-  .link-card { background:rgba(255,255,255,0.05); border:1px solid rgba(6,182,212,0.2); border-radius:10px; padding:13px 16px; margin-bottom:9px; display:flex; align-items:center; gap:12px; text-decoration:none; }
-  .link-card:hover { background:rgba(255,255,255,0.09); }
-  .link-icon { font-size:20px; flex-shrink:0; }
-  .link-info { flex:1; }
-  .link-title { font-size:13px; font-weight:700; color:#fff; }
-  .link-url { font-size:10px; color:rgba(103,232,249,0.6); margin-top:2px; }
-  .link-arr { color:rgba(103,232,249,0.4); font-size:18px; }
+  .lesson-nav{display:flex;gap:10px;margin-top:26px;}
+  .nav-btn{flex:1;background:var(--card);border:1px solid var(--line-2);padding:13px;text-align:center;font-family:var(--disp);font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer;transition:border-color .15s,background .15s;}
+  .nav-btn:hover{border-color:var(--ink);}
+  .nav-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .nav-btn.primary:hover{filter:brightness(.92);}
 
-  /* CODE EXPLAIN */
-  .code-explain { display:flex; flex-direction:column; gap:7px; margin-top:12px; }
-  .ce-row { display:flex; gap:10px; align-items:flex-start; padding:8px 12px; background:rgba(255,255,255,0.03); border-radius:8px; border-left:2px solid rgba(6,182,212,0.3); }
-  .ce-code { font-family:'Fira Code',monospace; font-size:11px; color:#67e8f9; flex-shrink:0; min-width:150px; }
-  .ce-desc { font-size:11.5px; color:rgba(255,255,255,0.6); line-height:1.5; }
-
-  /* STARTER KIT */
-  .kit-box { background:rgba(251,191,36,0.06); border:1px solid rgba(251,191,36,0.2); border-radius:14px; padding:20px; margin-top:14px; }
-  .kit-title { font-size:15px; font-weight:800; color:#fff; margin-bottom:6px; }
-  .kit-body { font-size:12.5px; color:rgba(255,255,255,0.6); line-height:1.7; margin-bottom:14px; }
-  .kit-imgs { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
-  .kit-imgs img { width:100%; border-radius:10px; border:1px solid rgba(251,191,36,0.2); object-fit:cover; height:160px; }
-  .kit-imgs .cap { font-size:9px; color:rgba(255,255,255,0.35); text-align:center; margin-top:4px; }
-  .kit-btns { display:flex; gap:8px; flex-wrap:wrap; }
-  .kit-btn { flex:1; min-width:90px; text-align:center; text-decoration:none; background:rgba(255,255,255,0.07); border:1px solid rgba(251,191,36,0.25); border-radius:10px; padding:10px 10px; font-size:12px; font-weight:700; color:#fff; }
-
-  /* REACH OUT */
-  .reach-box { background:rgba(14,165,233,0.07); border:1px solid rgba(14,165,233,0.2); border-radius:14px; padding:20px; margin-top:14px; }
-  .reach-title { font-size:15px; font-weight:800; color:#fff; margin-bottom:6px; }
-  .reach-body { font-size:12.5px; color:rgba(255,255,255,0.55); line-height:1.7; margin-bottom:14px; }
-  .reach-btns { display:flex; gap:8px; flex-wrap:wrap; }
-  .reach-btn { flex:1; min-width:80px; text-align:center; text-decoration:none; background:rgba(255,255,255,0.07); border:1px solid rgba(125,211,252,0.2); border-radius:10px; padding:10px 10px; font-size:12px; font-weight:700; color:#fff; }
-
-  /* NAV BTNS */
-  .lesson-nav { display:flex; gap:10px; margin-top:26px; }
-  .nav-btn { flex:1; background:rgba(255,255,255,0.06); border:1px solid rgba(6,182,212,0.2); border-radius:10px; padding:13px; text-align:center; cursor:pointer; font-family:'Exo 2',sans-serif; font-size:13px; font-weight:700; color:#fff; transition:all 0.2s; text-decoration:none; display:flex; align-items:center; justify-content:center; }
-  .nav-btn:hover { background:rgba(255,255,255,0.1); }
-  .nav-btn.primary { background:rgba(6,182,212,0.2); border-color:rgba(6,182,212,0.4); }
-
-  footer { text-align:center; margin-top:40px; font-size:11px; color:rgba(255,255,255,0.2); line-height:1.8; }
+  footer{text-align:center;margin-top:44px;padding-top:22px;border-top:1px solid var(--line-2);font-family:var(--mono);font-size:10px;letter-spacing:.5px;color:var(--muted);line-height:1.9;}
+  .wh-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:1.5px;color:var(--accent);border:1px solid var(--accent-line);background:var(--accent-soft);padding:4px 11px;text-transform:uppercase;margin-bottom:10px;}
 </style>
 </head>
 <body>
 <script>if(sessionStorage.getItem("tc_auth")!=="true"){window.location.replace("index.html");}</script>
 <!-- FLOATING SIGN OUT BAR -->
-<div style="position:fixed;top:12px;right:12px;z-index:9999;display:flex;align-items:center;gap:8px;">
-  <div id="float-name" style="background:rgba(2,14,46,0.88);border:1px solid rgba(125,211,252,0.2);border-radius:10px;padding:7px 14px;font-family:'Exo 2',sans-serif;font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);white-space:nowrap;">Student</div>
-  <button onclick="signOut()" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:7px 12px;font-family:'Exo 2',sans-serif;font-size:11px;font-weight:700;color:#fca5a5;cursor:pointer;white-space:nowrap;">🚪 Sign Out</button>
+<div id="float-bar">
+  <div id="float-name">Student</div>
+  <button id="float-signout" onclick="signOut()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Sign out</button>
 </div>
 <script>
 (function(){
@@ -183,18 +193,14 @@ function signOut() {
   }
 }
 </script>
-<div class="grid-bg"></div>
-<div class="blob b1"></div>
-<div class="blob b2"></div>
-
 <div class="wrap">
   <nav class="topnav">
     <a href="index.html">← Back to Hub</a>
-    <div class="week-badge">🤖 Arduino & C Programming</div>
+    <div class="week-badge"> Arduino & C Programming</div>
   </nav>
 
   <div class="hero">
-    <div class="hero-icon">🤖</div>
+    <div class="hero-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M10 2v3M14 2v3M10 19v3M14 19v3M2 10h3M2 14h3M19 10h3M19 14h3"/></svg></div>
     <div class="hero-title">Arduino & C Programming</div>
     <p class="hero-sub">Learn how microcontrollers work, write real C code, and build hands-on hardware projects — LED blink, ultrasonic distance sensor, I2C LCD display and a final weather station.</p>
     
@@ -206,8 +212,8 @@ function signOut() {
     <div class="p-day" onclick="showModule(3)"><div class="p-num">3</div><div class="p-label">LED & Sonic</div></div>
     <div class="p-day" onclick="showModule(4)"><div class="p-num">4</div><div class="p-label">LCD & DHT11</div></div>
     <div class="p-day" onclick="showModule(5)"><div class="p-num">5</div><div class="p-label">Final</div></div>
-    <div class="p-day" onclick="showModule(6)" style="background:rgba(251,191,36,0.08);border-color:rgba(251,191,36,0.3);"><div class="p-num" style="font-size:11px;">⚡</div><div class="p-label">Electronics</div></div>
-    <div class="p-day" onclick="showModule(7)" style="background:rgba(34,197,94,0.08);border-color:rgba(34,197,94,0.3);"><div class="p-num" style="font-size:14px;">▶</div><div class="p-label">C Console</div></div>
+    <div class="p-day" onclick="showModule(6)"><div class="p-num"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg></div><div class="p-label">Electronics</div></div>
+    <div class="p-day" onclick="showModule(7)"><div class="p-num"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" stroke="none"><polygon points="7 5 19 12 7 19 7 5"/></svg></div><div class="p-label">C Console</div></div>
   </div>
 
   <!-- ===== DAY 1 ===== -->
@@ -215,22 +221,22 @@ function signOut() {
 
     <div class="slide">
       <div class="slide-tag">Microcontrollers</div>
-      <div class="slide-title">🧠 What is a Microcontroller?</div>
+      <div class="slide-title"> What is a Microcontroller?</div>
       <div class="slide-body">
         <p>A <strong>microcontroller</strong> is a tiny computer on a single chip. It contains a processor, memory, and programmable input/output pins — all in one. Unlike a PC that runs many programs, a microcontroller runs <strong>one program at a time, forever in a loop</strong>.</p>
         <p>Microcontrollers are everywhere — inside your microwave, washing machine, TV remote, car dashboard, traffic lights, medical devices, and much more.</p>
       </div>
       <div class="vis-grid">
-        <div class="vis-card"><div class="vis-icon">⚡</div><div class="vis-label">CPU Core</div><div class="vis-desc">Processes your code instructions one by one.</div></div>
-        <div class="vis-card"><div class="vis-icon">💾</div><div class="vis-label">Flash Memory</div><div class="vis-desc">Stores your program permanently even when powered off.</div></div>
-        <div class="vis-card"><div class="vis-icon">🧮</div><div class="vis-label">RAM</div><div class="vis-desc">Temporary memory used while the program is running.</div></div>
-        <div class="vis-card"><div class="vis-icon">📌</div><div class="vis-label">I/O Pins</div><div class="vis-desc">Connect to LEDs, sensors, motors, displays — the real world.</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg></div><div class="vis-label">CPU Core</div><div class="vis-desc">Processes your code instructions one by one.</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11l3 3v13H5z"/><rect x="8" y="4" width="6" height="4"/><rect x="8" y="12" width="8" height="6"/></svg></div><div class="vis-label">Flash Memory</div><div class="vis-desc">Stores your program permanently even when powered off.</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="1.5"/><rect x="8" y="6" width="8" height="3"/><path d="M8 13h.01M12 13h.01M16 13h.01M8 17h.01M12 17h.01M16 17h.01"/></svg></div><div class="vis-label">RAM</div><div class="vis-desc">Temporary memory used while the program is running.</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="13" x2="12" y2="21"/><path d="M9 3h6l-1 6 3 2H7l3-2-1-6z"/></svg></div><div class="vis-label">I/O Pins</div><div class="vis-desc">Connect to LEDs, sensors, motors, displays — the real world.</div></div>
       </div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">Microcontroller Examples</div>
-      <div class="slide-title">🌍 Popular Microcontrollers</div>
+      <div class="slide-title"> Popular Microcontrollers</div>
       <div class="slide-body"><p>Here are microcontrollers used by engineers, hobbyists and students worldwide:</p></div>
       <table class="family-table">
         <tr><th>Chip</th><th>Used In</th><th>Notes</th></tr>
@@ -245,7 +251,7 @@ function signOut() {
 
     <div class="slide">
       <div class="slide-tag">Arduino Uno</div>
-      <div class="slide-title">🟦 Meet the Arduino Uno</div>
+      <div class="slide-title"> Meet the Arduino Uno</div>
       <div class="slide-body">
         <p><strong>Arduino</strong> is a complete platform — the hardware board, the free IDE software, and a massive global community. The <strong>Arduino Uno</strong> is where every beginner starts. It uses the ATmega328P microcontroller and gives you clearly labelled pins, USB connection, and built-in power regulation.</p>
       </div>
@@ -254,32 +260,32 @@ function signOut() {
       <img src="uno_diagram.jpg" class="comp-img" alt="Arduino Uno pin diagram">
       <div class="img-caption">Arduino Uno Pin Diagram — Power, Digital, Analog and I2C pins labelled</div>
       <div class="vis-grid">
-        <div class="vis-card"><div class="vis-icon">📌</div><div class="vis-label">14 Digital Pins</div><div class="vis-desc">Set HIGH (5V/on) or LOW (0V/off). Pins 3,5,6,9,10,11 support PWM.</div></div>
-        <div class="vis-card"><div class="vis-icon">〰️</div><div class="vis-label">6 Analog Pins</div><div class="vis-desc">A0–A5. Read voltages 0–5V as values 0–1023. Used for sensors.</div></div>
-        <div class="vis-card"><div class="vis-icon">🔌</div><div class="vis-label">Power Pins</div><div class="vis-desc">5V, 3.3V, GND, Vin (7–12V barrel jack input).</div></div>
-        <div class="vis-card"><div class="vis-icon">📡</div><div class="vis-label">I2C Pins</div><div class="vis-desc">A4 = SDA, A5 = SCL. Used for LCD, sensors with I2C protocol.</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="13" x2="12" y2="21"/><path d="M9 3h6l-1 6 3 2H7l3-2-1-6z"/></svg></div><div class="vis-label">14 Digital Pins</div><div class="vis-desc">Set HIGH (5V/on) or LOW (0V/off). Pins 3,5,6,9,10,11 support PWM.</div></div>
+        <div class="vis-card"><div class="vis-icon">〰</div><div class="vis-label">6 Analog Pins</div><div class="vis-desc">A0–A5. Read voltages 0–5V as values 0–1023. Used for sensors.</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v5M15 3v5"/><path d="M6 8h12v3a6 6 0 0 1-12 0V8z"/><line x1="12" y1="17" x2="12" y2="22"/></svg></div><div class="vis-label">Power Pins</div><div class="vis-desc">5V, 3.3V, GND, Vin (7–12V barrel jack input).</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20a10 10 0 0 1 0-14"/><path d="M4 20l7-7"/><circle cx="14" cy="10" r="3"/><line x1="16" y1="8" x2="20" y2="4"/></svg></div><div class="vis-label">I2C Pins</div><div class="vis-desc">A4 = SDA, A5 = SCL. Used for LCD, sensors with I2C protocol.</div></div>
       </div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">Arduino Family</div>
-      <div class="slide-title">👨‍👩‍👧‍👦 The Arduino Family</div>
+      <div class="slide-title"> The Arduino Family</div>
       <div class="slide-body"><p>There are many Arduino boards for different needs:</p></div>
       <table class="family-table">
         <tr><th>Board</th><th>Best For</th><th>Key Specs</th></tr>
-        <tr><td><strong>Arduino Uno 🏆</strong></td><td>Beginners — start here!</td><td>14 digital, 6 analog, 32KB flash, ATmega328P</td></tr>
+        <tr><td><strong>Arduino Uno </strong></td><td>Beginners — start here!</td><td>14 digital, 6 analog, 32KB flash, ATmega328P</td></tr>
         <tr><td><strong>Arduino Nano</strong></td><td>Compact breadboard projects</td><td>Same as Uno but tiny — fits on a breadboard</td></tr>
         <tr><td><strong>Arduino Mega</strong></td><td>Big projects, many pins</td><td>54 digital, 16 analog, 256KB flash</td></tr>
         <tr><td><strong>Arduino Leonardo</strong></td><td>USB HID projects</td><td>Can act as keyboard or mouse over USB</td></tr>
         <tr><td><strong>Arduino Due</strong></td><td>High-speed 32-bit projects</td><td>ARM processor, 3.3V only, much faster</td></tr>
         <tr><td><strong>Arduino MKR WiFi</strong></td><td>IoT / internet projects</td><td>Built-in WiFi. Send sensor data to cloud.</td></tr>
       </table>
-      <div class="tip-box"><div class="tip-icon">💡</div><div class="tip-text">We use the <strong>Arduino Uno</strong> for this boot camp — it's the most documented board in the world. Everything you learn transfers directly to other boards.</div></div>
+      <div class="tip-box"><div class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.6.6 1 1.5 1 2.5h6c0-1 .4-1.9 1-2.5A6 6 0 0 0 12 3z"/></svg></div><div class="tip-text">We use the <strong>Arduino Uno</strong> for this boot camp — it's the most documented board in the world. Everything you learn transfers directly to other boards.</div></div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">Hardware & Starter Kit</div>
-      <div class="slide-title">🧰 Do You Need Hardware?</div>
+      <div class="slide-title"> Do You Need Hardware?</div>
       <div class="slide-body">
         <p>To build real physical projects you'll need an <strong>Arduino Starter Kit</strong>. These come with the Arduino Uno board, breadboard, LEDs, resistors, sensors, motors, jumper wires and much more — everything you need to follow along with every project in this boot camp.</p>
         <p><strong>Don't have a kit yet?</strong> No problem — you can simulate every single project in your browser for free using <strong>Wokwi</strong>. Every lesson has a simulation link.</p>
@@ -295,18 +301,18 @@ function signOut() {
         </div>
       </div>
       <div class="kit-box">
-        <div class="kit-title">📦 What's in a Starter Kit?</div>
+        <div class="kit-title"> What's in a Starter Kit?</div>
         <div class="kit-body">A good starter kit includes: <strong>Arduino Uno board</strong> · USB cable · Breadboard (400 or 830 tie points) · Jumper wires (male-to-male & male-to-female) · LEDs (various colours) · Resistors (220Ω, 1kΩ, 10kΩ) · Push buttons · Potentiometer · DHT11 sensor · Ultrasonic sensor (HC-SR04) · I2C LCD display · DC motor · Servo motor · Relay module · Buzzer · IR remote & receiver · 9V battery connector</div>
         <div class="kit-btns">
-          <a class="kit-btn" href="https://wa.me/233554197193?text=Hi%2C%20I%20want%20to%20get%20an%20Arduino%20starter%20kit%20for%20TechCamp" target="_blank">📱 Ask for Kit</a>
-          <a class="kit-btn" href="https://wokwi.com" target="_blank">🖥️ Use Wokwi Instead</a>
+          <a class="kit-btn" href="https://wa.me/233554197193?text=Hi%2C%20I%20want%20to%20get%20an%20Arduino%20starter%20kit%20for%20TechCamp" target="_blank"> Ask for Kit</a>
+          <a class="kit-btn" href="https://wokwi.com" target="_blank"> Use Wokwi Instead</a>
         </div>
       </div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">Breadboard</div>
-      <div class="slide-title">🧩 Understanding the Breadboard</div>
+      <div class="slide-title"> Understanding the Breadboard</div>
       <div class="slide-body">
         <p>A <strong>breadboard</strong> is a reusable plastic board with metal clips inside that let you build circuits by pushing component legs and wires into the holes — <strong>no soldering required</strong>. It's the most important prototyping tool in electronics.</p>
       </div>
@@ -329,12 +335,12 @@ function signOut() {
         <div class="term"><div class="term-word">Tie Points / Rows</div><div class="term-def">The numbered rows in the middle. Each row of 5 holes is internally connected. Components sharing a row are electrically joined.</div></div>
         <div class="term"><div class="term-word">Center Gap</div><div class="term-def">The gap in the middle separates the two halves. Perfect for placing ICs (chips) so each pin is isolated.</div></div>
       </div>
-      <div class="tip-box"><div class="tip-icon">💡</div><div class="tip-text">Always connect your Arduino's <strong>5V pin → red rail</strong> and <strong>GND pin → blue rail</strong> first. Then all your components can share power and ground from those rails easily.</div></div>
+      <div class="tip-box"><div class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.6.6 1 1.5 1 2.5h6c0-1 .4-1.9 1-2.5A6 6 0 0 0 12 3z"/></svg></div><div class="tip-text">Always connect your Arduino's <strong>5V pin → red rail</strong> and <strong>GND pin → blue rail</strong> first. Then all your components can share power and ground from those rails easily.</div></div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">Setup</div>
-      <div class="slide-title">⚙️ Setting Up Arduino IDE</div>
+      <div class="slide-title"> Setting Up Arduino IDE</div>
       <div class="steps">
         <div class="step"><div class="step-num">1</div><div class="step-text">Go to <strong>arduino.cc/en/software</strong> → Download <strong>Arduino IDE 2</strong> for your OS.</div></div>
         <div class="step"><div class="step-num">2</div><div class="step-text">Install and open it. You'll see a code editor with <strong>setup()</strong> and <strong>loop()</strong> already written.</div></div>
@@ -344,12 +350,12 @@ function signOut() {
         <div class="step"><div class="step-num">6</div><div class="step-text">Click the <strong>→ Upload</strong> button to send code to the board. Done!</div></div>
       </div>
       <a class="link-card" href="https://www.arduino.cc/en/software" target="_blank">
-        <div class="link-icon">⬇️</div>
+        <div class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4" x2="12" y2="18"/><polyline points="6 13 12 19 18 13"/></svg></div>
         <div class="link-info"><div class="link-title">Download Arduino IDE 2 — Free</div><div class="link-url">arduino.cc/en/software</div></div>
         <div class="link-arr">›</div>
       </a>
       <a class="wokwi-banner" href="https://wokwi.com" target="_blank">
-        <div class="wokwi-icon">🖥️</div>
+        <div class="wokwi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="1.5"/><line x1="8" y1="20" x2="16" y2="20"/><line x1="12" y1="16" x2="12" y2="20"/></svg></div>
         <div class="wokwi-text">
           <div class="wokwi-title">No hardware? Use Wokwi — Free Online Simulator</div>
           <div class="wokwi-sub">Simulate every Arduino project in your browser. No board needed. wokwi.com</div>
@@ -368,7 +374,7 @@ function signOut() {
 
     <div class="slide">
       <div class="slide-tag">C Language</div>
-      <div class="slide-title">💻 C Programming for Arduino — The Structure</div>
+      <div class="slide-title"> C Programming for Arduino — The Structure</div>
       <div class="slide-body">
         <p>Arduino code is written in <strong>C/C++</strong>. Unlike Python, C is a <strong>strongly-typed, compiled language</strong> — you must declare what type every variable is, and every statement must end with a semicolon <strong>;</strong></p>
         <p>Every single Arduino program — no exceptions — must have exactly these two functions:</p>
@@ -393,12 +399,12 @@ function signOut() {
         <div class="term"><div class="term-word">loop()</div><div class="term-def">Like a heartbeat. Arduino keeps executing the code inside loop() over and over, thousands of times per second.</div></div>
         <div class="term"><div class="term-word">// comment</div><div class="term-def">A line starting with // is a comment — Arduino ignores it. Write notes to yourself and others explaining your code.</div></div>
       </div>
-      <div class="tip-box"><div class="tip-icon">🔄</div><div class="tip-text"><strong>setup()</strong> = getting dressed in the morning — once. <strong>loop()</strong> = breathing — never stops while you're alive (powered on). If you remove the power and reconnect, setup() runs again first.</div></div>
+      <div class="tip-box"><div class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 13-6l2 2"/><polyline points="19 3 19 8 14 8"/><path d="M20 12a8 8 0 0 1-13 6l-2-2"/><polyline points="5 21 5 16 10 16"/></svg></div><div class="tip-text"><strong>setup()</strong> = getting dressed in the morning — once. <strong>loop()</strong> = breathing — never stops while you're alive (powered on). If you remove the power and reconnect, setup() runs again first.</div></div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">Variables & Data Types</div>
-      <div class="slide-title">📦 Variables — Storing Data in C</div>
+      <div class="slide-title"> Variables — Storing Data in C</div>
       <div class="slide-body">
         <p>A <strong>variable</strong> is a named container that stores a value in memory. In C — unlike Python — you must tell the compiler exactly what <strong>type</strong> of data it holds before using it. This is because the Arduino has very limited RAM (only 2KB on the Uno!) so the type determines how many bytes to reserve.</p>
       </div>
@@ -441,12 +447,12 @@ function signOut() {
 <span class="cm">// ── STRING ──────────────────────────────────────────
 // Text. Use sparingly on Arduino — eats RAM fast!</span>
 String name = <span class="str">"TechCamp"</span>;</pre></div>
-      <div class="warn-box"><div class="warn-icon">⚠️</div><div class="warn-text">In C, <strong>every statement MUST end with a semicolon ;</strong> — missing it is the #1 beginner error. The compiler cannot find the next instruction without it and will refuse to compile.</div></div>
+      <div class="warn-box"><div class="warn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3z"/><line x1="12" y1="10" x2="12" y2="14"/><circle cx="12" cy="17" r="0.6" fill="currentColor"/></svg></div><div class="warn-text">In C, <strong>every statement MUST end with a semicolon ;</strong> — missing it is the #1 beginner error. The compiler cannot find the next instruction without it and will refuse to compile.</div></div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">pinMode()</div>
-      <div class="slide-title">📌 pinMode() — Configuring Pins</div>
+      <div class="slide-title"> pinMode() — Configuring Pins</div>
       <div class="slide-body">
         <p>Before you can use any pin on the Arduino, you <strong>must</strong> tell it whether that pin will be sending signals (OUTPUT) or receiving signals (INPUT). This is done with <strong>pinMode()</strong> and it always goes in <strong>setup()</strong>.</p>
         <p>Think of each pin as an employee. pinMode() is the job description — you tell them whether they will be speaking (OUTPUT) or listening (INPUT).</p>
@@ -472,12 +478,12 @@ String name = <span class="str">"TechCamp"</span>;</pre></div>
         <div class="term"><div class="term-word">INPUT</div><div class="term-def">The pin reads voltage coming in from outside. Use for buttons, sensors. Requires an external pull-down resistor to work reliably.</div></div>
         <div class="term"><div class="term-word">INPUT_PULLUP</div><div class="term-def">Same as INPUT but activates Arduino's built-in 20kΩ pull-up resistor. Saves a physical resistor. Pin reads HIGH normally, LOW when button pressed.</div></div>
       </div>
-      <div class="warn-box"><div class="warn-icon">⚠️</div><div class="warn-text">If you forget to call <strong>pinMode()</strong> before using a pin, Arduino defaults to INPUT mode — your OUTPUT will silently not work and the LED won't light. Always set pinMode first in setup()!</div></div>
+      <div class="warn-box"><div class="warn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3z"/><line x1="12" y1="10" x2="12" y2="14"/><circle cx="12" cy="17" r="0.6" fill="currentColor"/></svg></div><div class="warn-text">If you forget to call <strong>pinMode()</strong> before using a pin, Arduino defaults to INPUT mode — your OUTPUT will silently not work and the LED won't light. Always set pinMode first in setup()!</div></div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">digitalWrite()</div>
-      <div class="slide-title">⚡ digitalWrite() — Turning Things ON and OFF</div>
+      <div class="slide-title"> digitalWrite() — Turning Things ON and OFF</div>
       <div class="slide-body">
         <p><strong>digitalWrite()</strong> controls digital OUTPUT pins. It sends either <strong>HIGH (5 volts)</strong> or <strong>LOW (0 volts)</strong> to a pin. That voltage change is what turns LEDs on/off, activates relays, sends signals to other devices.</p>
         <p>Think of it as a light switch — HIGH = switch on, LOW = switch off.</p>
@@ -511,12 +517,12 @@ String name = <span class="str">"TechCamp"</span>;</pre></div>
 // digitalWrite(13, HIGH);  // LED 1 ON
 // digitalWrite(12, LOW);   // LED 2 OFF
 // Both happen almost simultaneously (microseconds apart)</span></pre></div>
-      <div class="tip-box"><div class="tip-icon">⚡</div><div class="tip-text">digitalWrite() only works on <strong>digital pins (0–13)</strong> set as OUTPUT. Writing HIGH to a pin set as INPUT won't light an LED — it just enables the internal pull-up resistor. Always match pinMode and digitalWrite!</div></div>
+      <div class="tip-box"><div class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg></div><div class="tip-text">digitalWrite() only works on <strong>digital pins (0–13)</strong> set as OUTPUT. Writing HIGH to a pin set as INPUT won't light an LED — it just enables the internal pull-up resistor. Always match pinMode and digitalWrite!</div></div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">digitalRead()</div>
-      <div class="slide-title">👂 digitalRead() — Reading Buttons & Switches</div>
+      <div class="slide-title"> digitalRead() — Reading Buttons & Switches</div>
       <div class="slide-body">
         <p><strong>digitalRead()</strong> reads the voltage on a digital INPUT pin. It returns either <strong>HIGH</strong> (pin sees ~5V) or <strong>LOW</strong> (pin sees 0V). Use this to detect button presses, switch states, or digital sensor signals.</p>
       </div>
@@ -567,7 +573,7 @@ String name = <span class="str">"TechCamp"</span>;</pre></div>
 
     <div class="slide">
       <div class="slide-tag">analogRead()</div>
-      <div class="slide-title">〰️ analogRead() — Reading Sensors & Potentiometers</div>
+      <div class="slide-title">〰 analogRead() — Reading Sensors & Potentiometers</div>
       <div class="slide-body">
         <p>Digital pins are all-or-nothing — HIGH or LOW. But the real world has in-between values — a temperature isn't just "hot" or "cold", it's 27.5°C. <strong>analogRead()</strong> reads a voltage anywhere between 0V and 5V and converts it to a number from <strong>0 to 1023</strong> using the Arduino's built-in 10-bit ADC (Analog-to-Digital Converter).</p>
       </div>
@@ -612,16 +618,16 @@ String name = <span class="str">"TechCamp"</span>;</pre></div>
 
   delay(<span class="num">500</span>);
 }</pre></div>
-      <div class="tip-box"><div class="tip-icon">🔧</div><div class="tip-text">The <strong>map()</strong> function is your best friend for analogRead. It re-maps a value from one range to another: <code style="font-family:monospace;color:#67e8f9;">map(value, fromLow, fromHigh, toLow, toHigh)</code>. Use it to turn 0–1023 into 0–255 for PWM, or 0–100 for percentages.</div></div>
+      <div class="tip-box"><div class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 6a4 4 0 0 0 5 5l-8 8a2.8 2.8 0 0 1-4-4l8-8a4 4 0 0 0-1-1z"/></svg></div><div class="tip-text">The <strong>map()</strong> function is your best friend for analogRead. It re-maps a value from one range to another: <code style="font-family:monospace;color:#67e8f9;">map(value, fromLow, fromHigh, toLow, toHigh)</code>. Use it to turn 0–1023 into 0–255 for PWM, or 0–100 for percentages.</div></div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">analogWrite() & PWM</div>
-      <div class="slide-title">🌊 analogWrite() — Dimming LEDs & Speed Control</div>
+      <div class="slide-title"> analogWrite() — Dimming LEDs & Speed Control</div>
       <div class="slide-body">
         <p><strong>analogWrite()</strong> doesn't actually output a true analog voltage. Instead it uses <strong>PWM (Pulse Width Modulation)</strong> — it rapidly switches the pin between HIGH and LOW, so fast the LED appears to dim or the motor appears to slow down. The <strong>duty cycle</strong> (how long it stays HIGH vs LOW per cycle) controls the apparent power.</p>
       </div>
-      <div class="circuit-box" style="background:#040d1a;border:1px solid rgba(6,182,212,0.2);border-radius:12px;padding:16px 14px;margin:12px 0;">
+      <div class="circuit-box" style="background:var(--term);border:1px solid var(--term-line);border-radius:12px;padding:16px 14px;margin:12px 0;">
         <div class="circuit-title">PWM Duty Cycle Visualised</div>
         <div class="circuit-diagram">
 <span class="note">Duty 0%  (off):  </span><span class="gnd">_______________________________</span>  <span class="note">0 brightness</span>
@@ -638,7 +644,7 @@ String name = <span class="str">"TechCamp"</span>;</pre></div>
 //                     128 = half power (50% duty cycle)
 //                     255 = fully ON   (100% duty cycle)
 //
-// ⚠ ONLY works on PWM pins: 3, 5, 6, 9, 10, 11
+//  ONLY works on PWM pins: 3, 5, 6, 9, 10, 11
 //   (marked with ~ tilde on Arduino Uno board)</span>
 
 <span class="kw">int</span> ledPin = <span class="num">9</span>;   <span class="cm">// must be a PWM pin (~)</span>
@@ -672,7 +678,7 @@ String name = <span class="str">"TechCamp"</span>;</pre></div>
 
     <div class="slide">
       <div class="slide-tag">delay() & millis()</div>
-      <div class="slide-title">⏱️ delay() & millis() — Controlling Time</div>
+      <div class="slide-title">⏱ delay() & millis() — Controlling Time</div>
       <div class="slide-body">
         <p><strong>delay()</strong> pauses the program for a number of milliseconds. It is the simplest timing tool — but it <strong>freezes the entire Arduino</strong> during the wait. While delay() is running, Arduino can't read sensors, check buttons, or do anything else.</p>
         <p><strong>millis()</strong> returns how many milliseconds have passed since Arduino turned on — without stopping anything. Think of it as checking a stopwatch while still running.</p>
@@ -713,12 +719,12 @@ String name = <span class="str">"TechCamp"</span>;</pre></div>
   // Read sensor, check button — no freezing!</span>
   <span class="kw">int</span> sensor = analogRead(A0);
 }</pre></div>
-      <div class="tip-box"><div class="tip-icon">⏱️</div><div class="tip-text">For beginner projects <strong>delay() is fine</strong>. Once you build more complex projects that need to do several things simultaneously (blink LED AND read sensor AND check button), switch to <strong>millis()</strong> for non-blocking timing.</div></div>
+      <div class="tip-box"><div class="tip-icon">⏱</div><div class="tip-text">For beginner projects <strong>delay() is fine</strong>. Once you build more complex projects that need to do several things simultaneously (blink LED AND read sensor AND check button), switch to <strong>millis()</strong> for non-blocking timing.</div></div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">Serial Communication</div>
-      <div class="slide-title">🖥️ Serial.begin() & Serial.print() — Talking to Your PC</div>
+      <div class="slide-title"> Serial.begin() & Serial.print() — Talking to Your PC</div>
       <div class="slide-body">
         <p>The <strong>Serial</strong> port lets Arduino communicate with your computer over the USB cable — the same cable you use to upload code. This is your most powerful debugging tool. You can print sensor values, debug messages, variable values — anything — to the <strong>Serial Monitor</strong> in Arduino IDE.</p>
       </div>
@@ -761,12 +767,12 @@ String name = <span class="str">"TechCamp"</span>;</pre></div>
 
   delay(<span class="num">1000</span>);
 }</pre></div>
-      <div class="tip-box"><div class="tip-icon">🖥️</div><div class="tip-text">Open Serial Monitor: <strong>Tools → Serial Monitor</strong> (or Ctrl+Shift+M). Make sure the baud rate in the bottom dropdown matches your Serial.begin() number. If you see gibberish — the rates don't match!</div></div>
+      <div class="tip-box"><div class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="1.5"/><line x1="8" y1="20" x2="16" y2="20"/><line x1="12" y1="16" x2="12" y2="20"/></svg></div><div class="tip-text">Open Serial Monitor: <strong>Tools → Serial Monitor</strong> (or Ctrl+Shift+M). Make sure the baud rate in the bottom dropdown matches your Serial.begin() number. If you see gibberish — the rates don't match!</div></div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">Loops & Functions</div>
-      <div class="slide-title">🔁 Loops & Writing Your Own Functions</div>
+      <div class="slide-title"> Loops & Writing Your Own Functions</div>
       <div class="slide-body"><p>Loops repeat code automatically. Functions let you organise and reuse code — like creating your own Arduino commands.</p></div>
       <div class="code-lang"><span>C — loops and custom functions</span></div>
       <div class="code-block"><pre><span class="cm">// ── FOR LOOP — repeat exact number of times ──────────
@@ -816,7 +822,7 @@ String name = <span class="str">"TechCamp"</span>;</pre></div>
 
     <div class="slide">
       <div class="slide-tag">Quick Reference</div>
-      <div class="slide-title">📋 Complete Arduino Function Reference</div>
+      <div class="slide-title"> Complete Arduino Function Reference</div>
       <div class="slide-body"><p>Here's every key function you'll use — with exactly what each argument means:</p></div>
       <div class="code-explain">
         <div class="ce-row"><div class="ce-code">pinMode(pin, mode)</div><div class="ce-desc"><strong>pin</strong> = 0–13 or A0–A5. <strong>mode</strong> = OUTPUT, INPUT, or INPUT_PULLUP. Always call in setup() before using any pin.</div></div>
@@ -834,7 +840,7 @@ String name = <span class="str">"TechCamp"</span>;</pre></div>
       </div>
 
       <a class="link-card" href="https://www.arduino.cc/reference/en/" target="_blank" style="margin-top:16px;">
-        <div class="link-icon">📚</div>
+        <div class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13a2 2 0 0 1 2 2v14a1 1 0 0 1-1 1H6a2 2 0 0 1-2-2z"/><line x1="8" y1="8" x2="15" y2="8"/><line x1="8" y1="12" x2="15" y2="12"/></svg></div>
         <div class="link-info">
           <div class="link-title">Arduino Language Reference — Official Docs</div>
           <div class="link-url">arduino.cc/reference/en — Every function, operator and constant explained with examples</div>
@@ -842,7 +848,7 @@ String name = <span class="str">"TechCamp"</span>;</pre></div>
         <div class="link-arr">›</div>
       </a>
       <a class="link-card" href="https://docs.arduino.cc/learn/starting-guide/getting-started-arduino/" target="_blank">
-        <div class="link-icon">🎓</div>
+        <div class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8l10-4 10 4-10 4L2 8z"/><path d="M6 10v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/><line x1="22" y1="8" x2="22" y2="13"/></svg></div>
         <div class="link-info">
           <div class="link-title">Arduino Getting Started Guide — Official</div>
           <div class="link-url">docs.arduino.cc — Official beginner tutorials for every board and topic</div>
@@ -863,19 +869,19 @@ String name = <span class="str">"TechCamp"</span>;</pre></div>
     <!-- PROJECT 1: LED BLINK -->
     <div class="slide">
       <div class="slide-tag">Project 1</div>
-      <div class="slide-title">💡 Project 1 — LED Blink</div>
+      <div class="slide-title"> Project 1 — LED Blink</div>
       <div class="slide-body">
         <p>The <strong>LED Blink</strong> is the "Hello World" of Arduino. We make an LED turn on and off repeatedly. The Arduino Uno has a <strong>built-in LED on Pin 13</strong> — so you don't even need extra parts to run your first program!</p>
       </div>
       <div class="vis-grid">
-        <div class="vis-card"><div class="vis-icon">🛒</div><div class="vis-label">Parts Needed</div><div class="vis-desc">Arduino Uno · 1x LED · 1x 220Ω resistor · Breadboard · Jumper wires</div></div>
-        <div class="vis-card"><div class="vis-icon">⚡</div><div class="vis-label">Why the Resistor?</div><div class="vis-desc">Limits current so the LED doesn't burn out. Always use one!</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M3 4h2l2 12h11l2-8H6"/></svg></div><div class="vis-label">Parts Needed</div><div class="vis-desc">Arduino Uno · 1x LED · 1x 220Ω resistor · Breadboard · Jumper wires</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg></div><div class="vis-label">Why the Resistor?</div><div class="vis-desc">Limits current so the LED doesn't burn out. Always use one!</div></div>
       </div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">Project 1 · Wiring</div>
-      <div class="slide-title">🔌 LED Blink — Circuit Diagram</div>
+      <div class="slide-title"> LED Blink — Circuit Diagram</div>
       <div class="circuit-box">
         <div class="circuit-title">LED Wiring — Pin 13 to Breadboard</div>
         <div class="circuit-diagram">
@@ -896,7 +902,7 @@ String name = <span class="str">"TechCamp"</span>;</pre></div>
 
     <div class="slide">
       <div class="slide-tag">Project 1 · Code</div>
-      <div class="slide-title">📝 LED Blink — Full Code</div>
+      <div class="slide-title"> LED Blink — Full Code</div>
       <div class="code-lang">
         <span>C / Arduino — LED Blink</span>
         <a class="sim-link" href="https://wokwi.com/projects/459752694293987329" target="_blank">▶ Open Simulation on Wokwi</a>
@@ -922,7 +928,7 @@ String name = <span class="str">"TechCamp"</span>;</pre></div>
         <div class="ce-row"><div class="ce-code">delay(1000)</div><div class="ce-desc">Pause 1000 milliseconds = 1 full second. Try 200 for fast blink!</div></div>
       </div>
       <a class="wokwi-banner" href="https://wokwi.com/projects/459752694293987329" target="_blank">
-        <div class="wokwi-icon">▶️</div>
+        <div class="wokwi-icon">▶</div>
         <div class="wokwi-text">
           <div class="wokwi-title">Run LED Blink Simulation</div>
           <div class="wokwi-sub">Click to open the live project on Wokwi — no hardware needed</div>
@@ -934,22 +940,22 @@ String name = <span class="str">"TechCamp"</span>;</pre></div>
     <!-- PROJECT 2: ULTRASONIC -->
     <div class="slide">
       <div class="slide-tag">Project 2</div>
-      <div class="slide-title">📡 Project 2 — Ultrasonic Distance Sensor</div>
+      <div class="slide-title"> Project 2 — Ultrasonic Distance Sensor</div>
       <div class="slide-body">
         <p>The <strong>HC-SR04</strong> is an ultrasonic distance sensor. It works like a bat — it sends out a high-frequency sound pulse (TRIG pin), which bounces off objects and returns (ECHO pin). By measuring the time it takes, we calculate the distance in centimetres.</p>
         <p>This is the same principle used in <strong>car parking sensors, drones, robots</strong> and industrial automation.</p>
       </div>
       <div class="vis-grid">
-        <div class="vis-card"><div class="vis-icon">🛒</div><div class="vis-label">Parts Needed</div><div class="vis-desc">Arduino Uno · HC-SR04 sensor · Breadboard · 4x Jumper wires</div></div>
-        <div class="vis-card"><div class="vis-icon">📏</div><div class="vis-label">Range</div><div class="vis-desc">Measures 2cm to 400cm (4 metres). Accuracy ±3mm.</div></div>
-        <div class="vis-card"><div class="vis-icon">📤</div><div class="vis-label">TRIG Pin</div><div class="vis-desc">Trigger — send a 10µs pulse to start a measurement.</div></div>
-        <div class="vis-card"><div class="vis-icon">📥</div><div class="vis-label">ECHO Pin</div><div class="vis-desc">Echo — goes HIGH for the duration of the return pulse.</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M3 4h2l2 12h11l2-8H6"/></svg></div><div class="vis-label">Parts Needed</div><div class="vis-desc">Arduino Uno · HC-SR04 sensor · Breadboard · 4x Jumper wires</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="8" rx="1"/><path d="M7 8v3M11 8v4M15 8v3M19 8v4"/></svg></div><div class="vis-label">Range</div><div class="vis-desc">Measures 2cm to 400cm (4 metres). Accuracy ±3mm.</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="1"/><polyline points="3 7 12 13 21 7"/></svg></div><div class="vis-label">TRIG Pin</div><div class="vis-desc">Trigger — send a 10µs pulse to start a measurement.</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="1"/><polyline points="3 7 12 13 21 7"/></svg></div><div class="vis-label">ECHO Pin</div><div class="vis-desc">Echo — goes HIGH for the duration of the return pulse.</div></div>
       </div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">Project 2 · Wiring</div>
-      <div class="slide-title">🔌 HC-SR04 — Circuit Diagram</div>
+      <div class="slide-title"> HC-SR04 — Circuit Diagram</div>
       <div class="circuit-box">
         <div class="circuit-title">HC-SR04 Ultrasonic Sensor Wiring</div>
         <div class="circuit-diagram">
@@ -975,7 +981,7 @@ String name = <span class="str">"TechCamp"</span>;</pre></div>
 
     <div class="slide">
       <div class="slide-tag">Project 2 · Code</div>
-      <div class="slide-title">📝 Ultrasonic Distance — Full Code</div>
+      <div class="slide-title"> Ultrasonic Distance — Full Code</div>
       <div class="code-lang">
         <span>C / Arduino — HC-SR04 Distance</span>
         <a class="sim-link" href="https://wokwi.com/projects/459753134450597889" target="_blank">▶ Open Simulation on Wokwi</a>
@@ -1016,7 +1022,7 @@ String name = <span class="str">"TechCamp"</span>;</pre></div>
   <span class="cm">// Step 5: Danger alert with LED on pin 13</span>
   <span class="kw">if</span> (distance < <span class="num">10</span>) {
     digitalWrite(<span class="num">13</span>, HIGH);  <span class="cm">// LED on — too close!</span>
-    Serial.println(<span class="str">"⚠ WARNING: Object too close!"</span>);
+    Serial.println(<span class="str">" WARNING: Object too close!"</span>);
   } <span class="kw">else</span> {
     digitalWrite(<span class="num">13</span>, LOW);   <span class="cm">// LED off — safe distance</span>
   }
@@ -1030,7 +1036,7 @@ String name = <span class="str">"TechCamp"</span>;</pre></div>
         <div class="ce-row"><div class="ce-code">if (distance &lt; 10)</div><div class="ce-desc">If closer than 10cm, turn on warning LED on pin 13.</div></div>
       </div>
       <a class="wokwi-banner" href="https://wokwi.com/projects/459753134450597889" target="_blank">
-        <div class="wokwi-icon">▶️</div>
+        <div class="wokwi-icon">▶</div>
         <div class="wokwi-text">
           <div class="wokwi-title">Run Ultrasonic Distance Simulation</div>
           <div class="wokwi-sub">Move the slider on the sensor to change distance — see it print live on Wokwi</div>
@@ -1050,7 +1056,7 @@ String name = <span class="str">"TechCamp"</span>;</pre></div>
 
     <div class="slide">
       <div class="slide-tag">Project 3</div>
-      <div class="slide-title">📟 Project 3 — I2C LCD Display "Hello World"</div>
+      <div class="slide-title"> Project 3 — I2C LCD Display "Hello World"</div>
       <div class="slide-body">
         <p>An <strong>I2C LCD (16x2)</strong> can display 2 rows of 16 characters. Normally an LCD needs 6+ wires — but the <strong>I2C backpack module</strong> reduces this to just <strong>4 wires</strong> using a communication protocol called I2C (Inter-Integrated Circuit).</p>
         <p>I2C uses only 2 signal wires — <strong>SDA</strong> (data) and <strong>SCL</strong> (clock) — to talk to many devices on the same bus. This is very common in professional electronics.</p>
@@ -1069,7 +1075,7 @@ String name = <span class="str">"TechCamp"</span>;</pre></div>
 
     <div class="slide">
       <div class="slide-tag">Project 3 · Wiring</div>
-      <div class="slide-title">🔌 I2C LCD — Circuit Diagram</div>
+      <div class="slide-title"> I2C LCD — Circuit Diagram</div>
       <div class="circuit-box">
         <div class="circuit-title">I2C LCD Wiring to Arduino Uno</div>
         <div class="circuit-diagram">
@@ -1089,12 +1095,12 @@ String name = <span class="str">"TechCamp"</span>;</pre></div>
         <tr><td class="from">SDA</td><td class="to">A4</td><td>I2C Data line</td></tr>
         <tr><td class="from">SCL</td><td class="to">A5</td><td>I2C Clock line</td></tr>
       </table>
-      <div class="tip-box"><div class="tip-icon">🔧</div><div class="tip-text">If screen is blank, adjust the <strong>blue contrast potentiometer</strong> on the back of the I2C module with a small screwdriver until text appears.</div></div>
+      <div class="tip-box"><div class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 6a4 4 0 0 0 5 5l-8 8a2.8 2.8 0 0 1-4-4l8-8a4 4 0 0 0-1-1z"/></svg></div><div class="tip-text">If screen is blank, adjust the <strong>blue contrast potentiometer</strong> on the back of the I2C module with a small screwdriver until text appears.</div></div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">Project 3 · Code</div>
-      <div class="slide-title">📝 I2C LCD — Hello World Code</div>
+      <div class="slide-title"> I2C LCD — Hello World Code</div>
       <div class="slide-body"><p>Install <strong>LiquidCrystal I2C</strong> by Frank de Brabander via Library Manager first, then upload:</p></div>
       <div class="code-lang"><span>C / Arduino — I2C LCD Hello World</span></div>
       <div class="code-block"><pre><span class="kw">#include</span> &lt;Wire.h&gt;
@@ -1127,7 +1133,7 @@ LiquidCrystal_I2C lcd(<span class="num">0x27</span>, <span class="num">16</span>
     <!-- PROJECT 4: DHT11 -->
     <div class="slide">
       <div class="slide-tag">Project 4</div>
-      <div class="slide-title">🌡️ Project 4 — DHT11 Temperature & Humidity</div>
+      <div class="slide-title"> Project 4 — DHT11 Temperature & Humidity</div>
       <div class="slide-body">
         <p>The <strong>DHT11</strong> is a digital sensor that measures temperature (0–50°C) and humidity (20–90% RH) in one small package. Used in weather stations, smart thermostats, greenhouses and HVAC systems.</p>
       </div>
@@ -1142,14 +1148,14 @@ LiquidCrystal_I2C lcd(<span class="num">0x27</span>, <span class="num">16</span>
         </div>
       </div>
       <div class="vis-grid">
-        <div class="vis-card"><div class="vis-icon">🌡️</div><div class="vis-label">Temperature</div><div class="vis-desc">Range: 0°C to 50°C · Accuracy ±2°C</div></div>
-        <div class="vis-card"><div class="vis-icon">💧</div><div class="vis-label">Humidity</div><div class="vis-desc">Range: 20% to 90% RH · Accuracy ±5%</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14V5a2 2 0 0 0-4 0v9a4 4 0 1 0 4 0z"/><line x1="12" y1="9" x2="12" y2="14"/></svg></div><div class="vis-label">Temperature</div><div class="vis-desc">Range: 0°C to 50°C · Accuracy ±2°C</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 7 6 11a6 6 0 0 1-12 0c0-4 3-7 6-11z"/></svg></div><div class="vis-label">Humidity</div><div class="vis-desc">Range: 20% to 90% RH · Accuracy ±5%</div></div>
       </div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">Project 4 · Wiring</div>
-      <div class="slide-title">🔌 DHT11 — Circuit Diagram</div>
+      <div class="slide-title"> DHT11 — Circuit Diagram</div>
       <div class="circuit-box">
         <div class="circuit-title">DHT11 3-Pin Module Wiring</div>
         <div class="circuit-diagram">
@@ -1187,7 +1193,7 @@ DHT dht(DHTPIN, DHTTYPE);
   Serial.print(<span class="str">"Temp: "</span>); Serial.print(t); Serial.print(<span class="str">"°C  "</span>);
   Serial.print(<span class="str">"Humidity: "</span>); Serial.print(h); Serial.println(<span class="str">"%"</span>);
 }</pre></div>
-      <div class="tip-box"><div class="tip-icon">⏱️</div><div class="tip-text">DHT11 needs at least <strong>2 seconds between readings</strong> — never reduce that delay() or you'll get errors.</div></div>
+      <div class="tip-box"><div class="tip-icon">⏱</div><div class="tip-text">DHT11 needs at least <strong>2 seconds between readings</strong> — never reduce that delay() or you'll get errors.</div></div>
     </div>
 
     <div class="lesson-nav">
@@ -1201,19 +1207,19 @@ DHT dht(DHTPIN, DHTTYPE);
 
     <div class="slide">
       <div class="slide-tag">Final Project</div>
-      <div class="slide-title">🏆 Final Project — DHT11 Readings on I2C LCD</div>
+      <div class="slide-title"> Final Project — DHT11 Readings on I2C LCD</div>
       <div class="slide-body">
         <p>We combine everything into one real project: read <strong>live temperature and humidity</strong> from the DHT11 sensor and display it on the <strong>I2C LCD screen</strong>, updating every 2 seconds. This is exactly how a commercial weather station works!</p>
       </div>
       <div class="vis-grid">
-        <div class="vis-card"><div class="vis-icon">🛒</div><div class="vis-label">Parts Needed</div><div class="vis-desc">Arduino Uno · DHT11 sensor · I2C LCD 16x2 · Breadboard · Jumper wires</div></div>
-        <div class="vis-card"><div class="vis-icon">📟</div><div class="vis-label">What Shows</div><div class="vis-desc">Row 1: "Temp: 27.5 C" · Row 2: "Humidity: 65 %" — live, updating every 2s</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M3 4h2l2 12h11l2-8H6"/></svg></div><div class="vis-label">Parts Needed</div><div class="vis-desc">Arduino Uno · DHT11 sensor · I2C LCD 16x2 · Breadboard · Jumper wires</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="1.5"/><rect x="6" y="8" width="12" height="4" rx="1"/><path d="M7 15h.01M10 15h.01M13 15h.01"/></svg></div><div class="vis-label">What Shows</div><div class="vis-desc">Row 1: "Temp: 27.5 C" · Row 2: "Humidity: 65 %" — live, updating every 2s</div></div>
       </div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">Final Project · Wiring</div>
-      <div class="slide-title">🔌 Complete Circuit — DHT11 + I2C LCD</div>
+      <div class="slide-title"> Complete Circuit — DHT11 + I2C LCD</div>
       <div class="circuit-box">
         <div class="circuit-title">Full Wiring — DHT11 + I2C LCD + Arduino Uno</div>
         <div class="circuit-diagram">
@@ -1246,7 +1252,7 @@ red (+) and blue (–) rails, then tap from there for both modules.</span>
 
     <div class="slide">
       <div class="slide-tag">Final Project · Code</div>
-      <div class="slide-title">📝 DHT11 on LCD — Full Code</div>
+      <div class="slide-title"> DHT11 on LCD — Full Code</div>
       <div class="code-lang">
         <span>C / Arduino — Final Project</span>
         <a class="sim-link" href="https://wokwi.com/projects/459751961915973633" target="_blank">▶ Open Final Project on Wokwi</a>
@@ -1312,7 +1318,7 @@ LiquidCrystal_I2C lcd(<span class="num">0x27</span>, <span class="num">16</span>
   Serial.println(<span class="str">"%"</span>);
 }</pre></div>
       <a class="wokwi-banner" href="https://wokwi.com/projects/459751961915973633" target="_blank">
-        <div class="wokwi-icon">▶️</div>
+        <div class="wokwi-icon">▶</div>
         <div class="wokwi-text">
           <div class="wokwi-title">▶ Run Final Project Live on Wokwi</div>
           <div class="wokwi-sub">See DHT11 readings appear on the LCD in real-time — move the sliders to change temperature & humidity</div>
@@ -1323,7 +1329,7 @@ LiquidCrystal_I2C lcd(<span class="num">0x27</span>, <span class="num">16</span>
 
     <div class="slide">
       <div class="slide-tag">Summary</div>
-      <div class="slide-title">✅ Module Complete — Full Summary</div>
+      <div class="slide-title">✓ Module Complete — Full Summary</div>
       <div class="steps">
         <div class="step"><div class="step-num">✓</div><div class="step-text">Understood what microcontrollers are and where they're used in real life</div></div>
         <div class="step"><div class="step-num">✓</div><div class="step-text">Explored the Arduino family — Uno, Nano, Mega, MKR and more</div></div>
@@ -1340,37 +1346,37 @@ LiquidCrystal_I2C lcd(<span class="num">0x27</span>, <span class="num">16</span>
 
     <div class="slide">
       <div class="slide-tag">Go Further</div>
-      <div class="slide-title">🚀 Want to Build More Amazing Projects?</div>
+      <div class="slide-title"> Want to Build More Amazing Projects?</div>
       <div class="slide-body"><p>This week is just the beginning. Explore these resources for more projects:</p></div>
       <a class="link-card" href="https://www.youtube.com/@GreatScottLab" target="_blank">
-        <div class="link-icon">▶️</div>
+        <div class="link-icon">▶</div>
         <div class="link-info"><div class="link-title">GreatScott! — YouTube</div><div class="link-url">Amazing Arduino & electronics projects with clear explanations</div></div>
         <div class="link-arr">›</div>
       </a>
       <a class="link-card" href="https://www.youtube.com/@PaulMcWhorter" target="_blank">
-        <div class="link-icon">▶️</div>
+        <div class="link-icon">▶</div>
         <div class="link-info"><div class="link-title">Paul McWhorter — YouTube</div><div class="link-url">Best beginner Arduino series on YouTube — step by step</div></div>
         <div class="link-arr">›</div>
       </a>
       <a class="link-card" href="https://create.arduino.cc/projecthub" target="_blank">
-        <div class="link-icon">🤖</div>
+        <div class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M10 2v3M14 2v3M10 19v3M14 19v3M2 10h3M2 14h3M19 10h3M19 14h3"/></svg></div>
         <div class="link-info"><div class="link-title">Arduino Project Hub</div><div class="link-url">create.arduino.cc — Hundreds of free tutorials with code & diagrams</div></div>
         <div class="link-arr">›</div>
       </a>
       <a class="link-card" href="https://www.tiktok.com/@_phil.jr" target="_blank">
-        <div class="link-icon">🎵</div>
+        <div class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9a3 3 0 0 1 0 6"/></svg></div>
         <div class="link-info"><div class="link-title">@_phil.jr on TikTok</div><div class="link-url">Short project demos and tips from your instructor</div></div>
         <div class="link-arr">›</div>
       </a>
 
       <div class="reach-box">
-        <div class="reach-title">💬 Want to Dive Deeper?</div>
+        <div class="reach-title"> Want to Dive Deeper?</div>
         <div class="reach-body">More boot camps are coming — advanced Arduino, IoT, robotics and embedded systems. Reach out if you want to continue learning or need help getting a starter kit.</div>
         <div class="reach-btns">
-          <a class="reach-btn" href="https://wa.me/233554197193?text=Hi%2C%20I%20want%20to%20learn%20more%20Arduino%20after%20TechCamp" target="_blank">📱 WhatsApp</a>
+          <a class="reach-btn" href="https://wa.me/233554197193?text=Hi%2C%20I%20want%20to%20learn%20more%20Arduino%20after%20TechCamp" target="_blank"> WhatsApp</a>
           <a class="reach-btn" href="https://www.linkedin.com/in/gyamerah-afriyie-philimon-32a11525b" target="_blank">in LinkedIn</a>
-          <a class="reach-btn" href="https://www.instagram.com/_phil.jr" target="_blank">📸 Instagram</a>
-          <a class="reach-btn" href="https://www.tiktok.com/@_phil.jr" target="_blank">🎵 TikTok</a>
+          <a class="reach-btn" href="https://www.instagram.com/_phil.jr" target="_blank"> Instagram</a>
+          <a class="reach-btn" href="https://www.tiktok.com/@_phil.jr" target="_blank"> TikTok</a>
         </div>
       </div>
     </div>
@@ -1386,21 +1392,21 @@ LiquidCrystal_I2C lcd(<span class="num">0x27</span>, <span class="num">16</span>
 
     <div class="slide">
       <div class="slide-tag">Electronics · Fundamentals</div>
-      <div class="slide-title">⚡ Electricity Basics — Voltage, Current & Resistance</div>
+      <div class="slide-title"> Electricity Basics — Voltage, Current & Resistance</div>
       <div class="slide-body">
         <p>Before building any circuit, you need to understand the three fundamental properties of electricity. They work together in every circuit you will ever build.</p>
       </div>
       <div class="terms-grid">
         <div class="term">
-          <div class="term-word">⚡ Voltage (V) — the "pressure"</div>
+          <div class="term-word"> Voltage (V) — the "pressure"</div>
           <div class="term-def">Voltage is the electrical force that pushes electrons through a circuit. Measured in <strong>Volts (V)</strong>. Think of it like water pressure in a pipe — higher pressure pushes more water. Arduino operates at <strong>5V</strong>. A USB port is 5V. A AA battery is 1.5V. A phone charger is typically 5V.</div>
         </div>
         <div class="term">
-          <div class="term-word">🌊 Current (I) — the "flow"</div>
+          <div class="term-word"> Current (I) — the "flow"</div>
           <div class="term-def">Current is the actual flow of electrons through the circuit. Measured in <strong>Amperes / Amps (A)</strong> or milliamps (mA). Think of it like the volume of water flowing through the pipe. An Arduino pin can safely supply a maximum of <strong>40mA</strong> per pin. An LED needs about 20mA.</div>
         </div>
         <div class="term">
-          <div class="term-word">🧱 Resistance (R) — the "restriction"</div>
+          <div class="term-word"> Resistance (R) — the "restriction"</div>
           <div class="term-def">Resistance opposes the flow of current. Measured in <strong>Ohms (Ω)</strong>. Think of it like a narrow section of pipe slowing water flow. Resistors are components that add resistance on purpose — to protect LEDs, limit current, and divide voltage.</div>
         </div>
       </div>
@@ -1408,7 +1414,7 @@ LiquidCrystal_I2C lcd(<span class="num">0x27</span>, <span class="num">16</span>
 
     <div class="slide">
       <div class="slide-tag">Electronics · Ohm's Law</div>
-      <div class="slide-title">🔺 Ohm's Law — The Most Important Formula in Electronics</div>
+      <div class="slide-title"> Ohm's Law — The Most Important Formula in Electronics</div>
       <div class="slide-body">
         <p><strong>Ohm's Law</strong> describes the relationship between Voltage, Current and Resistance. Know this formula and you can calculate anything in a basic circuit.</p>
       </div>
@@ -1439,12 +1445,12 @@ LiquidCrystal_I2C lcd(<span class="num">0x27</span>, <span class="num">16</span>
 // → Use a 150Ω or the nearest standard value: 220Ω (safer)
 // → Lower resistance = more current = brighter but may burn LED
 // → Higher resistance = less current = dimmer but safer</span></pre></div>
-      <div class="tip-box"><div class="tip-icon">💡</div><div class="tip-text">The most common beginner mistake is connecting an LED directly to 5V without a resistor. Without it, current is unlimited, the LED burns out instantly. <strong>Always use a resistor!</strong> When in doubt, 220Ω is safe for most LEDs at 5V.</div></div>
+      <div class="tip-box"><div class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.6.6 1 1.5 1 2.5h6c0-1 .4-1.9 1-2.5A6 6 0 0 0 12 3z"/></svg></div><div class="tip-text">The most common beginner mistake is connecting an LED directly to 5V without a resistor. Without it, current is unlimited, the LED burns out instantly. <strong>Always use a resistor!</strong> When in doubt, 220Ω is safe for most LEDs at 5V.</div></div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">Electronics · Resistors</div>
-      <div class="slide-title">🧱 Resistors — Reading Colour Codes</div>
+      <div class="slide-title"> Resistors — Reading Colour Codes</div>
       <div class="slide-body">
         <p>Resistors have <strong>colour bands</strong> painted on them that tell you their resistance value. Learning to read them means you can identify any resistor without measuring it. The most common are 4-band resistors.</p>
       </div>
@@ -1468,12 +1474,12 @@ LiquidCrystal_I2C lcd(<span class="num">0x27</span>, <span class="num">16</span>
         <div class="term"><div class="term-word">1kΩ (1000Ω) — Brown Black Red</div><div class="term-def">Used for buttons (pull-down), base resistors for transistors, general limiting.</div></div>
         <div class="term"><div class="term-word">10kΩ (10,000Ω) — Brown Black Orange</div><div class="term-def">Standard pull-up/pull-down resistor for buttons and sensor data lines. Very common.</div></div>
       </div>
-      <div class="tip-box"><div class="tip-icon">🔧</div><div class="tip-text">Can't read the colours? Use a <strong>multimeter</strong> set to Ohms (Ω) and touch the probes to both legs of the resistor. It will display the exact value. Or use the free <strong>Resistor Color Code Calculator</strong> at resistorguide.com.</div></tip-text></div>
+      <div class="tip-box"><div class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 6a4 4 0 0 0 5 5l-8 8a2.8 2.8 0 0 1-4-4l8-8a4 4 0 0 0-1-1z"/></svg></div><div class="tip-text">Can't read the colours? Use a <strong>multimeter</strong> set to Ohms (Ω) and touch the probes to both legs of the resistor. It will display the exact value. Or use the free <strong>Resistor Color Code Calculator</strong> at resistorguide.com.</div></tip-text></div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">Electronics · LEDs</div>
-      <div class="slide-title">💡 LEDs — Light Emitting Diodes</div>
+      <div class="slide-title"> LEDs — Light Emitting Diodes</div>
       <div class="slide-body">
         <p>An <strong>LED (Light Emitting Diode)</strong> is a semiconductor component that emits light when current flows through it in the correct direction. Unlike a light bulb, LEDs are polarised — they only work one way round.</p>
       </div>
@@ -1490,17 +1496,17 @@ LiquidCrystal_I2C lcd(<span class="num">0x27</span>, <span class="num">16</span>
         </div>
       </div>
       <div class="vis-grid">
-        <div class="vis-card"><div class="vis-icon">🔴</div><div class="vis-label">Red LED</div><div class="vis-desc">Forward voltage ~2.0V. Most common. 1.8–2.2V typical.</div></div>
-        <div class="vis-card"><div class="vis-icon">🟢</div><div class="vis-label">Green LED</div><div class="vis-desc">Forward voltage ~2.1V. Similar to red.</div></div>
-        <div class="vis-card"><div class="vis-icon">🔵</div><div class="vis-label">Blue LED</div><div class="vis-desc">Forward voltage ~3.2V. Needs a different resistor calculation.</div></div>
-        <div class="vis-card"><div class="vis-icon">⚪</div><div class="vis-label">White LED</div><div class="vis-desc">Forward voltage ~3.2–3.4V. Brightest. Same as blue.</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" fill="#c0453a"/></svg></div><div class="vis-label">Red LED</div><div class="vis-desc">Forward voltage ~2.0V. Most common. 1.8–2.2V typical.</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" fill="#3f8a5f"/></svg></div><div class="vis-label">Green LED</div><div class="vis-desc">Forward voltage ~2.1V. Similar to red.</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" fill="#3f6ea8"/></svg></div><div class="vis-label">Blue LED</div><div class="vis-desc">Forward voltage ~3.2V. Needs a different resistor calculation.</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" fill="#b9b7ac"/></svg></div><div class="vis-label">White LED</div><div class="vis-desc">Forward voltage ~3.2–3.4V. Brightest. Same as blue.</div></div>
       </div>
-      <div class="warn-box"><div class="warn-icon">⚠️</div><div class="warn-text">If you connect an LED the <strong>wrong way round</strong> (backwards), it simply won't light up — it won't break. Just flip it around. However, connecting it <strong>without a resistor</strong> WILL burn it out permanently within seconds!</div></div>
+      <div class="warn-box"><div class="warn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3z"/><line x1="12" y1="10" x2="12" y2="14"/><circle cx="12" cy="17" r="0.6" fill="currentColor"/></svg></div><div class="warn-text">If you connect an LED the <strong>wrong way round</strong> (backwards), it simply won't light up — it won't break. Just flip it around. However, connecting it <strong>without a resistor</strong> WILL burn it out permanently within seconds!</div></div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">Electronics · Push Buttons</div>
-      <div class="slide-title">🔘 Push Buttons & Switches</div>
+      <div class="slide-title"> Push Buttons & Switches</div>
       <div class="slide-body">
         <p>A <strong>push button</strong> is a simple switch — it connects two points in a circuit when pressed and disconnects them when released. Buttons in starter kits are typically <strong>momentary tactile switches</strong> with 4 legs.</p>
       </div>
@@ -1526,22 +1532,22 @@ LiquidCrystal_I2C lcd(<span class="num">0x27</span>, <span class="num">16</span>
 
     <div class="slide">
       <div class="slide-tag">Electronics · Capacitors</div>
-      <div class="slide-title">🔋 Capacitors — Storing & Smoothing Energy</div>
+      <div class="slide-title"> Capacitors — Storing & Smoothing Energy</div>
       <div class="slide-body">
         <p>A <strong>capacitor</strong> stores electrical charge and releases it quickly. Think of it like a small rechargeable battery that charges and discharges very fast. Capacitors are used to smooth out voltage spikes, filter noise in power lines, and create time delays in circuits.</p>
       </div>
       <div class="vis-grid">
-        <div class="vis-card"><div class="vis-icon">🔵</div><div class="vis-label">Electrolytic</div><div class="vis-desc">Polarised — has a + and – leg. The longer leg is +. Common in power supply filtering. e.g. 100µF, 1000µF.</div></div>
-        <div class="vis-card"><div class="vis-icon">🟡</div><div class="vis-label">Ceramic</div><div class="vis-desc">Small, non-polarised (no polarity). Used for high-frequency noise filtering. e.g. 100nF (0.1µF).</div></div>
-        <div class="vis-card"><div class="vis-icon">📊</div><div class="vis-label">Measured in Farads</div><div class="vis-desc">µF = microfarads (millionths). nF = nanofarads. pF = picofarads. Bigger = more charge stored.</div></div>
-        <div class="vis-card"><div class="vis-icon">⚡</div><div class="vis-label">Common Use</div><div class="vis-desc">Place 100nF ceramic cap between 5V and GND near sensors to filter electrical noise from motors.</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" fill="#3f6ea8"/></svg></div><div class="vis-label">Electrolytic</div><div class="vis-desc">Polarised — has a + and – leg. The longer leg is +. Common in power supply filtering. e.g. 100µF, 1000µF.</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" fill="#c9a13f"/></svg></div><div class="vis-label">Ceramic</div><div class="vis-desc">Small, non-polarised (no polarity). Used for high-frequency noise filtering. e.g. 100nF (0.1µF).</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V4"/><path d="M4 20h16"/><rect x="7" y="12" width="3" height="5"/><rect x="12" y="8" width="3" height="9"/><rect x="17" y="5" width="3" height="12"/></svg></div><div class="vis-label">Measured in Farads</div><div class="vis-desc">µF = microfarads (millionths). nF = nanofarads. pF = picofarads. Bigger = more charge stored.</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg></div><div class="vis-label">Common Use</div><div class="vis-desc">Place 100nF ceramic cap between 5V and GND near sensors to filter electrical noise from motors.</div></div>
       </div>
-      <div class="tip-box"><div class="tip-icon">⚠️</div><div class="tip-text">Electrolytic capacitors are <strong>polarised</strong> — connect + to positive and – to negative. Reverse polarity can cause them to <strong>explode</strong>. The negative leg is usually marked with a white stripe on the side of the capacitor.</div></div>
+      <div class="tip-box"><div class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3z"/><line x1="12" y1="10" x2="12" y2="14"/><circle cx="12" cy="17" r="0.6" fill="currentColor"/></svg></div><div class="tip-text">Electrolytic capacitors are <strong>polarised</strong> — connect + to positive and – to negative. Reverse polarity can cause them to <strong>explode</strong>. The negative leg is usually marked with a white stripe on the side of the capacitor.</div></div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">Electronics · Breadboard Deep Dive</div>
-      <div class="slide-title">🧩 Breadboard — Full Guide</div>
+      <div class="slide-title"> Breadboard — Full Guide</div>
       <div class="slide-body">
         <p>The breadboard is your prototyping workspace. Understanding how connections work inside it is essential — the most common beginner mistakes come from misunderstanding the breadboard's internal connections.</p>
       </div>
@@ -1572,30 +1578,30 @@ LiquidCrystal_I2C lcd(<span class="num">0x27</span>, <span class="num">16</span>
 
     <div class="slide">
       <div class="slide-tag">Electronics · Components Guide</div>
-      <div class="slide-title">🛒 Components in Your Starter Kit — Explained</div>
+      <div class="slide-title"> Components in Your Starter Kit — Explained</div>
       <div class="slide-body"><p>Here's every common component in a starter kit and exactly what it does:</p></div>
       <div class="terms-grid">
-        <div class="term"><div class="term-word">🔴 LED (Light Emitting Diode)</div><div class="term-def">Emits light when current flows through it. Polarised — longer leg (+). Always needs a current-limiting resistor (220Ω for 5V). Forward voltage: ~2V red/green, ~3.2V blue/white.</div></div>
-        <div class="term"><div class="term-word">🧱 Resistor</div><div class="term-def">Limits current flow. Value in Ohms (Ω). Read by colour bands. 220Ω for LEDs, 10kΩ for pull-ups, 1kΩ for general. Non-polarised — any direction.</div></div>
-        <div class="term"><div class="term-word">🔵 Capacitor (Electrolytic)</div><div class="term-def">Stores charge. Polarised — longer leg (+). Used for filtering power supply noise. Common values: 10µF, 100µF, 1000µF.</div></div>
-        <div class="term"><div class="term-word">🔘 Push Button</div><div class="term-def">Momentary switch. Connects circuit when pressed. 4 legs — A&B connected, C&D connected. Press bridges A/B to C/D. Needs pull-up or pull-down resistor.</div></div>
-        <div class="term"><div class="term-word">🌀 Potentiometer</div><div class="term-def">Variable resistor with a dial. 3 legs: left=GND, middle=signal (wiper), right=5V. Rotate to output 0–5V on the middle pin. Read with analogRead(). Great for controlling brightness/speed.</div></div>
-        <div class="term"><div class="term-word">🔊 Buzzer (Active)</div><div class="term-def">Makes a tone when 5V is applied. Active buzzers have a built-in oscillator — just power them. Passive buzzers need a PWM signal (analogWrite or tone()) to make different pitches.</div></div>
-        <div class="term"><div class="term-word">🌡️ DHT11 Sensor</div><div class="term-def">Measures temperature (0–50°C) and humidity (20–90%). Digital output — one data wire. Uses a single-wire protocol. Needs DHT library. Takes reading every 2 seconds minimum.</div></div>
-        <div class="term"><div class="term-word">📡 HC-SR04 Ultrasonic</div><div class="term-def">Measures distance 2cm–400cm using sound pulses. Two signal pins: TRIG (send) and ECHO (receive). Calculate: distance = duration × 0.034 / 2.</div></div>
-        <div class="term"><div class="term-word">⚙️ DC Motor</div><div class="term-def">Spins when current flows — direction depends on polarity. Cannot be powered directly from Arduino pin (too much current). Needs a motor driver like L298N or L293D. Speed via PWM.</div></div>
-        <div class="term"><div class="term-word">🔁 Servo Motor</div><div class="term-def">Rotates to a specific angle (0°–180°). 3 wires: Red=5V, Brown=GND, Orange=Signal. Controlled with the Servo library. servo.write(90) rotates to 90 degrees.</div></div>
-        <div class="term"><div class="term-word">⚡ Transistor (NPN)</div><div class="term-def">Electronic switch. 3 legs: Base (control), Collector (load), Emitter (GND). Small signal on Base controls large current through Collector. Used to switch motors, relays, high-power LEDs from Arduino's tiny pin current.</div></div>
-        <div class="term"><div class="term-word">🔌 Relay Module</div><div class="term-def">Electrically controlled switch. Lets Arduino switch 240V mains devices. Signal pin LOW=relay closes, HIGH=relay opens. Always isolate mains connections carefully!</div></div>
+        <div class="term"><div class="term-word"> LED (Light Emitting Diode)</div><div class="term-def">Emits light when current flows through it. Polarised — longer leg (+). Always needs a current-limiting resistor (220Ω for 5V). Forward voltage: ~2V red/green, ~3.2V blue/white.</div></div>
+        <div class="term"><div class="term-word"> Resistor</div><div class="term-def">Limits current flow. Value in Ohms (Ω). Read by colour bands. 220Ω for LEDs, 10kΩ for pull-ups, 1kΩ for general. Non-polarised — any direction.</div></div>
+        <div class="term"><div class="term-word"> Capacitor (Electrolytic)</div><div class="term-def">Stores charge. Polarised — longer leg (+). Used for filtering power supply noise. Common values: 10µF, 100µF, 1000µF.</div></div>
+        <div class="term"><div class="term-word"> Push Button</div><div class="term-def">Momentary switch. Connects circuit when pressed. 4 legs — A&B connected, C&D connected. Press bridges A/B to C/D. Needs pull-up or pull-down resistor.</div></div>
+        <div class="term"><div class="term-word"> Potentiometer</div><div class="term-def">Variable resistor with a dial. 3 legs: left=GND, middle=signal (wiper), right=5V. Rotate to output 0–5V on the middle pin. Read with analogRead(). Great for controlling brightness/speed.</div></div>
+        <div class="term"><div class="term-word"> Buzzer (Active)</div><div class="term-def">Makes a tone when 5V is applied. Active buzzers have a built-in oscillator — just power them. Passive buzzers need a PWM signal (analogWrite or tone()) to make different pitches.</div></div>
+        <div class="term"><div class="term-word"> DHT11 Sensor</div><div class="term-def">Measures temperature (0–50°C) and humidity (20–90%). Digital output — one data wire. Uses a single-wire protocol. Needs DHT library. Takes reading every 2 seconds minimum.</div></div>
+        <div class="term"><div class="term-word"> HC-SR04 Ultrasonic</div><div class="term-def">Measures distance 2cm–400cm using sound pulses. Two signal pins: TRIG (send) and ECHO (receive). Calculate: distance = duration × 0.034 / 2.</div></div>
+        <div class="term"><div class="term-word"> DC Motor</div><div class="term-def">Spins when current flows — direction depends on polarity. Cannot be powered directly from Arduino pin (too much current). Needs a motor driver like L298N or L293D. Speed via PWM.</div></div>
+        <div class="term"><div class="term-word"> Servo Motor</div><div class="term-def">Rotates to a specific angle (0°–180°). 3 wires: Red=5V, Brown=GND, Orange=Signal. Controlled with the Servo library. servo.write(90) rotates to 90 degrees.</div></div>
+        <div class="term"><div class="term-word"> Transistor (NPN)</div><div class="term-def">Electronic switch. 3 legs: Base (control), Collector (load), Emitter (GND). Small signal on Base controls large current through Collector. Used to switch motors, relays, high-power LEDs from Arduino's tiny pin current.</div></div>
+        <div class="term"><div class="term-word"> Relay Module</div><div class="term-def">Electrically controlled switch. Lets Arduino switch 240V mains devices. Signal pin LOW=relay closes, HIGH=relay opens. Always isolate mains connections carefully!</div></div>
       </div>
 
       <a class="link-card" href="https://www.arduino.cc/en/Tutorial/Foundations" target="_blank" style="margin-top:14px;">
-        <div class="link-icon">📚</div>
+        <div class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13a2 2 0 0 1 2 2v14a1 1 0 0 1-1 1H6a2 2 0 0 1-2-2z"/><line x1="8" y1="8" x2="15" y2="8"/><line x1="8" y1="12" x2="15" y2="12"/></svg></div>
         <div class="link-info"><div class="link-title">Arduino Foundation Tutorials — Electronics & Circuits</div><div class="link-url">arduino.cc/en/Tutorial/Foundations — Voltage, current, PWM, I2C, SPI all explained</div></div>
         <div class="link-arr">›</div>
       </a>
       <a class="link-card" href="https://www.electronics-tutorials.ws/resistor/res_1.html" target="_blank">
-        <div class="link-icon">🧱</div>
+        <div class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="M3 12h18M9 5v3M15 8v4M9 12v3M15 15v4"/></svg></div>
         <div class="link-info"><div class="link-title">Electronics Tutorials — Resistors, Capacitors, LEDs</div><div class="link-url">electronics-tutorials.ws — Deep dives into every electronic component</div></div>
         <div class="link-arr">›</div>
       </a>
@@ -1615,33 +1621,31 @@ LiquidCrystal_I2C lcd(<span class="num">0x27</span>, <span class="num">16</span>
       <div class="slide-title">▶ Interactive C/C++ Console</div>
       <div class="slide-body">
         <p>Write and run real C/C++ code in your browser. Powered by the <strong>Wandbox API</strong> — a free online compiler that runs your code on a real GCC compiler server. This lets you practice all the C programming concepts from  before uploading to Arduino.</p>
-        <p style="margin-top:8px;font-size:12px;color:rgba(255,255,255,0.45);">📡 Requires an internet connection. Runs on real GCC — output appears in 1–3 seconds. <strong>Arduino functions</strong> like pinMode() and digitalWrite() won't work here — use standard C++ only (printf, cout, for/while loops, functions etc.)</p>
+        <p style="margin-top:8px;font-size:12px;color:var(--muted);"> Requires an internet connection. Runs on real GCC — output appears in 1–3 seconds. <strong>Arduino functions</strong> like pinMode() and digitalWrite() won't work here — use standard C++ only (printf, cout, for/while loops, functions etc.)</p>
       </div>
     </div>
 
     <!-- CONSOLE UI -->
-    <div style="background:#040d1a;border:1px solid rgba(6,182,212,0.3);border-radius:16px;overflow:hidden;margin-bottom:18px;">
-      <!-- TOP BAR -->
-      <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(6,182,212,0.1);padding:10px 16px;border-bottom:1px solid rgba(6,182,212,0.15);">
-        <div style="display:flex;gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:#ef4444;display:inline-block;"></span><span style="width:10px;height:10px;border-radius:50%;background:#fbbf24;display:inline-block;"></span><span style="width:10px;height:10px;border-radius:50%;background:#22c55e;display:inline-block;"></span></div>
-        <div style="font-family:'Orbitron',monospace;font-size:11px;font-weight:700;color:var(--teal-p);letter-spacing:2px;">C/C++ Console</div>
-        <div style="font-size:10px;color:rgba(255,255,255,0.3);">GCC via Wandbox</div>
+        <div class="console-wrap">
+      <div class="console-topbar">
+        <div class="console-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="console-title">C / C++ Console</div>
+        <div style="font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:1px;">GCC via Wandbox</div>
       </div>
-      <!-- SNIPPET BUTTONS -->
-      <div style="display:flex;gap:6px;padding:10px 12px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,0.05);">
-        <button onclick="loadCSnippet('hello')" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);border-radius:6px;padding:4px 11px;font-size:10px;font-weight:600;color:var(--teal-p);cursor:pointer;font-family:'Exo 2',sans-serif;">Hello World</button>
-        <button onclick="loadCSnippet('variables')" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);border-radius:6px;padding:4px 11px;font-size:10px;font-weight:600;color:var(--teal-p);cursor:pointer;font-family:'Exo 2',sans-serif;">Variables</button>
-        <button onclick="loadCSnippet('ifelse')" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);border-radius:6px;padding:4px 11px;font-size:10px;font-weight:600;color:var(--teal-p);cursor:pointer;font-family:'Exo 2',sans-serif;">If / Else</button>
-        <button onclick="loadCSnippet('forloop')" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);border-radius:6px;padding:4px 11px;font-size:10px;font-weight:600;color:var(--teal-p);cursor:pointer;font-family:'Exo 2',sans-serif;">For Loop</button>
-        <button onclick="loadCSnippet('whileloop')" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);border-radius:6px;padding:4px 11px;font-size:10px;font-weight:600;color:var(--teal-p);cursor:pointer;font-family:'Exo 2',sans-serif;">While Loop</button>
-        <button onclick="loadCSnippet('functions')" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);border-radius:6px;padding:4px 11px;font-size:10px;font-weight:600;color:var(--teal-p);cursor:pointer;font-family:'Exo 2',sans-serif;">Functions</button>
-        <button onclick="loadCSnippet('arrays')" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);border-radius:6px;padding:4px 11px;font-size:10px;font-weight:600;color:var(--teal-p);cursor:pointer;font-family:'Exo 2',sans-serif;">Arrays</button>
-        <button onclick="loadCSnippet('math')" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);border-radius:6px;padding:4px 11px;font-size:10px;font-weight:600;color:var(--teal-p);cursor:pointer;font-family:'Exo 2',sans-serif;">Math Ops</button>
-        <button onclick="loadCSnippet('simulate')" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);border-radius:6px;padding:4px 11px;font-size:10px;font-weight:600;color:var(--teal-p);cursor:pointer;font-family:'Exo 2',sans-serif;">Simulate LED</button>
-        <button onclick="loadCSnippet('sensor')" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);border-radius:6px;padding:4px 11px;font-size:10px;font-weight:600;color:var(--teal-p);cursor:pointer;font-family:'Exo 2',sans-serif;">Sensor Sim</button>
+      <div class="console-snippets">
+        <button class="snippet-btn" onclick="loadCSnippet('hello')">Hello World</button>
+        <button class="snippet-btn" onclick="loadCSnippet('variables')">Variables</button>
+        <button class="snippet-btn" onclick="loadCSnippet('ifelse')">If / Else</button>
+        <button class="snippet-btn" onclick="loadCSnippet('forloop')">For Loop</button>
+        <button class="snippet-btn" onclick="loadCSnippet('whileloop')">While Loop</button>
+        <button class="snippet-btn" onclick="loadCSnippet('functions')">Functions</button>
+        <button class="snippet-btn" onclick="loadCSnippet('arrays')">Arrays</button>
+        <button class="snippet-btn" onclick="loadCSnippet('math')">Math Ops</button>
+        <button class="snippet-btn" onclick="loadCSnippet('simulate')">Simulate LED</button>
+        <button class="snippet-btn" onclick="loadCSnippet('sensor')">Sensor Sim</button>
       </div>
-      <!-- EDITOR -->
-      <textarea id="c-code" spellcheck="false" autocorrect="off" autocapitalize="off" style="width:100%;min-height:240px;background:#040d1a;border:none;outline:none;color:#e2e8f0;font-family:'Fira Code',monospace;font-size:12.5px;line-height:1.75;padding:16px;resize:vertical;display:block;">#include &lt;stdio.h&gt;
+      <div class="console-editor">
+        <textarea id="c-code" spellcheck="false" autocorrect="off" autocapitalize="off">#include &lt;stdio.h&gt;
 
 // Your first C program!
 // Write any C/C++ code here and click Run
@@ -1658,23 +1662,22 @@ int main() {
 
     return 0;
 }</textarea>
-      <!-- RUN BAR -->
-      <div style="display:flex;gap:10px;padding:10px 12px;border-top:1px solid rgba(255,255,255,0.05);align-items:center;">
-        <button id="c-run-btn" onclick="runCCode()" style="background:var(--teal);border:none;border-radius:8px;padding:9px 20px;font-family:'Exo 2',sans-serif;font-size:13px;font-weight:700;color:#fff;cursor:pointer;">▶ Run</button>
-        <button onclick="clearCOutput()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:9px 16px;font-family:'Exo 2',sans-serif;font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);cursor:pointer;">Clear</button>
-        <span id="c-status" style="font-size:10px;color:rgba(255,255,255,0.35);flex:1;">Click ▶ Run to compile and execute</span>
       </div>
-      <!-- OUTPUT -->
-      <div style="border-top:1px solid rgba(6,182,212,0.1);">
-        <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(103,232,249,0.4);padding:8px 16px 4px;">Output</div>
-        <div id="c-output" style="font-family:'Fira Code',monospace;font-size:12.5px;color:#67e8f9;padding:10px 16px 16px;min-height:60px;white-space:pre-wrap;line-height:1.75;">Your output will appear here after clicking Run ▶</div>
+      <div class="console-run-bar">
+        <button id="c-run-btn" onclick="runCCode()"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" stroke="none"><polygon points="7 5 19 12 7 19 7 5"/></svg> Run</button>
+        <button id="clear-btn" onclick="clearCOutput()">Clear</button>
+        <span id="c-status" class="py-status">Select Run to compile and execute</span>
+      </div>
+      <div class="console-output-wrap">
+        <div class="output-label">Output</div>
+        <div id="c-output">Your output will appear here after you run the code.</div>
       </div>
     </div>
 
     <!-- TRY IT CHALLENGES -->
     <div class="slide">
       <div class="slide-tag">C Console · Challenges</div>
-      <div class="slide-title">🏋️ Try It Yourself — Coding Challenges</div>
+      <div class="slide-title"> Try It Yourself — Coding Challenges</div>
       <div class="slide-body"><p>Load the starter code for each challenge, edit it in the console above, and run it!</p></div>
       <div class="terms-grid">
         <div class="term">
@@ -1698,7 +1701,7 @@ int main() {
 
     <div class="slide">
       <div class="slide-tag">C Console · Tips</div>
-      <div class="slide-title">💡 Console Tips</div>
+      <div class="slide-title"> Console Tips</div>
       <div class="terms-grid">
         <div class="term"><div class="term-word">printf() vs cout</div><div class="term-def">Both work. printf() is C style — use %d for int, %f for float, %s for string, %c for char, \n for newline. cout is C++ style — use &lt;&lt; and endl.</div></div>
         <div class="term"><div class="term-word">Arduino Functions Won't Work</div><div class="term-def">digitalWrite(), analogRead() etc. are Arduino-specific. In the console, simulate them with printf() showing what would happen: printf("Pin 13: HIGH\n");</div></div>
@@ -1760,19 +1763,19 @@ int main() {
         const out = (data.program_output || '') + (data.program_error || '');
         output.textContent = out || '(No output produced)';
         output.style.color = data.program_error ? '#fca5a5' : '#67e8f9';
-        status.textContent = data.status == 0 ? '✅ Compiled & ran successfully' : '⚠ Ran with warnings/errors';
+        status.textContent = data.status == 0 ? '✓ Compiled & ran successfully' : ' Ran with warnings/errors';
       } else if (data.compiler_error) {
-        output.textContent = '❌ Compile Error:\n' + data.compiler_error;
+        output.textContent = ' Compile Error:\n' + data.compiler_error;
         output.style.color = '#fca5a5';
-        status.textContent = '❌ Compile failed — check your code';
+        status.textContent = ' Compile failed — check your code';
       } else {
         output.textContent = '(No output — add printf() statements to see results)';
-        status.textContent = '✅ Ran successfully';
+        status.textContent = '✓ Ran successfully';
       }
     } catch(err) {
-      output.textContent = '❌ Network Error: ' + err.message + '\n\nCheck your internet connection.\nWandbox API requires internet access.';
+      output.textContent = ' Network Error: ' + err.message + '\n\nCheck your internet connection.\nWandbox API requires internet access.';
       output.style.color = '#fca5a5';
-      status.textContent = '❌ Could not reach compiler';
+      status.textContent = ' Could not reach compiler';
     }
 
     btn.disabled = false;
@@ -2058,7 +2061,7 @@ int main() {
 // Here: we print what WOULD happen on the board
 
 void simulateDigitalWrite(int pin, int value) {
-    const char* state = value ? "HIGH (LED ON  💡)" : "LOW  (LED OFF 🔴)";
+    const char* state = value ? "HIGH (LED ON  )" : "LOW  (LED OFF )";
     printf("  Pin %d → %s\\n", pin, state);
 }
 
@@ -2091,7 +2094,7 @@ int main() {
     blinkPattern(13, 1000, 1000, 3);   // 3 slow blinks
     blinkPattern(13, 100, 100, 5);    // 5 fast blinks
 
-    printf("\\n✅ Simulation complete!\\n");
+    printf("\\n✓ Simulation complete!\\n");
     printf("Upload the equivalent code to Arduino to see it for real.\\n");
 
     return 0;
@@ -2148,7 +2151,7 @@ int main() {
     for (int i = 0; i < 5; i++) {
         float dist = calcDistance(durations[i]);
         const char* status =
-            dist < 10 ? "⚠ DANGER!" :
+            dist < 10 ? " DANGER!" :
             dist < 30 ? "WARNING" : "SAFE";
         printf("  duration=%4ldµs → %.1f cm → %s\\n",
                durations[i], dist, status);

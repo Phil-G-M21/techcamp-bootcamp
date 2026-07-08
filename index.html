@@ -3,168 +3,199 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TechCamp — Student Access</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<title>TechCamp Boot Camp — Student Access</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; }
-  :root { --sky:#0ea5e9; --sky-l:#38bdf8; --sky-p:#7dd3fc; --dark:#020e2e; }
-
-  body {
-    background:var(--dark); font-family:'Exo 2',sans-serif;
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --paper:#eceae1; --card:#f7f6f0; --panel:#e4e2d7;
+    --ink:#1b1c1e; --ink-2:#43443f; --muted:#75766c;
+    --line:#d2d0c4; --line-2:#c1bfb1;
+    --pine:#1d4d43; --pine-d:#143a32;
+    --signal:#df530a; --signal-d:#bf460a;
+    --ok:#1c6b4d; --warn:#8a5a12; --err:#a12b1e;
+    --mono:'JetBrains Mono',monospace;
+    --disp:'Space Grotesk',sans-serif;
+    --body:'IBM Plex Sans',sans-serif;
+  }
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    background:var(--paper); color:var(--ink); font-family:var(--body);
     min-height:100vh; display:flex; flex-direction:column;
-    align-items:center; justify-content:center; padding:20px;
-    position:relative; overflow:hidden;
+    align-items:center; justify-content:center; padding:24px;
+    position:relative; line-height:1.55;
+    background-image:
+      linear-gradient(rgba(27,28,30,0.028) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(27,28,30,0.028) 1px,transparent 1px);
+    background-size:26px 26px;
   }
-  .grid-bg { position:fixed; inset:0; z-index:0; pointer-events:none;
-    background-image:linear-gradient(rgba(14,165,233,0.04) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(14,165,233,0.04) 1px,transparent 1px);
-    background-size:36px 36px; }
-  .blob { position:fixed; border-radius:50%; filter:blur(80px); pointer-events:none; z-index:0; }
-  .b1 { width:380px;height:380px; background:rgba(14,165,233,0.12); top:-100px; right:-100px; }
-  .b2 { width:300px;height:300px; background:rgba(56,189,248,0.08); bottom:-60px; left:-60px; }
-  .scan { position:fixed; top:0; left:0; right:0; height:2px;
-    background:linear-gradient(90deg,transparent,rgba(125,211,252,0.7),transparent);
-    animation:scan 5s linear infinite; z-index:1; pointer-events:none; }
-  @keyframes scan { 0%{top:0;opacity:1;} 90%{opacity:0.5;} 100%{top:100%;opacity:0;} }
+  ::selection{background:var(--pine);color:#fff;}
 
-  .gate-card {
-    position:relative; z-index:5; width:100%; max-width:420px;
-    background:rgba(255,255,255,0.04); border:1px solid rgba(125,211,252,0.2);
-    border-radius:20px; padding:36px 28px;
-    box-shadow:0 30px 80px rgba(0,0,0,0.4);
+  .sheet{
+    position:relative; width:100%; max-width:430px; background:var(--card);
+    border:1px solid var(--line-2); padding:38px 34px 34px;
+    box-shadow:0 1px 0 var(--line), 0 24px 60px -30px rgba(27,28,30,0.4);
   }
-  .logo-wrap { text-align:center; margin-bottom:28px; }
-  .logo-icon { font-size:42px; filter:drop-shadow(0 0 20px rgba(56,189,248,0.5)); margin-bottom:10px; }
-  .logo-title { font-family:'Orbitron',monospace; font-weight:900; font-size:28px; color:#fff; text-shadow:0 0 30px rgba(56,189,248,0.4); }
-  .logo-title span { color:var(--sky-l); }
-  .logo-sub { font-family:'Orbitron',monospace; font-size:11px; color:transparent; -webkit-text-stroke:1px rgba(125,211,252,0.4); letter-spacing:5px; margin-top:3px; }
-  .logo-desc { font-size:12px; font-weight:300; color:rgba(255,255,255,0.45); margin-top:10px; line-height:1.6; }
+  /* drafting registration ticks */
+  .sheet::before,.sheet::after{content:"";position:absolute;width:12px;height:12px;pointer-events:none;}
+  .sheet::before{top:-1px;left:-1px;border-top:2px solid var(--ink);border-left:2px solid var(--ink);}
+  .sheet::after{bottom:-1px;right:-1px;border-bottom:2px solid var(--ink);border-right:2px solid var(--ink);}
+  .tick-tr,.tick-bl{position:absolute;width:12px;height:12px;pointer-events:none;}
+  .tick-tr{top:-1px;right:-1px;border-top:2px solid var(--ink);border-right:2px solid var(--ink);}
+  .tick-bl{bottom:-1px;left:-1px;border-bottom:2px solid var(--ink);border-left:2px solid var(--ink);}
 
-  .divider { height:1px; background:linear-gradient(90deg,transparent,rgba(125,211,252,0.4),transparent); margin:24px 0; }
+  .brandrow{display:flex;align-items:center;gap:13px;margin-bottom:22px;}
+  .monogram{
+    width:46px;height:46px;flex:none;display:grid;place-items:center;
+    background:var(--ink);color:var(--card);font-family:var(--disp);
+    font-weight:700;font-size:17px;letter-spacing:0.5px;position:relative;
+  }
+  .monogram span{color:var(--signal);}
+  .brand-tt{font-family:var(--disp);font-weight:700;font-size:19px;letter-spacing:-0.4px;line-height:1;}
+  .brand-tt em{font-style:normal;color:var(--pine);}
+  .brand-sub{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:5px;}
 
-  .form-label { font-size:9px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:var(--sky-p); margin-bottom:6px; display:block; }
-  .form-group { margin-bottom:16px; }
-  .form-input {
-    width:100%; background:rgba(255,255,255,0.06); border:1px solid rgba(125,211,252,0.2);
-    border-radius:10px; padding:13px 16px; font-family:'Exo 2',sans-serif;
-    font-size:14px; color:#fff; outline:none; transition:border-color 0.2s;
+  .eyebrow{
+    font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;
+    color:var(--signal);display:flex;align-items:center;gap:8px;margin-bottom:12px;
   }
-  .form-input:focus { border-color:rgba(125,211,252,0.5); background:rgba(255,255,255,0.08); }
-  .form-input::placeholder { color:rgba(255,255,255,0.25); }
-  .form-input.shake { animation:shake 0.4s ease; border-color:rgba(239,68,68,0.5); }
-  @keyframes shake {
-    0%,100%{transform:translateX(0);}
-    20%{transform:translateX(-8px);}
-    40%{transform:translateX(8px);}
-    60%{transform:translateX(-6px);}
-    80%{transform:translateX(6px);}
-  }
+  .eyebrow::before{content:"";width:22px;height:1px;background:var(--signal);}
+  .lead{font-size:13.5px;color:var(--ink-2);margin-bottom:24px;line-height:1.6;}
 
-  .access-btn {
-    width:100%; background:linear-gradient(135deg,#0ea5e9,#0369a1);
-    border:none; border-radius:10px; padding:14px;
-    font-family:'Exo 2',sans-serif; font-size:15px; font-weight:800;
-    color:#fff; cursor:pointer; margin-top:4px;
-    box-shadow:0 6px 24px rgba(14,165,233,0.3); transition:all 0.2s;
-  }
-  .access-btn:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 8px 30px rgba(14,165,233,0.4); }
-  .access-btn:disabled { opacity:0.5; cursor:not-allowed; }
+  .rule{height:1px;background:var(--line-2);margin:22px 0;}
 
-  .msg-box { border-radius:10px; padding:13px 16px; font-size:12.5px; line-height:1.6; margin-top:14px; display:none; }
-  .msg-box.error { background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); color:#fca5a5; }
-  .msg-box.success { background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.3); color:#86efac; }
-  .msg-box.warn { background:rgba(251,191,36,0.08); border:1px solid rgba(251,191,36,0.25); color:#fde68a; }
-  .msg-box.show { display:block; }
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+  .field input{
+    width:100%;background:var(--paper);border:1px solid var(--line-2);
+    padding:13px 14px;font-family:var(--body);font-size:14.5px;color:var(--ink);
+    outline:none;transition:border-color .15s,box-shadow .15s;
+  }
+  .field input:focus{border-color:var(--pine);box-shadow:inset 0 0 0 1px var(--pine);}
+  .field input::placeholder{color:#a6a59a;}
+  .field input.shake{animation:shake .4s ease;border-color:var(--err);box-shadow:inset 0 0 0 1px var(--err);}
+  @keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-7px);}40%{transform:translateX(7px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
 
-  .register-box {
-    margin-top:22px; background:rgba(14,165,233,0.06);
-    border:1px solid rgba(14,165,233,0.2); border-radius:12px; padding:16px; text-align:center;
+  .btn-primary{
+    width:100%;display:flex;align-items:center;justify-content:center;gap:10px;
+    background:var(--ink);color:var(--card);border:none;padding:14px;
+    font-family:var(--disp);font-size:14px;font-weight:600;letter-spacing:.2px;
+    cursor:pointer;margin-top:6px;transition:background .15s,transform .05s;
   }
-  .register-box p { font-size:12px; color:rgba(255,255,255,0.45); line-height:1.6; margin-bottom:10px; }
-  .wa-btn {
-    display:inline-flex; align-items:center; gap:8px;
-    background:#25D366; border-radius:8px; padding:9px 18px;
-    text-decoration:none; font-size:13px; font-weight:700; color:#fff;
+  .btn-primary:hover:not(:disabled){background:var(--pine);}
+  .btn-primary:active:not(:disabled){transform:translateY(1px);}
+  .btn-primary:disabled{opacity:.45;cursor:not-allowed;}
+  .btn-primary svg{width:16px;height:16px;}
+
+  .msg{border-left:3px solid var(--muted);background:var(--panel);padding:12px 14px;font-size:12.5px;line-height:1.6;margin-top:16px;display:none;color:var(--ink-2);}
+  .msg strong{color:var(--ink);}
+  .msg.error{border-color:var(--err);background:#f4e5e2;color:#7d2015;}
+  .msg.success{border-color:var(--ok);background:#e3efe8;color:#154e39;}
+  .msg.warn{border-color:var(--warn);background:#f3ecdb;color:#6b4610;}
+  .msg.show{display:block;}
+
+  .register{margin-top:24px;border:1px solid var(--line-2);background:var(--paper);padding:18px;}
+  .register .rtag{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+  .register p{font-size:12.5px;color:var(--ink-2);line-height:1.6;margin-bottom:13px;}
+  .wa{
+    display:inline-flex;align-items:center;gap:9px;text-decoration:none;
+    background:var(--pine);color:#fff;padding:10px 18px;font-size:13px;font-weight:600;
+    font-family:var(--disp);transition:background .15s;
   }
-  .gate-footer { margin-top:24px; text-align:center; font-size:10px; color:rgba(255,255,255,0.2); line-height:1.8; z-index:5; position:relative; }
+  .wa:hover{background:var(--pine-d);}
+  .wa svg{width:16px;height:16px;}
+
+  .foot{margin-top:24px;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.5px;color:var(--muted);line-height:1.9;}
+  .foot a{color:var(--ink-2);text-decoration:none;}
+
+  @media (max-width:480px){.sheet{padding:30px 22px 26px;}}
 </style>
 </head>
 <body>
-<div class="grid-bg"></div>
-<div class="blob b1"></div>
-<div class="blob b2"></div>
-<div class="scan"></div>
 
-<div class="gate-card">
-  <div class="logo-wrap">
-    <div class="logo-icon">🎓</div>
-    <div class="logo-title">TECH<span>CAMP</span></div>
-    <div class="logo-sub">STUDENT PORTAL</div>
-    <p class="logo-desc">Enter your registered name and the personal access code sent to you on WhatsApp after payment.</p>
+<div class="sheet">
+  <span class="tick-tr"></span><span class="tick-bl"></span>
+
+  <div class="brandrow">
+    <div class="monogram">T<span>C</span></div>
+    <div>
+      <div class="brand-tt">Tech<em>Camp</em></div>
+      <div class="brand-sub">Boot Camp · Kumasi</div>
+    </div>
   </div>
 
-  <div class="divider"></div>
+  <div class="eyebrow">Restricted · Student access</div>
+  <p class="lead">Enter your registered name and the personal access code your instructor sent you on WhatsApp after payment.</p>
 
-  <div class="form-group">
-    <label class="form-label">Your Full Name</label>
-    <input type="text" id="input-name" class="form-input" placeholder="e.g. Kofi Mensah" autocomplete="name" />
+  <div class="rule"></div>
+
+  <div class="field">
+    <label for="input-name">Full name</label>
+    <input type="text" id="input-name" placeholder="e.g. Kofi Mensah" autocomplete="name" />
   </div>
 
-  <div class="form-group">
-    <label class="form-label">Personal Access Code</label>
-    <input type="text" id="input-code" class="form-input" placeholder="e.g. TC-ABCD"
-      autocomplete="off" style="letter-spacing:2px;text-transform:uppercase;"
+  <div class="field">
+    <label for="input-code">Access code</label>
+    <input type="text" id="input-code" placeholder="TC-ABCD" autocomplete="off"
+      style="letter-spacing:2px;text-transform:uppercase;font-family:var(--mono);"
       oninput="this.value=this.value.toUpperCase()" />
   </div>
 
-  <button class="access-btn" onclick="checkAccess()" id="access-btn">🔓 Enter Portal</button>
+  <button class="btn-primary" onclick="checkAccess()" id="access-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="1"/><path d="M8 10V7a4 4 0 0 1 8 0"/><path d="M12 14v2"/></svg>
+    Enter portal
+  </button>
 
-  <div class="msg-box" id="msg-box"></div>
+  <div class="msg" id="msg-box"></div>
 
-  <div class="register-box">
-    <p>Not registered yet? Text your instructor on WhatsApp to pay and receive your personal access code.</p>
-    <a class="wa-btn" href="https://wa.me/233554197193?text=Hi%20Philimon%2C%20I%20want%20to%20register%20for%20TechCamp%20and%20get%20access" target="_blank">
-      📱 Register via WhatsApp
+  <div class="register">
+    <div class="rtag">Not registered yet?</div>
+    <p>Text your instructor on WhatsApp to pay and receive your personal access code.</p>
+    <a class="wa" href="https://wa.me/233554197193?text=Hi%20Philimon%2C%20I%20want%20to%20register%20for%20TechCamp%20and%20get%20access" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      Register via WhatsApp
     </a>
   </div>
 </div>
 
-<div class="gate-footer">
-  techcamp.live · Online Boot Camp<br>
-  <span style="opacity:0.6;">Instructor: Gyamerah Afriyie Philimon</span>
+<div class="foot">
+  <a href="https://techcamp.live">techcamp.live</a> · Online Boot Camp<br>
+  Instructor — Gyamerah Afriyie Philimon
 </div>
 
 <script>
-// ════════════════════════════════════════════════════════════════
-//   ✏️  STUDENT ACCESS LIST — UPDATE THIS WHEN SOMEONE PAYS
+// ============================================================
+//   STUDENT ACCESS LIST — UPDATE THIS WHEN SOMEONE PAYS
 //
 //   HOW TO ADD A STUDENT:
 //   1. Student pays on WhatsApp
 //   2. Invent a code (e.g. TC-KW24)
 //   3. Add: "full name in lowercase": "TC-XXXX",
 //   4. WhatsApp them their name + code
-//   5. Push to GitHub — live in 2 minutes!
+//   5. Push to GitHub — live in 2 minutes
 //
 //   RULES:
 //   - Name = ALL LOWERCASE
 //   - Code = UPPERCASE (TC- + 4 chars)
 //   - Comma after every entry
-// ════════════════════════════════════════════════════════════════
+// ============================================================
 
 const STUDENTS = {
-  "martin sefah":                  "TC-MS01",
-  "efua antwi":                 "TC-EF19",
-  "kwabena adjei":              "TC-KB63",
-  "adwoa frimpong":             "TC-AD77",
-  // ── add new students below this line ────────────────────────
-  // "new student name":        "TC-XXXX",
-  // ────────────────────────────────────────────────────────────
+  "martin sefah":              "TC-MS01",
+  "efua antwi":                "TC-EF19",
+  "kwabena adjei":             "TC-KB63",
+  "adwoa frimpong":            "TC-AD77",
+  // -- add new students below this line ----------------------
+  // "new student name":       "TC-XXXX",
+  // ----------------------------------------------------------
 };
 
-// ── SECURITY SETTINGS ────────────────────────────────────────
+// -- SECURITY SETTINGS --------------------------------------
 const MAX_ATTEMPTS = 5;
 const LOCKOUT_MINS = 15;
-// ─────────────────────────────────────────────────────────────
+// -----------------------------------------------------------
 
 let attempts    = parseInt(sessionStorage.getItem('tc_att') || '0');
 let lockedUntil = parseInt(sessionStorage.getItem('tc_lock') || '0');
@@ -177,14 +208,14 @@ if (sessionStorage.getItem('tc_auth') === 'true') {
 // Show lockout state on page load
 if (Date.now() < lockedUntil) {
   const m = Math.ceil((lockedUntil - Date.now()) / 60000);
-  showMsg(`🔒 Too many failed attempts. Try again in ${m} minute(s).`, 'error');
+  showMsg(`Too many failed attempts. Try again in <strong>${m} minute(s)</strong>.`, 'error');
   document.getElementById('access-btn').disabled = true;
 }
 
 function checkAccess() {
   if (Date.now() < lockedUntil) {
     const m = Math.ceil((lockedUntil - Date.now()) / 60000);
-    showMsg(`🔒 Locked out. Try again in ${m} minute(s).`, 'error');
+    showMsg(`Locked out. Try again in <strong>${m} minute(s)</strong>.`, 'error');
     return;
   }
 
@@ -200,8 +231,8 @@ function checkAccess() {
 
   if (isValid) {
     attempts = 0;
-    sessionStorage.setItem('tc_att',     '0');
-    sessionStorage.setItem('tc_auth',    'true');
+    sessionStorage.setItem('tc_att',  '0');
+    sessionStorage.setItem('tc_auth', 'true');
 
     // Always store name in Title Case regardless of how they typed it
     var titleName = nameRaw.replace(/\w\S*/g, function(w) {
@@ -209,7 +240,7 @@ function checkAccess() {
     });
     sessionStorage.setItem('tc_student', titleName);
 
-    showMsg('✅ Welcome, ' + titleName + '! Taking you to your portal...', 'success');
+    showMsg('Welcome, <strong>' + titleName + '</strong>. Taking you to your portal…', 'success');
     document.getElementById('access-btn').disabled = true;
     setTimeout(() => window.location.replace('portal.html'), 1600);
 
@@ -222,11 +253,11 @@ function checkAccess() {
       sessionStorage.setItem('tc_lock', until);
       lockedUntil = until;
       document.getElementById('access-btn').disabled = true;
-      showMsg(`🔒 Too many attempts. Locked for ${LOCKOUT_MINS} minutes. Contact your instructor if you need help.`, 'error');
+      showMsg(`Too many attempts. Locked for <strong>${LOCKOUT_MINS} minutes</strong>. Contact your instructor if you need help.`, 'error');
     } else {
       const left = MAX_ATTEMPTS - attempts;
       showMsg(
-        `❌ Name or code not recognised. Double-check exactly as sent to you on WhatsApp.<br>
+        `Name or code not recognised. Double-check exactly as sent to you on WhatsApp.<br>
          <strong>${left} attempt${left !== 1 ? 's' : ''} remaining</strong> before lockout.`,
         'error'
       );
@@ -244,7 +275,7 @@ function checkAccess() {
 function showMsg(html, type) {
   const b = document.getElementById('msg-box');
   b.innerHTML = html;
-  b.className = `msg-box ${type} show`;
+  b.className = `msg ${type} show`;
 }
 
 document.addEventListener('keydown', e => { if (e.key === 'Enter') checkAccess(); });

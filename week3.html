@@ -4,172 +4,181 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Python Programming — TechCamp</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root { --green:#22c55e; --green-l:#4ade80; --green-p:#86efac; --dark:#020e2e; }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:var(--dark); font-family:'Exo 2',sans-serif; color:#fff; min-height:100vh; }
-
-  .grid-bg { position:fixed; inset:0; z-index:0; pointer-events:none;
-    background-image:linear-gradient(rgba(34,197,94,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(34,197,94,0.04) 1px,transparent 1px);
-    background-size:40px 40px; }
-  .blob { position:fixed; border-radius:50%; filter:blur(90px); pointer-events:none; z-index:0; }
-  .b1 { width:350px;height:350px; background:rgba(34,197,94,0.15); top:-80px; right:-80px; }
-  .b2 { width:300px;height:300px; background:rgba(16,185,129,0.1); bottom:0; left:-60px; }
-
-  .wrap { position:relative; z-index:1; max-width:720px; margin:0 auto; padding:30px 18px 70px; }
-
-  .topnav { display:flex; align-items:center; justify-content:space-between; margin-bottom:32px; }
-  .topnav a { text-decoration:none; color:var(--green-p); font-size:12px; font-weight:700; letter-spacing:1px; }
-  .week-badge { background:rgba(34,197,94,0.15); border:1px solid rgba(34,197,94,0.4); color:var(--green-p); font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:6px 14px; border-radius:50px; }
-
-  .hero { text-align:center; margin-bottom:36px; }
-  .hero-icon { font-size:52px; margin-bottom:12px; filter:drop-shadow(0 0 20px rgba(34,197,94,0.5)); }
-  .hero-title { font-family:'Orbitron',monospace; font-weight:900; font-size:26px; color:#fff; text-shadow:0 0 30px rgba(34,197,94,0.4); margin-bottom:8px; }
-  .hero-sub { font-size:13px; font-weight:300; color:rgba(255,255,255,0.5); line-height:1.7; }
-  .hero-dates { display:inline-block; margin-top:12px; background:rgba(34,197,94,0.12); border:1px solid rgba(34,197,94,0.3); border-radius:50px; padding:6px 16px; font-size:11px; font-weight:700; color:var(--green-p); letter-spacing:2px; }
-
-  .progress-strip { display:flex; gap:5px; margin-bottom:36px; }
-  .p-day { flex:1; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:10px 4px; text-align:center; cursor:pointer; transition:all 0.2s; }
-  .p-day.active { background:rgba(34,197,94,0.2); border-color:rgba(34,197,94,0.5); }
-  .p-day:hover { background:rgba(255,255,255,0.1); }
-  .p-num { font-family:'Orbitron',monospace; font-size:13px; font-weight:700; color:#fff; }
-  .p-label { font-size:7px; color:rgba(255,255,255,0.4); letter-spacing:1px; margin-top:3px; text-transform:uppercase; }
-
-  .lesson { display:none; }
-  .lesson.active { display:block; }
-
-  /* SLIDE */
-  .slide { background:linear-gradient(135deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02)); border:1px solid rgba(34,197,94,0.15); border-radius:16px; padding:24px 20px; margin-bottom:18px; position:relative; overflow:hidden; }
-  .slide::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--green),#0ea5e9); }
-  .slide-tag { font-size:9px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--green-p); margin-bottom:8px; }
-  .slide-title { font-size:19px; font-weight:800; color:#fff; margin-bottom:12px; line-height:1.3; }
-  .slide-body { font-size:13px; font-weight:400; color:rgba(255,255,255,0.7); line-height:1.8; }
-  .slide-body p { margin-bottom:10px; }
-  .slide-body strong { color:#fff; }
-
-  /* PROJECT SLIDE — highlighted differently */
-  .project-slide { background:linear-gradient(135deg,rgba(34,197,94,0.1),rgba(14,165,233,0.05)); border:1px solid rgba(34,197,94,0.3); border-radius:16px; padding:24px 20px; margin-bottom:18px; position:relative; overflow:hidden; }
-  .project-slide::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#22c55e,#fbbf24); }
-  .project-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(34,197,94,0.2); border:1px solid rgba(34,197,94,0.4); border-radius:20px; padding:4px 12px; font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--green-p); margin-bottom:10px; }
-  .project-title { font-size:18px; font-weight:800; color:#fff; margin-bottom:8px; }
-  .project-desc { font-size:12.5px; color:rgba(255,255,255,0.6); line-height:1.7; margin-bottom:14px; }
-
-  /* GRIDS */
-  .vis-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
-  .vis-card { background:rgba(255,255,255,0.05); border:1px solid rgba(34,197,94,0.12); border-radius:10px; padding:13px; text-align:center; }
-  .vis-icon { font-size:26px; margin-bottom:6px; }
-  .vis-label { font-size:12px; font-weight:700; color:#fff; margin-bottom:3px; }
-  .vis-desc { font-size:10px; color:rgba(255,255,255,0.45); font-weight:300; line-height:1.4; }
-
-  /* CODE */
-  .code-block { background:#040d1a; border:1px solid rgba(34,197,94,0.2); border-radius:10px; padding:16px; margin:12px 0; overflow-x:auto; }
-  .code-block pre { font-family:'Fira Code',monospace; font-size:12px; color:#e2e8f0; line-height:1.8; white-space:pre; }
-  .kw{color:#4ade80;} .str{color:#fbbf24;} .cm{color:#4b5563;} .num{color:#f472b6;} .fn{color:#60a5fa;} .bi{color:#67e8f9;}
-
-  .code-lang { font-size:9px; font-weight:700; letter-spacing:2px; color:var(--green-p); margin-bottom:8px; text-transform:uppercase; }
-
-  /* OUTPUT */
-  .output-block { background:#040d1a; border:1px solid rgba(34,197,94,0.15); border-radius:8px; padding:14px; margin-top:8px; }
-  .output-label { font-size:8px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(134,239,172,0.4); margin-bottom:8px; }
-  .output-block pre { font-family:'Fira Code',monospace; font-size:12px; color:#86efac; line-height:1.75; }
-
-  /* STEPS */
-  .steps { display:flex; flex-direction:column; gap:10px; margin-top:12px; }
-  .step { display:flex; gap:12px; align-items:flex-start; }
-  .step-num { width:26px; height:26px; border-radius:50%; flex-shrink:0; background:rgba(34,197,94,0.2); border:1px solid rgba(34,197,94,0.4); display:flex; align-items:center; justify-content:center; font-family:'Orbitron',monospace; font-size:10px; font-weight:700; color:var(--green-p); margin-top:2px; }
-  .step-text { font-size:13px; color:rgba(255,255,255,0.7); line-height:1.6; }
-  .step-text strong { color:#fff; }
-
-  /* TERMS */
-  .terms-grid { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
-  .term { background:rgba(255,255,255,0.04); border-left:3px solid var(--green); border-radius:0 8px 8px 0; padding:10px 14px; }
-  .term-word { font-size:13px; font-weight:700; color:var(--green-l); margin-bottom:2px; }
-  .term-def { font-size:11.5px; color:rgba(255,255,255,0.6); line-height:1.5; }
-
-  /* BOXES */
-  .tip-box { background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.25); border-radius:10px; padding:13px 16px; margin-top:13px; display:flex; gap:10px; align-items:flex-start; }
-  .tip-icon { font-size:17px; flex-shrink:0; }
-  .tip-text { font-size:12px; color:rgba(134,239,172,0.85); line-height:1.6; }
-
-  .warn-box { background:rgba(251,191,36,0.08); border:1px solid rgba(251,191,36,0.25); border-radius:10px; padding:13px 16px; margin-top:13px; display:flex; gap:10px; align-items:flex-start; }
-  .warn-icon { font-size:17px; flex-shrink:0; }
-  .warn-text { font-size:12px; color:rgba(253,230,138,0.85); line-height:1.6; }
-
-  /* CHALLENGE BOX */
-  .challenge { background:rgba(251,191,36,0.07); border:1px solid rgba(251,191,36,0.25); border-radius:10px; padding:14px 16px; margin-top:12px; }
-  .challenge-label { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#fbbf24; margin-bottom:8px; }
-  .challenge-text { font-size:12.5px; color:rgba(255,255,255,0.65); line-height:1.6; }
-
-  /* CODE EXPLAIN */
-  .code-explain { display:flex; flex-direction:column; gap:7px; margin-top:12px; }
-  .ce-row { display:flex; gap:10px; align-items:flex-start; padding:8px 12px; background:rgba(255,255,255,0.03); border-radius:8px; border-left:2px solid rgba(34,197,94,0.3); }
-  .ce-code { font-family:'Fira Code',monospace; font-size:11px; color:#4ade80; flex-shrink:0; min-width:140px; }
-  .ce-desc { font-size:11.5px; color:rgba(255,255,255,0.6); line-height:1.5; }
-
-  /* LINK CARD */
-  .link-card { background:rgba(255,255,255,0.05); border:1px solid rgba(34,197,94,0.2); border-radius:10px; padding:13px 16px; margin-bottom:9px; display:flex; align-items:center; gap:12px; text-decoration:none; }
-  .link-card:hover { background:rgba(255,255,255,0.09); }
-  .link-icon { font-size:20px; flex-shrink:0; }
-  .link-info { flex:1; }
-  .link-title { font-size:13px; font-weight:700; color:#fff; }
-  .link-url { font-size:10px; color:rgba(134,239,172,0.6); margin-top:2px; }
-  .link-arr { color:rgba(134,239,172,0.4); font-size:18px; }
-
-  /* REACH OUT */
-  .reach-box { background:rgba(14,165,233,0.07); border:1px solid rgba(14,165,233,0.2); border-radius:14px; padding:20px; margin-top:14px; }
-  .reach-title { font-size:15px; font-weight:800; color:#fff; margin-bottom:6px; }
-  .reach-body { font-size:12.5px; color:rgba(255,255,255,0.55); line-height:1.7; margin-bottom:14px; }
-  .reach-btns { display:flex; gap:8px; flex-wrap:wrap; }
-  .reach-btn { flex:1; min-width:80px; text-align:center; text-decoration:none; background:rgba(255,255,255,0.07); border:1px solid rgba(125,211,252,0.2); border-radius:10px; padding:10px 10px; font-size:12px; font-weight:700; color:#fff; }
-
-  /* CONSOLE */
-  .console-wrap { background:#040d1a; border:1px solid rgba(34,197,94,0.3); border-radius:16px; overflow:hidden; margin-bottom:18px; }
-  .console-topbar { display:flex; align-items:center; justify-content:space-between; background:rgba(34,197,94,0.1); padding:10px 16px; border-bottom:1px solid rgba(34,197,94,0.15); }
-  .console-title { font-family:'Orbitron',monospace; font-size:11px; font-weight:700; color:var(--green-p); letter-spacing:2px; }
-  .console-dots { display:flex; gap:6px; }
-  .console-dots span { width:10px; height:10px; border-radius:50%; }
-  .console-dots .r { background:#ef4444; }
-  .console-dots .y { background:#fbbf24; }
-  .console-dots .g { background:#22c55e; }
-  .console-snippets { display:flex; gap:6px; padding:10px 12px; flex-wrap:wrap; border-bottom:1px solid rgba(255,255,255,0.05); }
-  .snippet-btn { background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.2); border-radius:6px; padding:4px 10px; font-size:10px; font-weight:600; color:var(--green-p); cursor:pointer; font-family:'Exo 2',sans-serif; white-space:nowrap; }
-  .snippet-btn:hover { background:rgba(34,197,94,0.2); }
-  .console-editor { position:relative; }
-  #py-code {
-    width:100%; min-height:220px; background:#040d1a; border:none; outline:none;
-    color:#e2e8f0; font-family:'Fira Code',monospace; font-size:13px; line-height:1.75;
-    padding:16px; resize:vertical; display:block;
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --paper:#eceae1; --card:#f7f6f0; --panel:#e4e2d7;
+    --ink:#1b1c1e; --ink-2:#43443f; --muted:#75766c;
+    --line:#d2d0c4; --line-2:#c1bfb1;
+    --accent:#2f6b4c; --accent-soft:#e2ede6; --accent-line:#bcd3c6;
+    --pine:#1d4d43; --signal:#df530a;
+    --term:#15171b; --term-line:#2b2e33; --term-ink:#dcdccf;
+    --mono:'JetBrains Mono',monospace; --disp:'Space Grotesk',sans-serif; --body:'IBM Plex Sans',sans-serif;
   }
-  .console-run-bar { display:flex; gap:10px; padding:10px 12px; border-top:1px solid rgba(255,255,255,0.05); align-items:center; }
-  #run-btn { background:var(--green); border:none; border-radius:8px; padding:9px 20px; font-family:'Exo 2',sans-serif; font-size:13px; font-weight:700; color:#fff; cursor:pointer; display:flex; align-items:center; gap:6px; }
-  #run-btn:hover { background:var(--green-l); }
-  #run-btn:disabled { background:rgba(34,197,94,0.3); cursor:not-allowed; }
-  #clear-btn { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:9px 16px; font-family:'Exo 2',sans-serif; font-size:12px; font-weight:600; color:rgba(255,255,255,0.5); cursor:pointer; }
-  #clear-btn:hover { background:rgba(255,255,255,0.1); }
-  .py-status { font-size:10px; color:rgba(255,255,255,0.3); flex:1; }
-  .console-output-wrap { border-top:1px solid rgba(34,197,94,0.1); }
-  .output-hdr { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(134,239,172,0.4); padding:8px 16px 4px; }
-  #py-output { font-family:'Fira Code',monospace; font-size:12.5px; color:#86efac; padding:10px 16px 16px; min-height:60px; white-space:pre-wrap; line-height:1.75; }
-  #py-output.error { color:#fca5a5; }
-  .py-loader { display:inline-block; width:14px; height:14px; border:2px solid rgba(34,197,94,0.3); border-top-color:var(--green); border-radius:50%; animation:spin 0.8s linear infinite; vertical-align:middle; margin-left:6px; }
-  @keyframes spin { to { transform:rotate(360deg); } }
+  html{-webkit-text-size-adjust:100%;}
+  body{background:var(--paper);color:var(--ink);font-family:var(--body);min-height:100vh;line-height:1.6;
+    background-image:linear-gradient(rgba(27,28,30,0.024) 1px,transparent 1px),linear-gradient(90deg,rgba(27,28,30,0.024) 1px,transparent 1px);background-size:26px 26px;}
+  ::selection{background:var(--accent);color:#fff;}
+  .wrap{max-width:740px;margin:0 auto;padding:24px 18px 72px;position:relative;z-index:1;}
 
-  /* NAV */
-  .lesson-nav { display:flex; gap:10px; margin-top:26px; }
-  .nav-btn { flex:1; background:rgba(255,255,255,0.06); border:1px solid rgba(34,197,94,0.2); border-radius:10px; padding:13px; text-align:center; cursor:pointer; font-family:'Exo 2',sans-serif; font-size:13px; font-weight:700; color:#fff; transition:all 0.2s; text-decoration:none; display:flex; align-items:center; justify-content:center; }
-  .nav-btn:hover { background:rgba(255,255,255,0.1); }
-  .nav-btn.primary { background:rgba(34,197,94,0.2); border-color:rgba(34,197,94,0.4); }
+  .topnav{display:flex;align-items:center;justify-content:space-between;margin-bottom:30px;gap:12px;}
+  .topnav a{text-decoration:none;color:var(--ink-2);font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.5px;display:inline-flex;align-items:center;gap:7px;}
+  .topnav a:hover{color:var(--accent);}
+  .topnav a svg{width:15px;height:15px;}
+  .week-badge{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:1.6px;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent-line);padding:6px 13px;background:var(--accent-soft);white-space:nowrap;}
 
-  footer { text-align:center; margin-top:40px; font-size:11px; color:rgba(255,255,255,0.2); line-height:1.8; }
+  .hero{border-bottom:1px solid var(--line-2);padding-bottom:26px;margin-bottom:28px;}
+  .hero-icon{width:54px;height:54px;display:grid;place-items:center;border:1px solid var(--line-2);color:var(--accent);margin-bottom:16px;background:var(--card);}
+  .hero-icon svg{width:28px;height:28px;}
+  .hero-title{font-family:var(--disp);font-weight:700;font-size:27px;letter-spacing:-.6px;line-height:1.12;margin-bottom:10px;}
+  .hero-sub{font-size:14px;color:var(--ink-2);line-height:1.65;max-width:62ch;}
+
+  #float-bar{position:fixed;top:12px;right:12px;z-index:9999;display:flex;align-items:center;gap:8px;}
+  #float-name{background:var(--card);border:1px solid var(--line-2);padding:7px 13px;font-family:var(--mono);font-size:11px;font-weight:500;color:var(--ink-2);white-space:nowrap;}
+  #float-signout{background:var(--card);border:1px solid var(--line-2);padding:7px 12px;font-family:var(--mono);font-size:11px;font-weight:500;color:var(--ink-2);cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;}
+  #float-signout:hover{border-color:#a12b1e;color:#a12b1e;}
+  #float-signout svg{width:13px;height:13px;}
+
+  .progress-strip{display:flex;gap:0;margin-bottom:32px;border:1px solid var(--line-2);background:var(--card);flex-wrap:wrap;}
+  .p-day{flex:1;min-width:64px;padding:11px 6px;text-align:center;cursor:pointer;transition:background .15s;border-right:1px solid var(--line-2);}
+  .p-day:last-child{border-right:none;}
+  .p-day.active{background:var(--accent);}
+  .p-day.active .p-num{color:#fff;}
+  .p-day.active .p-label{color:rgba(255,255,255,.82);}
+  .p-day:hover:not(.active){background:var(--panel);}
+  .p-num{font-family:var(--disp);font-size:14px;font-weight:700;color:var(--ink);}
+  .p-label{font-family:var(--mono);font-size:7.5px;color:var(--muted);letter-spacing:1px;margin-top:3px;text-transform:uppercase;}
+
+  .lesson{display:none;} .lesson.active{display:block;}
+
+  .slide{background:var(--card);border:1px solid var(--line-2);border-left:4px solid var(--accent);padding:22px;margin-bottom:16px;}
+  .slide-tag{font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+  .slide-title{font-family:var(--disp);font-size:19px;font-weight:600;letter-spacing:-.3px;margin-bottom:12px;line-height:1.28;}
+  .slide-body{font-size:13.5px;color:var(--ink-2);line-height:1.75;}
+  .slide-body p{margin-bottom:11px;} .slide-body p:last-child{margin-bottom:0;}
+  .slide-body strong{color:var(--ink);font-weight:600;}
+  .slide-body ul,.slide-body ol{margin:0 0 11px 20px;} .slide-body li{margin-bottom:5px;}
+  .slide-body a{color:var(--accent);text-decoration:underline;text-underline-offset:2px;}
+
+  .terms-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+  @media(max-width:520px){.terms-grid{grid-template-columns:1fr;}}
+  .term{background:var(--paper);border:1px solid var(--line-2);padding:13px 15px;}
+  .term-word{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--accent);margin-bottom:5px;letter-spacing:.3px;}
+  .term-def{font-size:12px;color:var(--ink-2);line-height:1.6;}
+
+  .vis-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+  @media(max-width:520px){.vis-grid{grid-template-columns:1fr;}}
+  .vis-card{background:var(--paper);border:1px solid var(--line-2);padding:16px 14px;text-align:center;}
+  .vis-icon{width:40px;height:40px;margin:0 auto 10px;display:grid;place-items:center;border:1px solid var(--line-2);color:var(--accent);background:var(--card);}
+  .vis-icon svg{width:21px;height:21px;}
+  .vis-label{font-family:var(--disp);font-size:13px;font-weight:600;margin-bottom:4px;}
+  .vis-desc{font-size:11.5px;color:var(--muted);line-height:1.55;}
+
+  .code-lang{font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+  .code-block{background:var(--term);border:1px solid var(--term-line);padding:16px;overflow-x:auto;margin-bottom:10px;border-radius:2px;}
+  .code-block pre{font-family:var(--mono);font-size:12px;line-height:1.75;color:var(--term-ink);white-space:pre;}
+  .kw{color:#d98a4a;} .str{color:#9cbf7a;} .cm{color:#6e726b;} .num{color:#cbb26b;}
+  .fn{color:#7fb2c9;} .sig{color:#9cbf7a;} .pwr{color:#d98a8a;} .gnd{color:#8a8d86;}
+  .pin{color:#7fb2c9;} .wire{color:#8a8d86;} .comp{color:#b79bd0;} .teal-p{color:#7fc9bf;} .note{color:#8a8d86;}
+  .bi{color:#7fb2c9;} pre .g{color:#9cbf7a;} pre .r{color:#d98a8a;} pre .y{color:#cbb26b;}
+
+  .code-explain{display:flex;flex-direction:column;gap:8px;margin-top:10px;}
+  .ce-row{display:flex;gap:12px;align-items:flex-start;}
+  .ce-code{font-family:var(--mono);font-size:11px;color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-line);padding:3px 8px;white-space:nowrap;flex-shrink:0;}
+  .ce-desc{font-size:12.5px;color:var(--ink-2);line-height:1.55;}
+
+  .steps{display:flex;flex-direction:column;gap:12px;margin-top:14px;}
+  .step{display:flex;gap:13px;align-items:flex-start;}
+  .step-num{width:26px;height:26px;flex-shrink:0;background:var(--accent);color:#fff;display:grid;place-items:center;font-family:var(--disp);font-size:12px;font-weight:600;margin-top:1px;}
+  .step-text{font-size:13.5px;color:var(--ink-2);line-height:1.7;}
+  .step-text strong{color:var(--ink);font-weight:600;}
+
+  .circuit-box{background:var(--term);border:1px solid var(--term-line);padding:16px 14px;margin:12px 0;border-radius:2px;}
+  .circuit-title{font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+  .circuit-diagram{font-family:var(--mono);font-size:11.5px;line-height:2;color:#9aa0a6;white-space:pre;overflow-x:auto;}
+
+  .tip-box{display:flex;gap:12px;align-items:flex-start;background:var(--accent-soft);border:1px solid var(--accent-line);border-left:3px solid var(--accent);padding:13px 15px;margin-top:12px;}
+  .tip-icon{color:var(--accent);flex-shrink:0;margin-top:1px;} .tip-icon svg{width:18px;height:18px;}
+  .tip-text{font-size:12.5px;color:var(--ink-2);line-height:1.6;} .tip-text strong{color:var(--ink);}
+  .warn-box{display:flex;gap:12px;align-items:flex-start;background:#f3ecdb;border:1px solid #d9c99a;border-left:3px solid #b58a1e;padding:13px 15px;margin-top:12px;}
+  .warn-icon{color:#8a5a12;flex-shrink:0;margin-top:1px;} .warn-icon svg{width:18px;height:18px;}
+  .warn-text{font-size:12.5px;color:#6b5320;line-height:1.6;} .warn-text strong{color:#3a2c0c;}
+
+  .link-card{display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid var(--line-2);padding:12px 14px;text-decoration:none;margin-bottom:8px;color:inherit;transition:border-color .15s;}
+  .link-card:hover{border-color:var(--ink);}
+  .link-icon{width:34px;height:34px;flex-shrink:0;display:grid;place-items:center;border:1px solid var(--line-2);color:var(--accent);}
+  .link-icon svg{width:18px;height:18px;}
+  .link-info{flex:1;} .link-title{font-family:var(--disp);font-size:13.5px;font-weight:600;margin-bottom:2px;}
+  .link-url{font-family:var(--mono);font-size:10.5px;color:var(--muted);}
+  .link-arr{color:var(--line-2);} .link-arr svg{width:18px;height:18px;}
+
+  table,.family-table,.pin-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:12.5px;background:var(--card);border:1px solid var(--line-2);}
+  th{background:var(--panel);font-family:var(--mono);font-size:9.5px;letter-spacing:.8px;text-transform:uppercase;color:var(--ink-2);text-align:left;padding:9px 11px;border-bottom:1px solid var(--line-2);font-weight:600;}
+  td{padding:9px 11px;border-bottom:1px solid var(--line);color:var(--ink-2);vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+
+  .img-row{display:flex;gap:12px;flex-wrap:wrap;margin:14px 0;}
+  .comp-img,.img-row img,.kit-imgs img{max-width:100%;border:1px solid var(--line-2);background:var(--card);}
+  .img-caption{font-family:var(--mono);font-size:10px;color:var(--muted);text-align:center;margin-top:6px;}
+
+  .kit-box,.reach-box,.wokwi-banner{background:var(--card);border:1px solid var(--line-2);border-left:4px solid var(--accent);padding:20px;margin:16px 0;}
+  .kit-title,.reach-title,.wokwi-title{font-family:var(--disp);font-size:16px;font-weight:600;margin-bottom:8px;}
+  .kit-body,.reach-body,.wokwi-text,.wokwi-sub{font-size:13px;color:var(--ink-2);line-height:1.65;margin-bottom:12px;}
+  .kit-imgs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+  .kit-btns,.reach-btns{display:flex;gap:10px;flex-wrap:wrap;}
+  .kit-btn,.reach-btn,.sim-link{display:inline-flex;align-items:center;gap:8px;text-decoration:none;background:var(--accent);color:#fff;padding:10px 16px;font-family:var(--disp);font-size:13px;font-weight:600;transition:filter .15s;}
+  .kit-btn:hover,.reach-btn:hover,.sim-link:hover{filter:brightness(.92);}
+  .wokwi-banner{display:flex;gap:14px;align-items:center;text-decoration:none;color:inherit;}
+  .wokwi-icon{width:40px;height:40px;flex-shrink:0;display:grid;place-items:center;border:1px solid var(--line-2);color:var(--accent);}
+  .wokwi-icon svg{width:21px;height:21px;} .wokwi-arr{margin-left:auto;color:var(--line-2);}
+
+  .challenge{background:var(--accent-soft);border:1px solid var(--accent-line);border-left:3px solid var(--accent);padding:15px 17px;margin:14px 0;}
+  .challenge-label{font-family:var(--mono);font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:7px;}
+  .challenge-text{font-size:13px;color:var(--ink-2);line-height:1.6;}
+  .project-slide{background:var(--card);border:1px solid var(--line-2);border-top:4px solid var(--accent);padding:22px;margin-bottom:16px;}
+  .project-badge{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent-line);padding:4px 10px;margin-bottom:10px;}
+  .project-title{font-family:var(--disp);font-size:19px;font-weight:600;margin-bottom:8px;}
+  .project-desc{font-size:13.5px;color:var(--ink-2);line-height:1.7;}
+
+  .console-wrap{background:var(--term);border:1px solid var(--term-line);overflow:hidden;margin-bottom:18px;border-radius:3px;}
+  .console-topbar{display:flex;align-items:center;justify-content:space-between;background:#1c1f24;padding:10px 14px;border-bottom:1px solid var(--term-line);}
+  .console-title{font-family:var(--mono);font-size:10.5px;font-weight:500;color:#b7bcc2;letter-spacing:1.5px;}
+  .console-dots{display:flex;gap:6px;}
+  .console-dots span{width:10px;height:10px;border-radius:50%;display:block;}
+  .console-dots .r{background:#d9534f;} .console-dots .y{background:#d9a441;} .console-dots .g{background:#4f9d69;}
+  .console-snippets{display:flex;gap:6px;padding:10px 12px;flex-wrap:wrap;border-bottom:1px solid var(--term-line);}
+  .snippet-btn{background:#22262c;border:1px solid #33373d;padding:4px 11px;font-family:var(--mono);font-size:10.5px;color:#c3c8ce;cursor:pointer;white-space:nowrap;}
+  .snippet-btn:hover{background:#2b3037;color:#fff;}
+  .console-editor{position:relative;}
+  #py-code,#c-code{width:100%;min-height:220px;background:var(--term);border:none;outline:none;color:#dcdccf;font-family:var(--mono);font-size:13px;line-height:1.75;padding:16px;resize:vertical;display:block;}
+  .console-run-bar{display:flex;gap:10px;padding:10px 12px;border-top:1px solid var(--term-line);align-items:center;}
+  #run-btn,#c-run-btn{background:var(--accent);border:none;padding:9px 22px;font-family:var(--disp);font-size:13px;font-weight:600;color:#fff;cursor:pointer;display:flex;align-items:center;gap:7px;}
+  #run-btn:hover,#c-run-btn:hover{filter:brightness(.92);}
+  #run-btn:disabled,#c-run-btn:disabled{opacity:.5;cursor:not-allowed;}
+  #clear-btn{background:#22262c;border:1px solid #33373d;padding:9px 16px;font-family:var(--mono);font-size:12px;color:#b7bcc2;cursor:pointer;}
+  #clear-btn:hover{background:#2b3037;color:#fff;}
+  .py-status{font-family:var(--mono);font-size:10.5px;color:#8a8f96;margin-left:auto;}
+  .console-output-wrap{border-top:1px solid var(--term-line);}
+  #py-output,#c-output{font-family:var(--mono);font-size:12.5px;line-height:1.7;color:#dcdccf;padding:14px 16px;white-space:pre-wrap;min-height:60px;background:#101216;}
+  .output-block{margin-top:12px;} .output-hdr,.output-label{font-family:var(--mono);font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+
+  .lesson-nav{display:flex;gap:10px;margin-top:26px;}
+  .nav-btn{flex:1;background:var(--card);border:1px solid var(--line-2);padding:13px;text-align:center;font-family:var(--disp);font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer;transition:border-color .15s,background .15s;}
+  .nav-btn:hover{border-color:var(--ink);}
+  .nav-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .nav-btn.primary:hover{filter:brightness(.92);}
+
+  footer{text-align:center;margin-top:44px;padding-top:22px;border-top:1px solid var(--line-2);font-family:var(--mono);font-size:10px;letter-spacing:.5px;color:var(--muted);line-height:1.9;}
+  .wh-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:1.5px;color:var(--accent);border:1px solid var(--accent-line);background:var(--accent-soft);padding:4px 11px;text-transform:uppercase;margin-bottom:10px;}
 </style>
 </head>
 <body>
 <script>if(sessionStorage.getItem("tc_auth")!=="true"){window.location.replace("index.html");}</script>
 <!-- FLOATING SIGN OUT BAR -->
-<div style="position:fixed;top:12px;right:12px;z-index:9999;display:flex;align-items:center;gap:8px;">
-  <div id="float-name" style="background:rgba(2,14,46,0.88);border:1px solid rgba(125,211,252,0.2);border-radius:10px;padding:7px 14px;font-family:'Exo 2',sans-serif;font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);white-space:nowrap;">Student</div>
-  <button onclick="signOut()" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:7px 12px;font-family:'Exo 2',sans-serif;font-size:11px;font-weight:700;color:#fca5a5;cursor:pointer;white-space:nowrap;">🚪 Sign Out</button>
+<div id="float-bar">
+  <div id="float-name">Student</div>
+  <button id="float-signout" onclick="signOut()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Sign out</button>
 </div>
 <script>
 (function(){
@@ -184,18 +193,14 @@ function signOut() {
   }
 }
 </script>
-<div class="grid-bg"></div>
-<div class="blob b1"></div>
-<div class="blob b2"></div>
-
 <div class="wrap">
   <nav class="topnav">
     <a href="index.html">← Back to Hub</a>
-    <div class="week-badge">🐍 Python Programming</div>
+    <div class="week-badge"> Python Programming</div>
   </nav>
 
   <div class="hero">
-    <div class="hero-icon">🐍</div>
+    <div class="hero-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h6a3 3 0 0 1 0 6H8a3 3 0 0 0 0 6h8"/><circle cx="6.5" cy="6" r="0.7" fill="currentColor"/></svg></div>
     <div class="hero-title">Python Programming</div>
     <p class="hero-sub">The world's most beginner-friendly language. We start from zero — by the end of this week you'll be writing real programs and building projects you can actually use.</p>
     
@@ -207,8 +212,8 @@ function signOut() {
     <div class="p-day" onclick="showModule(3)"><div class="p-num">3</div><div class="p-label">Functions</div></div>
     <div class="p-day" onclick="showModule(4)"><div class="p-num">4</div><div class="p-label">Projects</div></div>
     <div class="p-day" onclick="showModule(5)"><div class="p-num">5</div><div class="p-label">Final</div></div>
-    <div class="p-day" onclick="showModule(6)" style="background:rgba(34,197,94,0.1);border-color:rgba(34,197,94,0.3);"><div class="p-num" style="font-size:16px;">▶</div><div class="p-label">Console</div></div>
-    <div class="p-day" onclick="showModule(7)" style="background:rgba(251,191,36,0.08);border-color:rgba(251,191,36,0.3);"><div class="p-num" style="font-size:11px;">🔑</div><div class="p-label">Bonus</div></div>
+    <div class="p-day" onclick="showModule(6)"><div class="p-num"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" stroke="none"><polygon points="7 5 19 12 7 19 7 5"/></svg></div><div class="p-label">Console</div></div>
+    <div class="p-day" onclick="showModule(7)"><div class="p-num" style="font-size:11px;"></div><div class="p-label">Bonus</div></div>
   </div>
 
   <!-- ===== DAY 1 — GETTING STARTED ===== -->
@@ -216,36 +221,36 @@ function signOut() {
 
     <div class="slide">
       <div class="slide-tag">Why Python</div>
-      <div class="slide-title">🐍 Why Learn Python?</div>
+      <div class="slide-title"> Why Learn Python?</div>
       <div class="slide-body">
         <p>Python is the <strong>#1 most popular programming language</strong> in the world. It's used in AI, cybersecurity, web development, data science, automation and robotics. Companies like Google, Netflix, NASA, Instagram and Spotify all use Python.</p>
         <p>The best part for beginners? Python reads almost like <strong>plain English</strong>. No curly braces, no semicolons, no complicated syntax — just clear, readable code.</p>
       </div>
       <div class="vis-grid">
-        <div class="vis-card"><div class="vis-icon">🤖</div><div class="vis-label">AI & ML</div><div class="vis-desc">TensorFlow, PyTorch — all the big AI tools are Python.</div></div>
-        <div class="vis-card"><div class="vis-icon">🔐</div><div class="vis-label">Cybersecurity</div><div class="vis-desc">Most hacking tools and scripts are written in Python.</div></div>
-        <div class="vis-card"><div class="vis-icon">🌐</div><div class="vis-label">Web Dev</div><div class="vis-desc">Django & Flask build powerful websites with Python.</div></div>
-        <div class="vis-card"><div class="vis-icon">📊</div><div class="vis-label">Data Science</div><div class="vis-desc">Analyse and visualise data with pandas & matplotlib.</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M10 2v3M14 2v3M10 19v3M14 19v3M2 10h3M2 14h3M19 10h3M19 14h3"/></svg></div><div class="vis-label">AI & ML</div><div class="vis-desc">TensorFlow, PyTorch — all the big AI tools are Python.</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="1.5"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/><circle cx="12" cy="15.5" r="1.3"/></svg></div><div class="vis-label">Cybersecurity</div><div class="vis-desc">Most hacking tools and scripts are written in Python.</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg></div><div class="vis-label">Web Dev</div><div class="vis-desc">Django & Flask build powerful websites with Python.</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V4"/><path d="M4 20h16"/><rect x="7" y="12" width="3" height="5"/><rect x="12" y="8" width="3" height="9"/><rect x="17" y="5" width="3" height="12"/></svg></div><div class="vis-label">Data Science</div><div class="vis-desc">Analyse and visualise data with pandas & matplotlib.</div></div>
       </div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">Setup</div>
-      <div class="slide-title">⚙️ Setting Up Python</div>
+      <div class="slide-title"> Setting Up Python</div>
       <div class="slide-body"><p>You need two things — Python itself, and a code editor to write in.</p></div>
       <div class="steps">
         <div class="step"><div class="step-num">1</div><div class="step-text">Go to <strong>python.org/downloads</strong> → click <strong>Download Python 3.x</strong> (latest version). Install it.</div></div>
-        <div class="step"><div class="step-num">2</div><div class="step-text">⚠️ During install on Windows — check <strong>"Add Python to PATH"</strong> before clicking Install Now. Very important!</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-text"> During install on Windows — check <strong>"Add Python to PATH"</strong> before clicking Install Now. Very important!</div></div>
         <div class="step"><div class="step-num">3</div><div class="step-text">Download <strong>VS Code</strong> from code.visualstudio.com — this is your code editor.</div></div>
         <div class="step"><div class="step-num">4</div><div class="step-text">Open VS Code → Extensions (left sidebar) → search <strong>"Python"</strong> → install the Microsoft Python extension.</div></div>
         <div class="step"><div class="step-num">5</div><div class="step-text">Create a new file called <strong>hello.py</strong> and you're ready to code!</div></div>
       </div>
-      <div class="tip-box"><div class="tip-icon">🌐</div><div class="tip-text"><strong>No installation?</strong> Use <strong>replit.com</strong> — a free browser-based Python IDE. Create an account, click "Create Repl" → Python → start coding instantly, no setup needed.</div></div>
+      <div class="tip-box"><div class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg></div><div class="tip-text"><strong>No installation?</strong> Use <strong>replit.com</strong> — a free browser-based Python IDE. Create an account, click "Create Repl" → Python → start coding instantly, no setup needed.</div></div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">Your First Program</div>
-      <div class="slide-title">👋 Hello World — Your First Python Program</div>
+      <div class="slide-title"> Hello World — Your First Python Program</div>
       <div class="slide-body"><p>Every programmer starts here. This is the simplest Python program possible — one line that prints text to the screen.</p></div>
       <div class="code-lang">python — hello.py</div>
       <div class="code-block"><pre><span class="fn">print</span>(<span class="str">"Hello, World!"</span>)
@@ -262,14 +267,14 @@ I am learning Python.</pre>
         <div class="ce-row"><div class="ce-code">"Hello, World!"</div><div class="ce-desc">A string — text surrounded by quotes. Can use single ' or double " quotes.</div></div>
       </div>
       <div class="challenge">
-        <div class="challenge-label">🏋️ Try it Yourself</div>
+        <div class="challenge-label"> Try it Yourself</div>
         <div class="challenge-text">Change the text inside the print() to say your own name and where you're from. Run it and see it print!</div>
       </div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">Variables</div>
-      <div class="slide-title">📦 Variables — Storing Information</div>
+      <div class="slide-title"> Variables — Storing Information</div>
       <div class="slide-body">
         <p>A <strong>variable</strong> is a name that stores a value. In Python you don't need to declare the type — Python figures it out automatically. Think of variables like labelled boxes that hold data.</p>
       </div>
@@ -304,7 +309,7 @@ My name is Kwame and I am 21 years old.</pre>
 
     <div class="slide">
       <div class="slide-tag">Input & Math</div>
-      <div class="slide-title">⌨️ Getting Input + Doing Math</div>
+      <div class="slide-title">⌨ Getting Input + Doing Math</div>
       <div class="slide-body"><p>Programs become interactive when they ask the user questions. Use <strong>input()</strong> to get keyboard input.</p></div>
       <div class="code-lang">python — input and maths</div>
       <div class="code-block"><pre><span class="cm"># Get input from the user</span>
@@ -323,12 +328,12 @@ b = <span class="num">3</span>
 <span class="fn">print</span>(a // b)  <span class="cm"># 3   → floor division (no decimal)</span>
 <span class="fn">print</span>(a % b)   <span class="cm"># 1   → modulus (remainder)</span>
 <span class="fn">print</span>(a ** b)  <span class="cm"># 1000 → power (10 to the 3)</span></pre></div>
-      <div class="warn-box"><div class="warn-icon">⚠️</div><div class="warn-text"><strong>input() always returns text (a string).</strong> Wrap it with <strong>int()</strong> or <strong>float()</strong> if you need a number — otherwise you can't do math with it.</div></div>
+      <div class="warn-box"><div class="warn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3z"/><line x1="12" y1="10" x2="12" y2="14"/><circle cx="12" cy="17" r="0.6" fill="currentColor"/></svg></div><div class="warn-text"><strong>input() always returns text (a string).</strong> Wrap it with <strong>int()</strong> or <strong>float()</strong> if you need a number — otherwise you can't do math with it.</div></div>
     </div>
 
     <!-- DAY 1 PROJECT -->
     <div class="project-slide">
-      <div class="project-badge">🏗️  Project</div>
+      <div class="project-badge">  Project</div>
       <div class="project-title">Personal Info Card Generator</div>
       <div class="project-desc">Build a program that asks the user for their details and prints a formatted info card. Uses: variables, input(), f-strings and print().</div>
       <div class="code-lang">python — info_card.py</div>
@@ -372,21 +377,21 @@ TechCamp Boot Camp</pre>
 
     <div class="slide">
       <div class="slide-tag">Conditions</div>
-      <div class="slide-title">🔀 If / Elif / Else — Making Decisions</div>
+      <div class="slide-title"> If / Elif / Else — Making Decisions</div>
       <div class="slide-body"><p>Programs make decisions using <strong>if statements</strong>. Python uses <strong>indentation</strong> (4 spaces) to define code blocks — not curly braces like C.</p></div>
       <div class="code-lang">python — conditions</div>
       <div class="code-block"><pre>score = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Enter your score (0-100): "</span>))
 
 <span class="kw">if</span> score >= <span class="num">80</span>:
-    <span class="fn">print</span>(<span class="str">"🏆 Excellent! Grade A"</span>)
+    <span class="fn">print</span>(<span class="str">" Excellent! Grade A"</span>)
 <span class="kw">elif</span> score >= <span class="num">70</span>:
-    <span class="fn">print</span>(<span class="str">"✅ Good job! Grade B"</span>)
+    <span class="fn">print</span>(<span class="str">"✓ Good job! Grade B"</span>)
 <span class="kw">elif</span> score >= <span class="num">60</span>:
-    <span class="fn">print</span>(<span class="str">"👍 Pass. Grade C"</span>)
+    <span class="fn">print</span>(<span class="str">" Pass. Grade C"</span>)
 <span class="kw">elif</span> score >= <span class="num">50</span>:
-    <span class="fn">print</span>(<span class="str">"⚠ Borderline. Grade D"</span>)
+    <span class="fn">print</span>(<span class="str">" Borderline. Grade D"</span>)
 <span class="kw">else</span>:
-    <span class="fn">print</span>(<span class="str">"❌ Below pass mark. Study harder!"</span>)</pre></div>
+    <span class="fn">print</span>(<span class="str">" Below pass mark. Study harder!"</span>)</pre></div>
       <div class="terms-grid">
         <div class="term"><div class="term-word">== &nbsp; Equal to</div><div class="term-def">score == 100 → is score exactly 100?</div></div>
         <div class="term"><div class="term-word">!= &nbsp; Not equal</div><div class="term-def">name != "Admin" → is name NOT Admin?</div></div>
@@ -398,7 +403,7 @@ TechCamp Boot Camp</pre>
 
     <div class="slide">
       <div class="slide-tag">For Loop</div>
-      <div class="slide-title">🔁 For Loops — Repeat Automatically</div>
+      <div class="slide-title"> For Loops — Repeat Automatically</div>
       <div class="slide-body"><p>Loops let you repeat code without writing it over and over. The <strong>for loop</strong> repeats a specific number of times.</p></div>
       <div class="code-lang">python — for loops</div>
       <div class="code-block"><pre><span class="cm"># Count 1 to 5</span>
@@ -426,7 +431,7 @@ Welcome, Abena!</pre>
 
     <div class="slide">
       <div class="slide-tag">While Loop</div>
-      <div class="slide-title">🔄 While Loops — Repeat Until Done</div>
+      <div class="slide-title"> While Loops — Repeat Until Done</div>
       <div class="slide-body"><p>A <strong>while loop</strong> keeps running as long as a condition is True. Useful when you don't know how many times to repeat.</p></div>
       <div class="code-lang">python — while loop</div>
       <div class="code-block"><pre><span class="cm"># Count up to 5</span>
@@ -442,13 +447,13 @@ password = <span class="str">""</span>
     <span class="kw">if</span> password != <span class="str">"techcamp123"</span>:
         <span class="fn">print</span>(<span class="str">"Wrong! Try again."</span>)
 
-<span class="fn">print</span>(<span class="str">"Access granted! ✅"</span>)</pre></div>
-      <div class="warn-box"><div class="warn-icon">♾️</div><div class="warn-text">If your while condition never becomes False, you get an <strong>infinite loop</strong> — the program never stops. Always make sure something changes inside the loop to eventually break the condition. Press <strong>Ctrl+C</strong> to stop a running loop.</div></div>
+<span class="fn">print</span>(<span class="str">"Access granted! ✓"</span>)</pre></div>
+      <div class="warn-box"><div class="warn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 12a3 3 0 1 1 3 3c-1.5 0-2.5-1.5-4-3s-2.5-3-4-3a3 3 0 0 0 0 6"/></svg></div><div class="warn-text">If your while condition never becomes False, you get an <strong>infinite loop</strong> — the program never stops. Always make sure something changes inside the loop to eventually break the condition. Press <strong>Ctrl+C</strong> to stop a running loop.</div></div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">Lists</div>
-      <div class="slide-title">📋 Lists — Store Multiple Values</div>
+      <div class="slide-title"> Lists — Store Multiple Values</div>
       <div class="slide-body"><p>A <strong>list</strong> stores many items in one variable. Items are separated by commas and surrounded by square brackets <strong>[ ]</strong>.</p></div>
       <div class="code-lang">python — lists</div>
       <div class="code-block"><pre>fruits = [<span class="str">"mango"</span>, <span class="str">"orange"</span>, <span class="str">"banana"</span>, <span class="str">"pineapple"</span>]
@@ -467,19 +472,19 @@ fruits.sort()                 <span class="cm"># sort alphabetically</span>
 
 <span class="cm"># Loop through all items</span>
 <span class="kw">for</span> fruit <span class="kw">in</span> fruits:
-    <span class="fn">print</span>(<span class="str">f"🍎 {fruit}"</span>)</pre></div>
-      <div class="tip-box"><div class="tip-icon">⚠️</div><div class="tip-text">Lists are <strong>zero-indexed</strong> — the first item is at index <strong>0</strong>, not 1. So a list of 4 items has indexes 0, 1, 2, 3. Index 4 would cause an error!</div></div>
+    <span class="fn">print</span>(<span class="str">f" {fruit}"</span>)</pre></div>
+      <div class="tip-box"><div class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3z"/><line x1="12" y1="10" x2="12" y2="14"/><circle cx="12" cy="17" r="0.6" fill="currentColor"/></svg></div><div class="tip-text">Lists are <strong>zero-indexed</strong> — the first item is at index <strong>0</strong>, not 1. So a list of 4 items has indexes 0, 1, 2, 3. Index 4 would cause an error!</div></div>
     </div>
 
     <!-- DAY 2 PROJECT -->
     <div class="project-slide">
-      <div class="project-badge">🏗️  Project</div>
+      <div class="project-badge">  Project</div>
       <div class="project-title">Number Guessing Game</div>
       <div class="project-desc">A classic beginner project. The program picks a random number, you guess it. Uses: random, while loop, if/else, and input. Great for practising all of  and 2!</div>
       <div class="code-lang">python — guess_game.py</div>
       <div class="code-block"><pre><span class="kw">import</span> random
 
-<span class="fn">print</span>(<span class="str">"🎮 Welcome to the Number Guessing Game!"</span>)
+<span class="fn">print</span>(<span class="str">" Welcome to the Number Guessing Game!"</span>)
 <span class="fn">print</span>(<span class="str">"I'm thinking of a number between 1 and 100."</span>)
 <span class="fn">print</span>()
 
@@ -492,21 +497,21 @@ guessed = <span class="kw">False</span>
     attempts += <span class="num">1</span>
 
     <span class="kw">if</span> guess < secret:
-        <span class="fn">print</span>(<span class="str">"📉 Too low! Try higher."</span>)
+        <span class="fn">print</span>(<span class="str">" Too low! Try higher."</span>)
     <span class="kw">elif</span> guess > secret:
-        <span class="fn">print</span>(<span class="str">"📈 Too high! Try lower."</span>)
+        <span class="fn">print</span>(<span class="str">" Too high! Try lower."</span>)
     <span class="kw">else</span>:
         guessed = <span class="kw">True</span>
-        <span class="fn">print</span>(<span class="str">f"\n🎉 Correct! The number was {secret}."</span>)
+        <span class="fn">print</span>(<span class="str">f"\n Correct! The number was {secret}."</span>)
         <span class="fn">print</span>(<span class="str">f"You got it in {attempts} attempt(s)!"</span>)
         <span class="kw">if</span> attempts <= <span class="num">5</span>:
-            <span class="fn">print</span>(<span class="str">"⭐ Amazing! You're a natural guesser."</span>)
+            <span class="fn">print</span>(<span class="str">" Amazing! You're a natural guesser."</span>)
         <span class="kw">elif</span> attempts <= <span class="num">10</span>:
-            <span class="fn">print</span>(<span class="str">"👍 Good effort!"</span>)
+            <span class="fn">print</span>(<span class="str">" Good effort!"</span>)
         <span class="kw">else</span>:
-            <span class="fn">print</span>(<span class="str">"💪 Keep practising your guessing!"</span>)</pre></div>
+            <span class="fn">print</span>(<span class="str">" Keep practising your guessing!"</span>)</pre></div>
       <div class="challenge">
-        <div class="challenge-label">🏋️ Challenge</div>
+        <div class="challenge-label"> Challenge</div>
         <div class="challenge-text">Add a feature: ask the player if they want to play again after each game. Use another while loop to repeat the whole game until they say "no".</div>
       </div>
     </div>
@@ -522,14 +527,14 @@ guessed = <span class="kw">False</span>
 
     <div class="slide">
       <div class="slide-tag">Functions</div>
-      <div class="slide-title">🧩 Functions — Write Once, Use Anywhere</div>
+      <div class="slide-title"> Functions — Write Once, Use Anywhere</div>
       <div class="slide-body">
         <p>A <strong>function</strong> is a reusable block of code with a name. Instead of writing the same code 10 times, write it once as a function and <strong>call it</strong> whenever you need it. Functions make code cleaner, shorter and easier to fix.</p>
       </div>
       <div class="code-lang">python — functions</div>
       <div class="code-block"><pre><span class="cm"># Define a function with 'def'</span>
 <span class="kw">def</span> <span class="fn">greet</span>(name):
-    <span class="fn">print</span>(<span class="str">f"Hello, {name}! Welcome to TechCamp 🎓"</span>)
+    <span class="fn">print</span>(<span class="str">f"Hello, {name}! Welcome to TechCamp "</span>)
 
 <span class="cm"># Call the function</span>
 <span class="fn">greet</span>(<span class="str">"Kwame"</span>)
@@ -558,7 +563,7 @@ result = <span class="fn">add</span>(<span class="num">10</span>, <span class="n
 
     <div class="slide">
       <div class="slide-tag">Dictionaries</div>
-      <div class="slide-title">📖 Dictionaries — Key-Value Storage</div>
+      <div class="slide-title"> Dictionaries — Key-Value Storage</div>
       <div class="slide-body"><p>A <strong>dictionary</strong> stores data as pairs: a <strong>key</strong> and a <strong>value</strong>. Like a contact book — name (key) → phone number (value).</p></div>
       <div class="code-lang">python — dictionaries</div>
       <div class="code-block"><pre><span class="cm"># Create a dictionary</span>
@@ -586,12 +591,12 @@ student[<span class="str">"score"</span>] = <span class="num">87</span>
 
 <span class="cm"># Check if a key exists</span>
 <span class="kw">if</span> <span class="str">"paid"</span> <span class="kw">in</span> student:
-    <span class="fn">print</span>(<span class="str">"Student has paid ✅"</span>)</pre></div>
+    <span class="fn">print</span>(<span class="str">"Student has paid ✓"</span>)</pre></div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">Modules</div>
-      <div class="slide-title">📦 Using Python Modules</div>
+      <div class="slide-title"> Using Python Modules</div>
       <div class="slide-body"><p>Python has thousands of ready-made <strong>modules</strong> (libraries). You <strong>import</strong> them to use their functions without writing everything from scratch.</p></div>
       <div class="code-lang">python — built-in modules</div>
       <div class="code-block"><pre><span class="cm"># math module</span>
@@ -615,12 +620,12 @@ now = datetime.now()
 <span class="cm"># os module — interact with your computer</span>
 <span class="kw">import</span> os
 <span class="fn">print</span>(os.getcwd())  <span class="cm"># current working directory</span></pre></div>
-      <div class="tip-box"><div class="tip-icon">📦</div><div class="tip-text">Need a module that's not built-in? Install it with pip in your terminal:<br><code style="font-family:monospace;background:rgba(0,0,0,0.3);padding:2px 6px;border-radius:4px;">pip install requests</code> then <code style="font-family:monospace;background:rgba(0,0,0,0.3);padding:2px 6px;border-radius:4px;">import requests</code> in your code.</div></div>
+      <div class="tip-box"><div class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 21 7v10l-9 5-9-5V7l9-5z"/><path d="M3 7l9 5 9-5"/><line x1="12" y1="12" x2="12" y2="22"/></svg></div><div class="tip-text">Need a module that's not built-in? Install it with pip in your terminal:<br><code style="font-family:monospace;background:rgba(0,0,0,0.3);padding:2px 6px;border-radius:4px;">pip install requests</code> then <code style="font-family:monospace;background:rgba(0,0,0,0.3);padding:2px 6px;border-radius:4px;">import requests</code> in your code.</div></div>
     </div>
 
     <!-- DAY 3 PROJECT -->
     <div class="project-slide">
-      <div class="project-badge">🏗️  Project</div>
+      <div class="project-badge">  Project</div>
       <div class="project-title">Simple Calculator</div>
       <div class="project-desc">A menu-driven calculator using functions for each operation. Uses: functions, if/else, while loop, and input. Students will keep using it until they choose to quit.</div>
       <div class="code-lang">python — calculator.py</div>
@@ -634,14 +639,14 @@ now = datetime.now()
         <span class="kw">return</span> <span class="str">"Error: Cannot divide by zero!"</span>
     <span class="kw">return</span> a / b
 
-<span class="fn">print</span>(<span class="str">"🧮 TechCamp Calculator"</span>)
+<span class="fn">print</span>(<span class="str">" TechCamp Calculator"</span>)
 
 <span class="kw">while</span> <span class="kw">True</span>:
     <span class="fn">print</span>(<span class="str">"\n1. Add  2. Subtract  3. Multiply  4. Divide  5. Quit"</span>)
     choice = <span class="fn">input</span>(<span class="str">"Choose: "</span>)
 
     <span class="kw">if</span> choice == <span class="str">"5"</span>:
-        <span class="fn">print</span>(<span class="str">"Goodbye! 👋"</span>)
+        <span class="fn">print</span>(<span class="str">"Goodbye! "</span>)
         <span class="kw">break</span>
 
     <span class="kw">if</span> choice <span class="kw">in</span> [<span class="str">"1"</span>,<span class="str">"2"</span>,<span class="str">"3"</span>,<span class="str">"4"</span>]:
@@ -669,7 +674,7 @@ now = datetime.now()
 
     <div class="slide">
       <div class="slide-tag">File Handling</div>
-      <div class="slide-title">📁 Reading & Writing Files</div>
+      <div class="slide-title"> Reading & Writing Files</div>
       <div class="slide-body"><p>Real programs save data so it's not lost when the program closes. Python makes file handling very easy with the built-in <strong>open()</strong> function.</p></div>
       <div class="code-lang">python — file handling</div>
       <div class="code-block"><pre><span class="cm"># WRITE — create or overwrite a file</span>
@@ -702,7 +707,7 @@ now = datetime.now()
 
     <div class="slide">
       <div class="slide-tag">Error Handling</div>
-      <div class="slide-title">🛡️ Try / Except — Handling Errors Gracefully</div>
+      <div class="slide-title"> Try / Except — Handling Errors Gracefully</div>
       <div class="slide-body"><p>Programs crash when errors happen. <strong>try/except</strong> lets you catch errors and handle them without crashing — like a safety net for your code.</p></div>
       <div class="code-lang">python — try/except</div>
       <div class="code-block"><pre><span class="cm"># Without try/except — this CRASHES if user types text</span>
@@ -713,22 +718,22 @@ now = datetime.now()
     age = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Enter your age: "</span>))
     <span class="fn">print</span>(<span class="str">f"You are {age} years old."</span>)
 <span class="kw">except</span> ValueError:
-    <span class="fn">print</span>(<span class="str">"❌ Please enter a number, not text!"</span>)
+    <span class="fn">print</span>(<span class="str">" Please enter a number, not text!"</span>)
 
 <span class="cm"># File reading with error handling</span>
 <span class="kw">try</span>:
     <span class="kw">with</span> <span class="fn">open</span>(<span class="str">"data.txt"</span>, <span class="str">"r"</span>) <span class="kw">as</span> f:
         <span class="fn">print</span>(f.read())
 <span class="kw">except</span> FileNotFoundError:
-    <span class="fn">print</span>(<span class="str">"❌ File not found! Check the filename."</span>)
+    <span class="fn">print</span>(<span class="str">" File not found! Check the filename."</span>)
 <span class="kw">finally</span>:
     <span class="fn">print</span>(<span class="str">"Done — this runs no matter what."</span>)</pre></div>
-      <div class="tip-box"><div class="tip-icon">💡</div><div class="tip-text"><strong>try</strong> = attempt the risky code. <strong>except</strong> = what to do if it fails. <strong>finally</strong> = always runs regardless. This makes your programs professional and unbreakable.</div></div>
+      <div class="tip-box"><div class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.6.6 1 1.5 1 2.5h6c0-1 .4-1.9 1-2.5A6 6 0 0 0 12 3z"/></svg></div><div class="tip-text"><strong>try</strong> = attempt the risky code. <strong>except</strong> = what to do if it fails. <strong>finally</strong> = always runs regardless. This makes your programs professional and unbreakable.</div></div>
     </div>
 
     <!-- DAY 4 PROJECT 1 -->
     <div class="project-slide">
-      <div class="project-badge">🏗️  Project 1</div>
+      <div class="project-badge">  Project 1</div>
       <div class="project-title">Student Registration System</div>
       <div class="project-desc">A real program that registers students, saves them to a file and can view them. Uses: functions, file handling, while loop, try/except — everything from the week!</div>
       <div class="code-lang">python — registration.py</div>
@@ -737,7 +742,7 @@ now = datetime.now()
 <span class="kw">def</span> <span class="fn">register</span>(name):
     <span class="kw">with</span> <span class="fn">open</span>(<span class="str">"registered.txt"</span>, <span class="str">"a"</span>) <span class="kw">as</span> f:
         f.write(name + <span class="str">"\n"</span>)
-    <span class="fn">print</span>(<span class="str">f"✅ {name} registered successfully!"</span>)
+    <span class="fn">print</span>(<span class="str">f"✓ {name} registered successfully!"</span>)
 
 <span class="kw">def</span> <span class="fn">view_all</span>():
     <span class="fn">print</span>(<span class="str">"\n── Registered Students ──"</span>)
@@ -758,7 +763,7 @@ now = datetime.now()
             <span class="kw">return</span> <span class="bi">len</span>(f.readlines())
     <span class="kw">except</span>: <span class="kw">return</span> <span class="num">0</span>
 
-<span class="fn">print</span>(<span class="str">"🎓 TechCamp Registration System"</span>)
+<span class="fn">print</span>(<span class="str">" TechCamp Registration System"</span>)
 
 <span class="kw">while</span> <span class="kw">True</span>:
     <span class="fn">print</span>(<span class="str">f"\nStudents: {<span class="fn">count</span>()}"</span>)
@@ -772,12 +777,12 @@ now = datetime.now()
     <span class="kw">elif</span> choice == <span class="str">"2"</span>:
         <span class="fn">view_all</span>()
     <span class="kw">elif</span> choice == <span class="str">"3"</span>:
-        <span class="fn">print</span>(<span class="str">"Goodbye! 👋"</span>); <span class="kw">break</span></pre></div>
+        <span class="fn">print</span>(<span class="str">"Goodbye! "</span>); <span class="kw">break</span></pre></div>
     </div>
 
     <!-- DAY 4 PROJECT 2 -->
     <div class="project-slide">
-      <div class="project-badge">🏗️  Project 2</div>
+      <div class="project-badge">  Project 2</div>
       <div class="project-title">Password Strength Checker</div>
       <div class="project-desc">Combines our hacking knowledge with Python — a tool that checks how strong a password is and gives specific feedback. Great demo of functions, loops, and string methods.</div>
       <div class="code-lang">python — password_check.py</div>
@@ -788,37 +793,37 @@ now = datetime.now()
     <span class="kw">if</span> <span class="bi">len</span>(pw) >= <span class="num">8</span>:
         score += <span class="num">1</span>
     <span class="kw">else</span>:
-        tips.append(<span class="str">"❌ Use at least 8 characters"</span>)
+        tips.append(<span class="str">" Use at least 8 characters"</span>)
 
     <span class="kw">if</span> <span class="bi">any</span>(c.isupper() <span class="kw">for</span> c <span class="kw">in</span> pw):
         score += <span class="num">1</span>
     <span class="kw">else</span>:
-        tips.append(<span class="str">"❌ Add uppercase letters (A-Z)"</span>)
+        tips.append(<span class="str">" Add uppercase letters (A-Z)"</span>)
 
     <span class="kw">if</span> <span class="bi">any</span>(c.islower() <span class="kw">for</span> c <span class="kw">in</span> pw):
         score += <span class="num">1</span>
     <span class="kw">else</span>:
-        tips.append(<span class="str">"❌ Add lowercase letters (a-z)"</span>)
+        tips.append(<span class="str">" Add lowercase letters (a-z)"</span>)
 
     <span class="kw">if</span> <span class="bi">any</span>(c.isdigit() <span class="kw">for</span> c <span class="kw">in</span> pw):
         score += <span class="num">1</span>
     <span class="kw">else</span>:
-        tips.append(<span class="str">"❌ Add numbers (0-9)"</span>)
+        tips.append(<span class="str">" Add numbers (0-9)"</span>)
 
     <span class="kw">if</span> <span class="bi">any</span>(c <span class="kw">in</span> <span class="str">"!@#$%^&*_-"</span> <span class="kw">for</span> c <span class="kw">in</span> pw):
         score += <span class="num">1</span>
     <span class="kw">else</span>:
-        tips.append(<span class="str">"❌ Add symbols (!@#$%^&*)"</span>)
+        tips.append(<span class="str">" Add symbols (!@#$%^&*)"</span>)
 
     labels = [<span class="str">""</span>, <span class="str">"Very Weak"</span>, <span class="str">"Weak"</span>, <span class="str">"Fair"</span>, <span class="str">"Strong"</span>, <span class="str">"Very Strong"</span>]
-    emojis = [<span class="str">""</span>, <span class="str">"💀"</span>, <span class="str">"⚠"</span>, <span class="str">"🔶"</span>, <span class="str">"✅"</span>, <span class="str">"🔒"</span>]
+    emojis = [<span class="str">""</span>, <span class="str">""</span>, <span class="str">""</span>, <span class="str">""</span>, <span class="str">"✓"</span>, <span class="str">""</span>]
 
     <span class="fn">print</span>(<span class="str">f"\nStrength: {emojis[score]} {labels[score]} ({score}/5)"</span>)
     <span class="kw">if</span> tips:
         <span class="fn">print</span>(<span class="str">"Improve it:"</span>)
         <span class="kw">for</span> t <span class="kw">in</span> tips: <span class="fn">print</span>(<span class="str">f"  {t}"</span>)
     <span class="kw">else</span>:
-        <span class="fn">print</span>(<span class="str">"Perfect password! 🎉"</span>)
+        <span class="fn">print</span>(<span class="str">"Perfect password! "</span>)
 
 <span class="kw">while</span> <span class="kw">True</span>:
     pw = <span class="fn">input</span>(<span class="str">"\nEnter password to check (or 'quit'): "</span>)
@@ -837,18 +842,18 @@ now = datetime.now()
 
     <div class="slide">
       <div class="slide-tag">Final Project</div>
-      <div class="slide-title">🏆 Final Project — Python Quiz Game</div>
+      <div class="slide-title"> Final Project — Python Quiz Game</div>
       <div class="slide-body">
         <p>Our grand finale! A full interactive quiz game about everything in this boot camp — ethical hacking, Arduino and Python. It tracks scores, gives feedback, and saves results to a file. This uses <strong>everything</strong> from the whole week.</p>
       </div>
       <div class="vis-grid">
-        <div class="vis-card"><div class="vis-icon">📋</div><div class="vis-label">What It Does</div><div class="vis-desc">Asks 6 questions, tracks score, shows final result, saves to file.</div></div>
-        <div class="vis-card"><div class="vis-icon">🧠</div><div class="vis-label">What It Uses</div><div class="vis-desc">Lists, dicts, functions, for loops, if/else, file writing, f-strings.</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="17" rx="1.5"/><rect x="9" y="2.5" width="6" height="3.5" rx="1"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="9" y1="15" x2="13" y2="15"/></svg></div><div class="vis-label">What It Does</div><div class="vis-desc">Asks 6 questions, tracks score, shows final result, saves to file.</div></div>
+        <div class="vis-card"><div class="vis-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 3 2V4z"/><path d="M15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4 3 3 0 0 1-3 2V4z"/></svg></div><div class="vis-label">What It Uses</div><div class="vis-desc">Lists, dicts, functions, for loops, if/else, file writing, f-strings.</div></div>
       </div>
     </div>
 
     <div class="project-slide">
-      <div class="project-badge">🏗️ Final Project</div>
+      <div class="project-badge"> Final Project</div>
       <div class="project-title">TechCamp Quiz Game</div>
       <div class="project-desc">A complete quiz game that covers all 3 topics of the boot camp. Students fill in the answers, get scored and their results are saved. This is a real, complete Python program.</div>
       <div class="code-lang">python — quiz_game.py</div>
@@ -880,34 +885,34 @@ questions = [
     score = <span class="num">0</span>
     random.shuffle(questions)
 
-    <span class="fn">print</span>(<span class="str">f"\n🎮 Starting quiz for {player_name}!\n"</span>)
+    <span class="fn">print</span>(<span class="str">f"\n Starting quiz for {player_name}!\n"</span>)
 
     <span class="kw">for</span> i, q <span class="kw">in</span> <span class="bi">enumerate</span>(questions, <span class="num">1</span>):
         <span class="fn">print</span>(<span class="str">f"Q{i} [{q['topic']}]: {q['q']}"</span>)
         answer = <span class="fn">input</span>(<span class="str">"   Your answer: "</span>).strip().lower()
 
         <span class="kw">if</span> answer == q[<span class="str">"a"</span>].lower():
-            <span class="fn">print</span>(<span class="str">"   ✅ Correct!\n"</span>)
+            <span class="fn">print</span>(<span class="str">"   ✓ Correct!\n"</span>)
             score += <span class="num">1</span>
         <span class="kw">else</span>:
-            <span class="fn">print</span>(<span class="str">f"   ❌ Wrong. Answer: {q['a']}\n"</span>)
+            <span class="fn">print</span>(<span class="str">f"    Wrong. Answer: {q['a']}\n"</span>)
 
     percent = (score / <span class="bi">len</span>(questions)) * <span class="num">100</span>
     <span class="fn">print</span>(<span class="str">f"── Final Score: {score}/{<span class="bi">len</span>(questions)} ({percent:.0f}%) ──"</span>)
 
-    <span class="kw">if</span>   percent == <span class="num">100</span>: <span class="fn">print</span>(<span class="str">"🏆 Perfect! You're a TechCamp legend!"</span>)
-    <span class="kw">elif</span> percent >= <span class="num">70</span>:  <span class="fn">print</span>(<span class="str">"✅ Great work! You've learned a lot."</span>)
-    <span class="kw">elif</span> percent >= <span class="num">50</span>:  <span class="fn">print</span>(<span class="str">"👍 Good effort. Keep studying!"</span>)
-    <span class="kw">else</span>:                <span class="fn">print</span>(<span class="str">"📚 Review the notes and try again!"</span>)
+    <span class="kw">if</span>   percent == <span class="num">100</span>: <span class="fn">print</span>(<span class="str">" Perfect! You're a TechCamp legend!"</span>)
+    <span class="kw">elif</span> percent >= <span class="num">70</span>:  <span class="fn">print</span>(<span class="str">"✓ Great work! You've learned a lot."</span>)
+    <span class="kw">elif</span> percent >= <span class="num">50</span>:  <span class="fn">print</span>(<span class="str">" Good effort. Keep studying!"</span>)
+    <span class="kw">else</span>:                <span class="fn">print</span>(<span class="str">" Review the notes and try again!"</span>)
 
     <span class="cm"># Save result to file</span>
     <span class="kw">with</span> <span class="fn">open</span>(<span class="str">"quiz_results.txt"</span>, <span class="str">"a"</span>) <span class="kw">as</span> f:
         time = datetime.now().strftime(<span class="str">"%d/%m/%Y %H:%M"</span>)
         f.write(<span class="str">f"{time} | {player_name} | {score}/{<span class="bi">len</span>(questions)} | {percent:.0f}%\n"</span>)
-    <span class="fn">print</span>(<span class="str">"📁 Result saved to quiz_results.txt"</span>)
+    <span class="fn">print</span>(<span class="str">" Result saved to quiz_results.txt"</span>)
 
 <span class="cm"># ── Main program ──</span>
-<span class="fn">print</span>(<span class="str">"🎓 TechCamp Boot Camp Quiz"</span>)
+<span class="fn">print</span>(<span class="str">" TechCamp Boot Camp Quiz"</span>)
 name = <span class="fn">input</span>(<span class="str">"Enter your name: "</span>).strip()
 <span class="fn">run_quiz</span>(name)
 
@@ -915,65 +920,65 @@ again = <span class="fn">input</span>(<span class="str">"\nPlay again? (yes/no):
 <span class="kw">if</span> again.lower() == <span class="str">"yes"</span>:
     <span class="fn">run_quiz</span>(name)
 <span class="kw">else</span>:
-    <span class="fn">print</span>(<span class="str">"Thanks for playing! Keep coding 🐍"</span>)</pre></div>
+    <span class="fn">print</span>(<span class="str">"Thanks for playing! Keep coding "</span>)</pre></div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">Week Summary</div>
-      <div class="slide-title">✅ Full Boot Camp Summary</div>
+      <div class="slide-title">✓ Full Boot Camp Summary</div>
       <div class="slide-body"><p>Here's everything you built and learned across the entire boot camp:</p></div>
       <div class="terms-grid">
-        <div class="term"><div class="term-word">🔐 Ethical Hacking</div><div class="term-def">VMware & Kali Linux setup · Terminal commands · Nmap scanning · Networking basics · Backdoors, payloads & msfvenom · Client-side attacks</div></div>
-        <div class="term"><div class="term-word">🤖 Arduino & C</div><div class="term-def">Microcontrollers · Breadboard · LED Blink · Ultrasonic distance sensor · I2C LCD display · DHT11 weather station final project</div></div>
-        <div class="term"><div class="term-word">🐍 Python</div><div class="term-def">Variables · Input/output · Conditions · Loops · Lists · Functions · Dicts · Modules · Files · 5 complete projects</div></div>
+        <div class="term"><div class="term-word"> Ethical Hacking</div><div class="term-def">VMware & Kali Linux setup · Terminal commands · Nmap scanning · Networking basics · Backdoors, payloads & msfvenom · Client-side attacks</div></div>
+        <div class="term"><div class="term-word"> Arduino & C</div><div class="term-def">Microcontrollers · Breadboard · LED Blink · Ultrasonic distance sensor · I2C LCD display · DHT11 weather station final project</div></div>
+        <div class="term"><div class="term-word"> Python</div><div class="term-def">Variables · Input/output · Conditions · Loops · Lists · Functions · Dicts · Modules · Files · 5 complete projects</div></div>
       </div>
     </div>
 
     <div class="slide">
       <div class="slide-tag">What's Next</div>
-      <div class="slide-title">🚀 Keep Learning — Resources</div>
+      <div class="slide-title"> Keep Learning — Resources</div>
       <div class="slide-body"><p>This boot camp is your foundation. Here's where to go next:</p></div>
       <a class="link-card" href="https://www.freecodecamp.org/learn/scientific-computing-with-python/" target="_blank">
-        <div class="link-icon">🐍</div>
+        <div class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h6a3 3 0 0 1 0 6H8a3 3 0 0 0 0 6h8"/><circle cx="6.5" cy="6" r="0.7" fill="currentColor"/></svg></div>
         <div class="link-info"><div class="link-title">freeCodeCamp — Python Course</div><div class="link-url">Free. Full Python course with exercises and certification.</div></div>
         <div class="link-arr">›</div>
       </a>
       <a class="link-card" href="https://www.youtube.com/@coreyms" target="_blank">
-        <div class="link-icon">▶️</div>
+        <div class="link-icon">▶</div>
         <div class="link-info"><div class="link-title">Corey Schafer — YouTube</div><div class="link-url">Best Python tutorials on YouTube. Covers beginner to advanced.</div></div>
         <div class="link-arr">›</div>
       </a>
       <a class="link-card" href="https://tryhackme.com" target="_blank">
-        <div class="link-icon">🔐</div>
+        <div class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="1.5"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/><circle cx="12" cy="15.5" r="1.3"/></svg></div>
         <div class="link-info"><div class="link-title">TryHackMe — Ethical Hacking Labs</div><div class="link-url">Free guided hacking exercises. Start with "Pre-Security" path.</div></div>
         <div class="link-arr">›</div>
       </a>
       <a class="link-card" href="https://www.tiktok.com/@_phil.jr" target="_blank">
-        <div class="link-icon">🎵</div>
+        <div class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9a3 3 0 0 1 0 6"/></svg></div>
         <div class="link-info"><div class="link-title">@_phil.jr on TikTok</div><div class="link-url">Short project demos and coding tips from your instructor.</div></div>
         <div class="link-arr">›</div>
       </a>
       <a class="link-card" href="https://www.instagram.com/_phil.jr" target="_blank">
-        <div class="link-icon">📸</div>
+        <div class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L18 8h2a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.2"/></svg></div>
         <div class="link-info"><div class="link-title">@_phil.jr on Instagram</div><div class="link-url">Updates, projects and more.</div></div>
         <div class="link-arr">›</div>
       </a>
 
       <div class="reach-box">
-        <div class="reach-title">💬 Want to Dive Even Deeper?</div>
+        <div class="reach-title"> Want to Dive Even Deeper?</div>
         <div class="reach-body">More boot camps are coming — advanced Python, web development with Flask, machine learning, and more. Stay connected and reach out anytime. The learning never stops!</div>
         <div class="reach-btns">
-          <a class="reach-btn" href="https://wa.me/233554197193?text=Hi%2C%20I%20want%20to%20continue%20learning%20after%20TechCamp" target="_blank">📱 WhatsApp</a>
-          <a class="reach-btn" href="/cdn-cgi/l/email-protection#711b08100645444731161c10181d5f121e1c" target="_blank">✉️ Email</a>
+          <a class="reach-btn" href="https://wa.me/233554197193?text=Hi%2C%20I%20want%20to%20continue%20learning%20after%20TechCamp" target="_blank"> WhatsApp</a>
+          <a class="reach-btn" href="/cdn-cgi/l/email-protection#711b08100645444731161c10181d5f121e1c" target="_blank"> Email</a>
           <a class="reach-btn" href="https://www.linkedin.com/in/gyamerah-afriyie-philimon-32a11525b" target="_blank">in LinkedIn</a>
-          <a class="reach-btn" href="https://www.tiktok.com/@_phil.jr" target="_blank">🎵 TikTok</a>
+          <a class="reach-btn" href="https://www.tiktok.com/@_phil.jr" target="_blank"> TikTok</a>
         </div>
       </div>
     </div>
 
     <div class="lesson-nav">
       <div class="nav-btn" onclick="showModule(4)">← Previous</div>
-      <a class="nav-btn primary" href="index.html">🏠 Back to Hub</a>
+      <a class="nav-btn primary" href="index.html"> Back to Hub</a>
     </div>
   </div>
 
@@ -984,15 +989,15 @@ again = <span class="fn">input</span>(<span class="str">"\nPlay again? (yes/no):
       <div class="slide-title">▶ Interactive Python Console</div>
       <div class="slide-body">
         <p>Write and run real Python code right here in your browser — no installation needed! Powered by <strong>Pyodide</strong>, a full Python runtime. Click any snippet button to load an example, edit it, then hit <strong>Run</strong>.</p>
-        <p style="margin-top:8px;font-size:12px;color:rgba(255,255,255,0.45);">⚠️ First run takes ~5 seconds to load Python. After that it's instant. <strong>input()</strong> is replaced with a placeholder — use hardcoded values for practice.</p>
+        <p style="margin-top:8px;font-size:12px;color:var(--muted);"> First run takes ~5 seconds to load Python. After that it's instant. <strong>input()</strong> is replaced with a placeholder — use hardcoded values for practice.</p>
       </div>
     </div>
 
     <div class="console-wrap">
       <div class="console-topbar">
         <div class="console-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
-        <div class="console-title">🐍 Python Console</div>
-        <div style="font-size:10px;color:rgba(255,255,255,0.3);">Pyodide Runtime</div>
+        <div class="console-title"> Python Console</div>
+        <div style="font-size:10px;color:var(--muted);">Pyodide Runtime</div>
       </div>
       <div class="console-snippets">
         <button class="snippet-btn" onclick="loadSnippet('hello')">Hello World</button>
@@ -1007,7 +1012,7 @@ again = <span class="fn">input</span>(<span class="str">"\nPlay again? (yes/no):
         <button class="snippet-btn" onclick="loadSnippet('password')">Password Check</button>
       </div>
       <div class="console-editor">
-        <textarea id="py-code" spellcheck="false" autocorrect="off" autocapitalize="off"># TechCamp Python Console 🐍
+        <textarea id="py-code" spellcheck="false" autocorrect="off" autocapitalize="off"># TechCamp Python Console 
 # Write your code and click Run!
 
 name = "TechCamp Student"
@@ -1017,7 +1022,7 @@ print(f"Hello, {name}!")
 print(f"Welcome to Python Boot Camp {year}")
 
 for i in range(1, 6):
-    print(f"  Line {i}: Keep coding! 💪")</textarea>
+    print(f"  Line {i}: Keep coding! ")</textarea>
       </div>
       <div class="console-run-bar">
         <button id="run-btn" onclick="runPython()">▶ Run</button>
@@ -1032,18 +1037,18 @@ for i in range(1, 6):
 
     <div class="slide" style="margin-top:18px;">
       <div class="slide-tag">Console Tips</div>
-      <div class="slide-title">💡 Tips & Limitations</div>
+      <div class="slide-title"> Tips & Limitations</div>
       <div class="terms-grid">
-        <div class="term"><div class="term-word">✅ What Works</div><div class="term-def">print(), variables, loops, if/else, functions, lists, dicts, math, random, datetime, string methods — all fully supported.</div></div>
-        <div class="term"><div class="term-word">❌ input() Not Supported</div><div class="term-def">Browser can't pause for keyboard input. Replace input() with a hardcoded value for testing. e.g. name = "Kwame" instead of name = input("Name: ")</div></div>
+        <div class="term"><div class="term-word">✓ What Works</div><div class="term-def">print(), variables, loops, if/else, functions, lists, dicts, math, random, datetime, string methods — all fully supported.</div></div>
+        <div class="term"><div class="term-word"> input() Not Supported</div><div class="term-def">Browser can't pause for keyboard input. Replace input() with a hardcoded value for testing. e.g. name = "Kwame" instead of name = input("Name: ")</div></div>
         <div class="term"><div class="term-word">⏱ First Run Delay</div><div class="term-def">Pyodide loads a full Python engine the first time (~5 seconds). After that all runs are instant.</div></div>
-        <div class="term"><div class="term-word">📦 External Packages</div><div class="term-def">Built-in libraries (math, random, datetime, os) work fine. Third-party packages like pynput, requests are not available in the browser console.</div></div>
+        <div class="term"><div class="term-word"> External Packages</div><div class="term-def">Built-in libraries (math, random, datetime, os) work fine. Third-party packages like pynput, requests are not available in the browser console.</div></div>
       </div>
     </div>
 
     <div class="lesson-nav">
       <div class="nav-btn" onclick="showModule(5)">← Previous</div>
-      <a class="nav-btn primary" href="index.html">🏠 Back to Hub</a>
+      <a class="nav-btn primary" href="index.html"> Back to Hub</a>
     </div>
   </div>
 
@@ -1061,7 +1066,7 @@ for i in range(1, 6):
     try {
       pyodide = await loadPyodide({ indexURL:"https://cdn.jsdelivr.net/pyodide/v0.25.0/full/" });
       pyReady = true;
-      document.getElementById('py-status').textContent = 'Python ready ✅ — click Run!';
+      document.getElementById('py-status').textContent = 'Python ready ✓ — click Run!';
     } catch(e) {
       document.getElementById('py-status').textContent = 'Load failed — check internet';
     }
@@ -1090,13 +1095,13 @@ for i in range(1, 6):
       const result = await pyodide.runPythonAsync(`sys.stdout=sys.__stdout__; _buf.getvalue()`);
       out.textContent = result && result.trim() ? result : '(No output — add print() to see results)';
       out.className = '';
-      status.textContent = '✅ Ran successfully';
+      status.textContent = '✓ Ran successfully';
     } catch(err) {
       try { await pyodide.runPythonAsync(`import sys; sys.stdout=sys.__stdout__`); } catch(e){}
       let msg = (err.message||String(err)).split('\n').filter(l=>!l.includes('File "<exec"')).join('\n').trim();
-      out.textContent = '❌ Error:\n' + msg;
+      out.textContent = ' Error:\n' + msg;
       out.className = 'error';
-      status.textContent = '❌ Error';
+      status.textContent = ' Error';
     }
     btn.disabled = false;
     btn.innerHTML = '▶ Run';
@@ -1110,7 +1115,7 @@ for i in range(1, 6):
 
   const snippets = {
     hello:`print("Hello, World!")
-print("Welcome to TechCamp 🎓")
+print("Welcome to TechCamp ")
 print("Python is awesome!")`,
     variables:`name = "Kwame"
 age = 21
@@ -1138,7 +1143,7 @@ print("Sorted:")
 for i, f in enumerate(fruits, 1):
     print(f"  {i}. {f}")`,
     function:`def greet(name, course="TechCamp"):
-    return f"Hello {name}! Welcome to {course} 🎓"
+    return f"Hello {name}! Welcome to {course} "
 
 def grade(score):
     if score>=80: return "A"
@@ -1178,35 +1183,35 @@ nums = list(range(1,11)); random.shuffle(nums)
 print(f"Shuffled  : {nums}")`,
     guess:`import random
 secret = random.randint(1,20)
-print(f"🎮 Guess the number! (secret={secret})")
+print(f" Guess the number! (secret={secret})")
 guesses = [10, 5, 15, secret]
 for i, g in enumerate(guesses, 1):
     print(f"Guess #{i}: {g}")
-    if g < secret: print("  📉 Too low!")
-    elif g > secret: print("  📈 Too high!")
-    else: print(f"  🎉 Correct in {i} attempts!"); break`,
+    if g < secret: print("   Too low!")
+    elif g > secret: print("   Too high!")
+    else: print(f"   Correct in {i} attempts!"); break`,
     calc:`def add(a,b): return a+b
 def sub(a,b): return a-b
 def mul(a,b): return a*b
 def div(a,b): return "Error: /0!" if b==0 else round(a/b,4)
 ops=[(10,5,"+",add),(10,5,"-",sub),(10,5,"*",mul),(10,5,"/",div),(7,0,"/",div)]
-print("🧮 Calculator")
+print(" Calculator")
 print("-"*22)
 for a,b,op,fn in ops:
     print(f"  {a} {op} {b} = {fn(a,b)}")`,
     password:`def check(pw):
     s=0; tips=[]
     if len(pw)>=8: s+=1
-    else: tips.append("❌ Need 8+ chars")
+    else: tips.append(" Need 8+ chars")
     if any(c.isupper() for c in pw): s+=1
-    else: tips.append("❌ Need uppercase")
+    else: tips.append(" Need uppercase")
     if any(c.islower() for c in pw): s+=1
-    else: tips.append("❌ Need lowercase")
+    else: tips.append(" Need lowercase")
     if any(c.isdigit() for c in pw): s+=1
-    else: tips.append("❌ Need numbers")
+    else: tips.append(" Need numbers")
     if any(c in "!@#$%^&*" for c in pw): s+=1
-    else: tips.append("❌ Need symbols")
-    lb=["","💀 Very Weak","⚠ Weak","🔶 Fair","✅ Strong","🔒 Very Strong"]
+    else: tips.append(" Need symbols")
+    lb=[""," Very Weak"," Weak"," Fair","✓ Strong"," Very Strong"]
     print(f"'{pw}' → {lb[s]} ({s}/5)")
     for t in tips: print(f"   {t}")
     print()
